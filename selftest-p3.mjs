@@ -17,6 +17,9 @@
 
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+import { dataPath } from './lib/paths.js';
 
 const ARGS = process.argv.slice(2);
 const HAS = (flag) => ARGS.includes(flag);
@@ -25,13 +28,14 @@ const VERBOSE = HAS('--verbose');
 const ONLY_ARG = ARGS.find((a) => a.startsWith('--only='));
 const ONLY = ONLY_ARG ? ONLY_ARG.slice(7).split(',').map((s) => s.trim().toUpperCase()).filter(Boolean) : null;
 
-const PLUGIN_ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+// [2026-10-29 修复] 硬编码指向原开发机目录，换成从脚本自身位置推导
+const PLUGIN_ROOT = dirname(fileURLToPath(import.meta.url));
 const LIB = PLUGIN_ROOT + '/lib/retrieval';
-const INDEX_ROOT = '~/.dsh/unified-memory/hypergraph';
+const INDEX_ROOT = dataPath('hypergraph');
 // [2026-10-22 by Assistant · 交接文档坑5 修复] 期5 已把 engram 存储根迁到云盘 live。
 // 这里原本还指旧路径（6241 行 / 5496 活卡），而检索器读的是 live（6440 / 5682）
 // ⇒ p3 的「alive 覆盖」「BM25 扫全部活卡」两条判据必然对不上（测的和用的不是同一份文件）。
-const ENGRAM_PATH = '~/.dsh/unified-memory/engram-relay/engrams.jsonl';
+const ENGRAM_PATH = dataPath('engram-relay/engrams.jsonl');
 const ALIAS_PATH = '~/_tmp/engram-triggers-20261018/engram-triggers.preview.jsonl';
 const QUERY_SET = '~/_team-v2/p3/queries-v1.jsonl';
 
@@ -746,6 +750,15 @@ async function runI(snapBefore) {
 
 // ============================ 主流程 ============================
 async function main() {
+  // [2026-10-29 开源版适配] 无真实数据则跳过（这套依赖已积累的 engram）
+  {
+    const _eng = dataPath('engram-relay/engrams.jsonl');
+    if (!existsSync(_eng)) {
+      console.log('⚠️ 跳过：本机没有记忆数据（' + _eng + '）');
+      console.log('SKIPPED（无数据）');
+      process.exit(0);
+    }
+  }
   log('════════ P3 SELFTEST · 期3 三级检索 ════════');
   log('时间: ' + new Date().toISOString());
   log('模式: ' + (BUILD ? 'build（先重建索引）' : 'run-only') + (ONLY ? '  only=' + ONLY.join(',') : ''));

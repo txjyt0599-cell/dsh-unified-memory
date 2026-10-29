@@ -8,8 +8,11 @@
  * 这个文件有**两处**产卡路径（LLM 主路径 + 启发式兜底），必须都带。
  */
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
-const SRC = 'D:/dsh-plugins/dsh-unified-memory/lib/ingest/extract.js';
+const SRC = join(ROOT, '')lib/ingest/extract.js';
 const s = readFileSync(SRC, 'utf8');
 
 let fail = 0;

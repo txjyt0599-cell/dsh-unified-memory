@@ -13,8 +13,9 @@
  */
 import { createRetriever } from '../lib/retrieval/retriever.js';
 import { readFileSync, existsSync, writeFileSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
 
-const ROOT = '~/.dsh/unified-memory/ingest';
+const ROOT = dataPath('ingest');
 const ENGRAM = ROOT + '/engrams.jsonl';
 
 function loadCards() {
@@ -114,7 +115,7 @@ if (!cards.length) {
   else if (d10 === 0) console.log('判定：**同义改写场景下也无差异** ⇒ 图确实没起作用，需查根因（实体质量/扩散策略）。');
   else console.log('判定：图反而降低召回（' + d10 + '）⇒ 应关闭。');
 
-  const outPath = '~/.dsh/unified-memory/ingest/traces/eval-synonym-' + Date.now() + '.json';
+  const outPath = dataPath('ingest/traces/eval-synonym-') + Date.now() + '.json';
   try { writeFileSync(outPath, JSON.stringify({ at: new Date().toISOString(), a, b }, null, 2), 'utf8'); } catch {}
   console.log('明细: ' + outPath);
   process.exitCode = 0;

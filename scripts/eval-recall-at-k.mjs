@@ -13,8 +13,9 @@
  */
 import { createRetriever } from '../lib/retrieval/retriever.js';
 import { readFileSync, existsSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
 
-const ROOT = '~/.dsh/unified-memory/ingest';
+const ROOT = dataPath('ingest');
 const CONV = ROOT + '/conversations/2026-10-23.jsonl';
 
 // ── 取真实用户原话当查询 ──

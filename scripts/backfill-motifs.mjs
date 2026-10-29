@@ -14,9 +14,10 @@
 import { extractMotifsLLM } from '../lib/ingest/motifs.js';
 import { complete, resolveLlm } from '../lib/ingest/llm.js';
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
 
-const ROOT = '~/.dsh/unified-memory/ingest';
-const TDAI = '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/records';
+const ROOT = dataPath('ingest');
+const TDAI = dataPath('memory-tencentdb/memory-tdai/records');
 const BAK = '~/_backups/20261023-p8-motifs-backfill';
 
 const DRY = process.argv.includes('--dry');

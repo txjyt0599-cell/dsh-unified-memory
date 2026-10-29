@@ -21,8 +21,9 @@
  */
 import { readFileSync, writeFileSync, copyFileSync, existsSync, statSync } from 'node:fs';
 import { LEGACY_DEFAULTS, normalizeEngramV2 } from '../lib/ingest/belief.js';
+import { dataPath } from '../lib/paths.js';
 
-const FILE = '~/.dsh/unified-memory/ingest/engrams.jsonl';
+const FILE = dataPath('ingest/engrams.jsonl');
 const DRY = process.argv.includes('--dry');
 
 if (!existsSync(FILE)) {

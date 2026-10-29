@@ -12,8 +12,9 @@ import {
   inferSourceWeight, normalizeEngramV2, STATUS,
 } from '../lib/ingest/belief.js';
 import { createConsolidation } from '../lib/ingest/consolidate.js';
+import { dataPath } from '../lib/paths.js';
 
-const OUT_DIR = '~/.dsh/unified-memory/ingest/traces';
+const OUT_DIR = dataPath('ingest/traces');
 mkdirSync(OUT_DIR, { recursive: true });
 
 const trace = { at: new Date().toISOString(), cases: {} };

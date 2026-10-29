@@ -12,6 +12,9 @@
 import { mkdtempSync, rmSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 let pass = 0, fail = 0;
 const fails = [];
@@ -20,7 +23,7 @@ function check(g, name, ok, detail) {
   else { fail++; fails.push(name); console.log('  FAIL ' + name + (detail ? '   ' + detail : '')); }
 }
 
-const LIB = 'D:/dsh-plugins/dsh-unified-memory/lib';
+const LIB = join(ROOT, '')lib';
 const { createLedger } = await import('file:///' + LIB + '/dispatch/ledger.js');
 const { createDispatchTools, newTaskId, frameMessage } = await import('file:///' + LIB + '/dispatch/tool.js');
 const { STATE } = await import('file:///' + LIB + '/dispatch/state-machine.js');

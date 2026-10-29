@@ -16,7 +16,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory/lib';
+const ROOT = join(ROOT, '')lib';
 const files = [];
 function walk(d) {
   for (const e of readdirSync(d, { withFileTypes: true })) {

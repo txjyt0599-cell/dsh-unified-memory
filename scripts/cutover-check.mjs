@@ -11,8 +11,12 @@
  * 它**不做**任何改动：不写生产数据、不改配置、不启停插件。
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
-const INGEST_ROOT = '~/.dsh/unified-memory/ingest';
+const INGEST_ROOT = dataPath('ingest');
 const CFG = INGEST_ROOT + '/config.json';
 const PROFILE = '~/.dsh/profiles/web/cordis.patch.yml';
 
@@ -35,8 +39,8 @@ console.log('');
 // ① L0 对话捕获
 {
   const conv = listJsonl(INGEST_ROOT + '/conversations');
-  const oldFiles = listJsonl('~/.dsh/unified-memory/memory-tencentdb/memory-tdai/conversations');
-  const hasImpl = existsSync('D:/dsh-plugins/dsh-unified-memory/lib/ingest/capture.js');
+  const oldFiles = listJsonl(dataPath('memory-tencentdb/memory-tdai/conversations'));
+  const hasImpl = existsSync(join(ROOT, '')lib/ingest/capture.js');
   const on = !!(cfg && cfg.enabled && cfg.capture);
   row('L0 对话捕获',
     'tdai auto-capture.js → conversations/',
@@ -52,7 +56,7 @@ console.log('');
   const rec = listJsonl(INGEST_ROOT + '/records');
   let cards = 0;
   for (const f of rec) cards += countLines(INGEST_ROOT + '/records/' + f);
-  const hasImpl = existsSync('D:/dsh-plugins/dsh-unified-memory/lib/ingest/extract.js');
+  const hasImpl = existsSync(join(ROOT, '')lib/ingest/extract.js');
   const on = !!(cfg && cfg.enabled && cfg.extract);
   // 模型端点能不能解析（不打印 key）
   let llm = '未解析';
@@ -74,7 +78,7 @@ console.log('');
 {
   const eng = INGEST_ROOT + '/engrams.jsonl';
   const n = existsSync(eng) ? countLines(eng) : 0;
-  const hasImpl = existsSync('D:/dsh-plugins/dsh-unified-memory/lib/ingest/distill.js');
+  const hasImpl = existsSync(join(ROOT, '')lib/ingest/distill.js');
   const on = !!(cfg && cfg.enabled && cfg.distill);
   row('engram 蒸馏',
     'engram-relay relay.js:625 maybeDistill()',
@@ -97,8 +101,8 @@ console.log('');
 
 // ⑤ 存量可读性（关旧之后历史还在不在）
 {
-  const engramFile = '~/.dsh/unified-memory/engram-relay/engrams.jsonl';
-  const tdaiRec = '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/records';
+  const engramFile = dataPath('engram-relay/engrams.jsonl');
+  const tdaiRec = dataPath('memory-tencentdb/memory-tdai/records');
   const eOk = existsSync(engramFile);
   const tOk = existsSync(tdaiRec);
   row('存量历史', '旧插件目录', '直接读 jsonl（不依赖插件运行）', eOk && tOk,

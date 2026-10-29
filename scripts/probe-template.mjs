@@ -10,11 +10,12 @@
  *   注意：cwd 必须是插件根，导入路径用 ../lib/...
  */
 import { createRetriever } from '../lib/retrieval/retriever.js';
+import { dataPath } from '../lib/paths.js';
 
 /** 生产同款三源配置 —— 任何探针都必须从这里取，禁止手写部分参数 */
 export const PROD_CONVERSATION_DIRS = [
-  '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/conversations',
-  '~/.dsh/unified-memory/ingest/conversations',
+  dataPath('memory-tencentdb/memory-tdai/conversations'),
+  dataPath('ingest/conversations'),
 ];
 
 export function makeProdRetriever(extra) {

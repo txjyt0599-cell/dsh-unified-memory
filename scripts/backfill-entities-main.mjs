@@ -19,6 +19,7 @@
 import { readFileSync, writeFileSync, renameSync, existsSync, copyFileSync, mkdirSync, statSync } from 'node:fs';
 import { extractEntities } from '../lib/ingest/entities.js';
 import { extractMotifs } from '../lib/ingest/motifs.js';
+import { dataPath } from '../lib/paths.js';
 
 const argv = process.argv.slice(2);
 const opt = {};
@@ -31,7 +32,7 @@ for (let i = 0; i < argv.length; i += 1) {
   }
 }
 const APPLY = opt.apply === true;
-const FILE = String(opt.file || '~/.dsh/unified-memory/engram-relay/engrams.jsonl');
+const FILE = String(opt.file || dataPath('engram-relay/engrams.jsonl'));
 if (!existsSync(FILE)) { console.error('找不到：' + FILE); process.exit(1); }
 
 const raw = readFileSync(FILE, 'utf8');
@@ -81,7 +82,7 @@ console.log('  坏行      : ' + bad);
 
 if (!APPLY) { console.log('\n（加 --apply 才落盘）'); process.exit(0); }
 
-const dir = '~/.dsh/unified-memory/diary/backups';
+const dir = dataPath('diary/backups');
 try { mkdirSync(dir, { recursive: true }); } catch {}
 const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
 try { copyFileSync(FILE, dir + '/engrams-before-entities-' + ts + '.jsonl'); }

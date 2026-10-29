@@ -12,6 +12,7 @@ import { loadLiveConfig } from '../lib/ingest/config.js';
 import { scoreImportance } from '../lib/scoring/importance.js';
 import { applyFourForces, GATE_THRESHOLD } from '../lib/scoring/four-forces.js';
 import { isAdopted } from '../lib/scoring/adoption.js';
+import { dataPath } from '../lib/paths.js';
 
 const D = 86400000;
 const now = Date.now();
@@ -90,12 +91,12 @@ line('陪跑不采纳（防马太死锁）', noUse.used === false);
 // ⑥ 数据文件
 console.log('\n── ⑥ 数据落点 ──');
 for (const f of [
-  '~/.dsh/unified-memory/ingest/config.json',
-  '~/.dsh/unified-memory/diary/state.json',
+  dataPath('ingest/config.json'),
+  dataPath('diary/state.json'),
 ]) {
   console.log('  ' + (existsSync(f) ? '✓' : '✗') + ' ' + f);
 }
-line('活配置存在', existsSync('~/.dsh/unified-memory/ingest/config.json'));
+line('活配置存在', existsSync(dataPath('ingest/config.json')));
 
 console.log('\n══════ 结论 ══════');
 console.log(fail === 0 ? '✅ 全部通过（' + (fail === 0 ? '无失败项' : '') + '）' : '❌ ' + fail + ' 项失败');

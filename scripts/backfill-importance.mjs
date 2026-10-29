@@ -14,6 +14,7 @@
  */
 import { readFileSync, existsSync, appendFileSync, copyFileSync, mkdirSync } from 'node:fs';
 import { scoreImportance } from '../lib/scoring/importance.js';
+import { dataPath } from '../lib/paths.js';
 
 const argv = process.argv.slice(2);
 const opt = {};
@@ -26,12 +27,12 @@ for (let i = 0; i < argv.length; i += 1) {
   }
 }
 
-const FILE = String(opt.file || '~/.dsh/unified-memory/ingest/engrams.jsonl');
+const FILE = String(opt.file || dataPath('ingest/engrams.jsonl'));
 if (!existsSync(FILE)) { console.error('找不到卡片文件：' + FILE); process.exit(1); }
 
 // 先备份
 if (opt.dry !== true) {
-  const dir = '~/.dsh/unified-memory/diary/backups';
+  const dir = dataPath('diary/backups');
   try { mkdirSync(dir, { recursive: true }); } catch {}
   const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   try { copyFileSync(FILE, dir + '/engrams-before-importance-' + ts + '.jsonl'); } catch {}

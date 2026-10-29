@@ -9,6 +9,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { parseSourceMessageId, buildL0Index, lookupRound } from './lib/hypergraph/source.js';
 import { renderCardLine } from './lib/working-memory/budget.js';
 import { resolveConfig, WM_DEFAULTS } from './lib/working-memory/types.js';
+import { dataPath } from './lib/paths.js';
 
 const results = [];
 function check(g, name, ok, detail) {
@@ -29,7 +30,7 @@ const GOOD = 'l0_session-00000000-0000-0000-b596-c7ad79d80582_1792609087361_0_47
 
 // ── B · L0 索引与反查 ──
 console.log('\n── B · L0 索引与反查（真实数据）──');
-const CONV = '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/conversations';
+const CONV = dataPath('memory-tencentdb/memory-tdai/conversations');
 let idx = null, buildMs = 0;
 if (existsSync(CONV)) {
   const t0 = Date.now();

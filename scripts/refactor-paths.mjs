@@ -9,7 +9,7 @@ process.on('uncaughtException', e => { console.error('[UNCAUGHT]', e && e.messag
  *   脚本可以：正则替换 + 逐文件校验语法 + 出账。
  *
  * ## 替换规则（保守，只动"确定的形态"）
- *   '~/.dsh/unified-memory/<X>'  →  dataPath('<X>')
+ *   dataPath('<X>')  →  dataPath('<X>')
  *   '~/日记'                          →  diaryRoot()
  *   '~/日记/<f>'                      →  normalize(diaryRoot() + '/<f>')
  *   '~/.dsh/sessions'            →  sessionsRoot()
@@ -22,6 +22,7 @@ process.on('uncaughtException', e => { console.error('[UNCAUGHT]', e && e.messag
  */
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { dataPath } from '../lib/paths.js';
 
 const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
 const LIB = ROOT + '/lib';

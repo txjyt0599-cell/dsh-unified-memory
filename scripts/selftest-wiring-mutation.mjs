@@ -3,8 +3,11 @@
  */
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
-const F = 'D:/dsh-plugins/dsh-unified-memory/lib/dispatch/tool.js';
+const F = join(ROOT, '')lib/dispatch/tool.js';
 const original = fs.readFileSync(F, 'utf8');
 const results = [];
 

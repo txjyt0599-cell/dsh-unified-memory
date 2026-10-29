@@ -24,6 +24,10 @@ import { createWorkingMemory } from '../lib/working-memory/index.js';
 import { readCards, readTdaiRecords, readOwnIngest } from '../lib/hypergraph/source.js';
 import { applyFourForces } from '../lib/scoring/four-forces.js';
 import { scoreImportance } from '../lib/scoring/importance.js';
+import { dataPath } from '../lib/paths.js';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 const D = 86400000;
 const now = Date.now();
@@ -66,7 +70,7 @@ item('180 天前的流水卡分数明显下降', sOld < sNew * 0.6, sOld.toFixed
 // ── ③ 越近印象越深 ──
 console.log('── ③ 越近印象越深（近期给更多细节）──');
 const wm = createWorkingMemory({
-  enabled: true, dir: '~/.dsh/unified-memory/working', l0Detail: false,
+  enabled: true, dir: dataPath('working'), l0Detail: false,
   cards: {
     header: (id) => { const c = map.get(String(id)); if (!c) return null; return { id, title: c.title || '', summary: c.summary || '', layer: c.layer || 'global', createdAt: Number(c.createdAt) || 0 }; },
     get: (id) => map.get(String(id)) || null,
@@ -97,7 +101,7 @@ const eS = applyFourForces(err, 0.9, now).score;
 const fS = applyFourForces(fix, 0.9, now).score;
 item('纠错卡能压过老错误卡', fS > eS * 1.5, (fS / eS).toFixed(2) + 'x');
 const { readFileSync } = await import('node:fs');
-const rsrc = readFileSync('D:/dsh-plugins/dsh-unified-memory/lib/retrieval/retriever.js', 'utf8');
+const rsrc = readFileSync(join(ROOT, '')lib/retrieval/retriever.js', 'utf8');
 item('被推翻的卡会被降权（refute_by 有人读）', /refute_by/.test(rsrc));
 
 // ── ⑥ 别乱联想 ──

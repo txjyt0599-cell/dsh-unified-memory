@@ -15,9 +15,10 @@
  */
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
 import { applyFourForces, GATE_THRESHOLD } from '../lib/scoring/four-forces.js';
+import { dataPath } from '../lib/paths.js';
 
-const ENG = '~/.dsh/unified-memory/engram-relay/engrams.jsonl';
-const OUT_DIR = '~/.dsh/unified-memory/diary/backups';
+const ENG = dataPath('engram-relay/engrams.jsonl');
+const OUT_DIR = dataPath('diary/backups');
 const DAY = 86400000;
 const now = Date.now();
 

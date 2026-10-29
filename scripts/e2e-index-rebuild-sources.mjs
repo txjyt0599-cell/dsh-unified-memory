@@ -13,11 +13,12 @@
  */
 import { sigOfIngest } from '../lib/ingest/core.js';
 import { appendFileSync, readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
 
 let fail = 0;
 const check = (n, ok, d) => { console.log((ok ? '  ✅ ' : '  ❌ ') + n + (d ? '   ' + d : '')); if (!ok) fail++; };
 
-const INGEST = '~/.dsh/unified-memory/ingest';
+const INGEST = dataPath('ingest');
 const REC = INGEST + '/records';
 
 // ── ① L1 records：加 hits 不该改签名 ──
@@ -51,7 +52,7 @@ if (!files.length) {
 
 // ── ② 主库签名：已有 e2e-index-rebuild 覆盖，这里只做冒烟 ──
 console.log('── ② 主库签名（详细见 e2e-index-rebuild）──');
-const MAIN = '~/.dsh/unified-memory/engram-relay/engrams.jsonl';
+const MAIN = dataPath('engram-relay/engrams.jsonl');
 check('主库文件存在', existsSync(MAIN));
 if (existsSync(MAIN)) {
   const st = statSync(MAIN);
@@ -60,7 +61,7 @@ if (existsSync(MAIN)) {
 
 // ── ③ tdai 目录：逐文件签名应能察觉新文件 ──
 console.log('── ③ tdai 目录 ──');
-const TDAI = '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/records';
+const TDAI = dataPath('memory-tencentdb/memory-tdai/records');
 if (!existsSync(TDAI)) {
   console.log('    （tdai records 目录不存在，跳过）');
 } else {

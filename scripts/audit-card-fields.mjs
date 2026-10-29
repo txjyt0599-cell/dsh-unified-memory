@@ -15,7 +15,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory/lib';
+const ROOT = join(ROOT, '')lib';
 const REQUIRED = ['importance', 'is_axiom', 'createdAt', 'entities'];
 
 // 产卡标志：出现这些说明在构造一张要落盘的卡

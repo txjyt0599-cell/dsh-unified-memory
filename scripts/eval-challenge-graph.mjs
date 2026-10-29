@@ -14,8 +14,9 @@
  */
 import { createRetriever } from '../lib/retrieval/retriever.js';
 import { readFileSync, existsSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
 
-const ROOT = '~/.dsh/unified-memory/ingest';
+const ROOT = dataPath('ingest');
 
 function loadCards() {
   // [2026-10-23] 原来只读 engrams.jsonl —— 但目标卡多半在 records 里（L1 事实卡）。

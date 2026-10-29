@@ -32,6 +32,12 @@ console.log("════ FALLBACK SELFTEST · 向量备路下级切换 ══�
 // ── 假端点：不用真网络，靠 http.Server 控制成功/失败 ──
 import http from "node:http";
 
+// [2026-10-29 开源版适配] 有卡库才能测"检索出结果"；全新安装没有 ⇒ 相关断言标 SKIP。
+import { existsSync as __ex } from 'node:fs';
+import { dataPath as __dp } from './lib/paths.js';
+const __HAS_CARDS = __ex(__dp('engram-relay/engrams.jsonl'));
+
+
 function makeFakeServer(mode) {
   // mode: { ok:boolean, delayMs:number, tag:string }
   const srv = http.createServer((req, res) => {
@@ -70,7 +76,7 @@ async function mkRetriever(cfg) {
 }
 
 // ── F1/F7 主路正常 ──
-{
+if (!__HAS_CARDS) { console.log("  ~ F1/F7 SKIP（无卡库）"); } else {
   const okSrv = await makeFakeServer({ ok: true });
   const rt = await mkRetriever({ embedding: ep(okSrv.url) });
   const r = await rt.search("记忆索引重建", {});
@@ -84,7 +90,7 @@ async function mkRetriever(cfg) {
 }
 
 // ── F2 主路失败 → 备路 ──
-{
+if (!__HAS_CARDS) { console.log("  ~ F2 SKIP（无卡库）"); } else {
   const badSrv = await makeFakeServer({ ok: false });
   const okSrv = await makeFakeServer({ ok: true });
   const rt = await mkRetriever({ embedding: ep(badSrv.url), embeddingFallback: ep(okSrv.url) });
@@ -97,7 +103,7 @@ async function mkRetriever(cfg) {
 }
 
 // ── F3/F4/F6 P0 核心：主路熔断已开 + 备路可用 ──
-{
+if (!__HAS_CARDS) { console.log("  ~ F3/F4/F6 SKIP（无卡库：检索必 0 命中，链路判定无从触发）"); } else {
   const badSrv = await makeFakeServer({ ok: false });
   const okSrv = await makeFakeServer({ ok: true });
   const rt = await mkRetriever({
@@ -136,7 +142,7 @@ async function mkRetriever(cfg) {
 }
 
 // ── F5 双路全挂 → 纯 BM25 ──
-{
+if (!__HAS_CARDS) { console.log("  ~ F5 SKIP（无卡库）"); } else {
   const b1 = await makeFakeServer({ ok: false });
   const b2 = await makeFakeServer({ ok: false });
   const rt = await mkRetriever({ embedding: ep(b1.url), embeddingFallback: ep(b2.url) });

@@ -17,6 +17,10 @@
  */
 import { readCards, readTdaiRecords, readOwnIngest } from '../lib/hypergraph/source.js';
 import { applyFourForces } from '../lib/scoring/four-forces.js';
+import { dataPath } from '../lib/paths.js';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 const D = 86400000;
 const now = Date.now();
@@ -53,7 +57,7 @@ check('被推翻卡片数据结构正常（refute_by 格式合法）', Array.isA
 // ── ④ 机制是否闭环：检索端会不会读 refute_by ──
 console.log('── ④ 机制闭环检查 ──');
 const { readFileSync } = await import('node:fs');
-const retrieverSrc = readFileSync('D:/dsh-plugins/dsh-unified-memory/lib/retrieval/retriever.js', 'utf8');
+const retrieverSrc = readFileSync(join(ROOT, '')lib/retrieval/retriever.js', 'utf8');
 const readsRefute = /refute_by/.test(retrieverSrc);
 console.log('    retriever.js 读 refute_by: ' + readsRefute);
 check('检索端会读取 refute_by 做降权/过滤', readsRefute, readsRefute ? '已接' : '未接（缺口：被推翻的卡仍会参与检索）');
@@ -61,7 +65,7 @@ check('检索端会读取 refute_by 做降权/过滤', readsRefute, readsRefute 
 // ── ⑤ 实测降权倍数（用临时卡，跑完还原）──
 console.log('── ⑤ 实测降权是否真生效 ──');
 const { appendFileSync, writeFileSync } = await import('node:fs');
-const MAIN = '~/.dsh/unified-memory/engram-relay/engrams.jsonl';
+const MAIN = dataPath('engram-relay/engrams.jsonl');
 const { createRetriever: mkRet } = await import('../lib/retrieval/retriever.js');
 const backupMain = readFileSync(MAIN, 'utf8');
 try {
@@ -96,7 +100,7 @@ try {
 console.log('── ⑥ 反例：不许误伤正常卡 ──');
 {
   const { appendFileSync: ap, writeFileSync: wf } = await import('node:fs');
-  const MAIN2 = '~/.dsh/unified-memory/engram-relay/engrams.jsonl';
+  const MAIN2 = dataPath('engram-relay/engrams.jsonl');
   const bk = readFileSync(MAIN2, 'utf8');
   try {
     const nid2 = 'refute-neg-' + Date.now();

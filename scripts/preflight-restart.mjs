@@ -16,6 +16,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, resolve, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { dataPath } from '../lib/paths.js';
 
 const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
 let fail = 0;
@@ -63,10 +64,10 @@ console.log('  inject = ' + JSON.stringify(inject));
 const cfg = {
   enabled: true, emit: 'section', freezePerSession: true,
   injectMaxChars: 8000, budgetTokens: 450, order: 0.6,
-  hypergraph: { indexRoot: '~/.dsh/unified-memory/hypergraph' },
-  workingMemoryDir: '~/.dsh/unified-memory/working',
+  hypergraph: { indexRoot: dataPath('hypergraph') },
+  workingMemoryDir: dataPath('working'),
   retrieval: { l0Enabled: true, l0RecentDays: 30, sourceWeight: 0.85, topicBoost: 0.15 },
-  logs: { dir: '~/.dsh/unified-memory/logs' },
+  logs: { dir: dataPath('logs') },
   __resetMerge: true,
 };
 const reg = { sections: [], events: new Map(), tools: [] };

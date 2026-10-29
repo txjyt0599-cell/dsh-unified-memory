@@ -23,8 +23,9 @@ import { runDistill, readOwnEngrams } from '../lib/ingest/distill.js';
 import { resolveLlm, llmLabel } from '../lib/ingest/llm.js';
 import { readOwnIngest } from '../lib/hypergraph/source.js';
 import { dirs } from '../lib/ingest/core.js';
+import { dataPath } from '../lib/paths.js';
 
-const REAL_L0_DIR = '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/conversations';
+const REAL_L0_DIR = dataPath('memory-tencentdb/memory-tdai/conversations');
 const PROFILE = '~/.dsh/profiles/web/cordis.patch.yml';
 const KEEP = process.argv.includes('--keep');
 // [2026-10-22] --fake-llm：用确定性的假模型跑完整链路。
@@ -47,7 +48,7 @@ const fakeDistill = async () => JSON.stringify([
 const LIMIT_MSGS = Number((process.argv.find((a) => a.startsWith('--msgs=')) || '').slice(7)) || 40;
 
 const root = KEEP
-  ? '~/.dsh/unified-memory/ingest-shadow'
+  ? dataPath('ingest-shadow')
   : mkdtempSync(join(tmpdir(), 'pm-shadow-'));
 const d = dirs(root);
 let fail = 0;

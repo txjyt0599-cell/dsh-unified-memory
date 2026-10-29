@@ -11,6 +11,7 @@ import { createRetriever } from './lib/retrieval/retriever.js';
 import { readTdaiRecords, DEFAULT_TDAI_DIR } from './lib/hypergraph/source.js';
 import { classifyTemporal, classifyQuery } from './lib/retrieval/rrf.js';
 import { existsSync } from 'node:fs';
+import { dataPath } from './lib/paths.js';
 
 const R = [];
 function check(group, name, ok, detail) {
@@ -67,8 +68,8 @@ check('B', 'B2 含时间词的判 temporal', classifyQuery('最早的桌宠') ==
 // ── C · 跨源检索 ──
 console.log('── C · 跨源检索 ──');
 const rt = createRetriever({
-  indexRoot: '~/.dsh/unified-memory/hypergraph',
-  engramPath: '~/.dsh/unified-memory/engram-relay/engrams.jsonl',
+  indexRoot: dataPath('hypergraph'),
+  engramPath: dataPath('engram-relay/engrams.jsonl'),
   tdaiEnabled: true,
 });
 const t0 = Date.now();
@@ -100,8 +101,8 @@ check('C', 'C6 tdai 段内时间单调（不降）', mono, 'tdai 命中 ' + tdHi
 
 // 关掉跨源后，8 月记录应该消失了
 const rtOff = createRetriever({
-  indexRoot: '~/.dsh/unified-memory/hypergraph',
-  engramPath: '~/.dsh/unified-memory/engram-relay/engrams.jsonl',
+  indexRoot: dataPath('hypergraph'),
+  engramPath: dataPath('engram-relay/engrams.jsonl'),
   tdaiEnabled: false,
 });
 await rtOff.warmup();
@@ -124,7 +125,7 @@ console.log('── N · 归属会话字段口径 ──');
   check('N', 'N5 空字符串会跳到下一个字段', sessionIdOf({ sessionId: '   ', source_session_id: 'session-b' }) === 'session-b');
   // 真实落盘卡：从主库取一条，确认它带的是哪个字段
   const { readFileSync } = await import('node:fs');
-  const raw = readFileSync('~/.dsh/unified-memory/engram-relay/engrams.jsonl', 'utf8').split('\n').filter(Boolean).slice(-200);
+  const raw = readFileSync(dataPath('engram-relay/engrams.jsonl'), 'utf8').split('\n').filter(Boolean).slice(-200);
   let withSid = 0, total = 0, viaDerivedOnly = 0;
   for (const line of raw) {
     let o; try { o = JSON.parse(line); } catch { continue; }

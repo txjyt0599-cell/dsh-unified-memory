@@ -18,10 +18,11 @@
  * 数据来源：~/.dsh/unified-memory/probe/assemble.jsonl（插件每次 assemble 都写一条）
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
 
 const HOME = process.env.USERPROFILE || 'C:/Users/Administrator';
 const PROBE = HOME + '/.dsh/unified-memory/probe/assemble.jsonl';
-const SNAP = '~/.dsh/unified-memory/prompt-fingerprint.json';
+const SNAP = dataPath('prompt-fingerprint.json');
 
 function readProbe() {
   if (!existsSync(PROBE)) return [];

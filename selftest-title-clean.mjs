@@ -21,7 +21,11 @@ T('A6 属性残留被剥', () => eq(cleanTitle('标题 <div class="phoe', '正�
 T('A7 制表符/框线被剥', () => ok(!/[\u2500-\u257F]/.test(cleanTitle('▼ ▼ ┌──────', '正文句。'))));
 T('A8 markdown 标题符被剥', () => eq(cleanTitle('### 记忆改造', ''), '记忆改造'));
 T('A9 正常标题一字不改', () => eq(cleanTitle('圆桌插件v0.2.2装配', ''), '圆桌插件v0.2.2装配'));
-T('A10 全脏且无兜底 → 无标题', () => eq(cleanTitle('</style>', ''), '（无标题）'));
+// [2026-10-29 修正] 期望值过时，实现已改（且注释写明理由）。
+//   代码注释原话："原来这里写死填字面量 '（无标题）'。后果是脏数据被伪装成
+//   合法标题……⛔ 绝不在这里编一个占位符假装合格。"
+//   ⇒ 现在脏就返回空串，把"没有可用标题"如实交给上游。测试没跟上才红的。
+T('A10 全脏且无兜底 → 返回空串（不编占位符）', () => eq(cleanTitle('</style>', ''), ''));
 T('A11 幂等：清洗两次结果相同', () => {
   const once = cleanTitle('标题 <div class="x', '正文。');
   eq(cleanTitle(once, '正文。'), once);
@@ -59,7 +63,11 @@ T('A12 isDirtyTitle 判得准', () => {
   ok(isDirtyTitle('圆桌插件装配') === false);
 });
 
+// [2026-10-29 开源版适配] B1/B2 依赖本机已有的卡库；全新装没有 ⇒ 标 SKIP。
+const __hasCards = (() => { try { return readCards().alive.length > 0; } catch { return false; } })();
+
 T('B1 生产卡库：0 张脏标题', () => {
+  if (!__hasCards) { ok(true, 'SKIP：本机还没有卡库（新装即如此）'); return; }
   const r = readCards();
   const bad = r.alive.filter((c) => {
     const t = String(c.title || '');
@@ -68,6 +76,7 @@ T('B1 生产卡库：0 张脏标题', () => {
   ok(bad.length === 0, '仍有 ' + bad.length + ' 张：' + bad.slice(0, 3).map((c) => String(c.title)).join(' / '));
 });
 T('B2 生产卡库：0 张「以冒号结尾的半句话」标题', () => {
+  if (!__hasCards) { ok(true, 'SKIP：本机还没有卡库（新装即如此）'); return; }
   const r = readCards();
   const bad = r.alive.filter((c) => /[：:]\s*$/.test(String(c.title || '')));
   ok(bad.length === 0, '仍有 ' + bad.length + ' 张半句标题');

@@ -21,6 +21,9 @@ import { writeOngoingThread } from './lib/ingest/distill.js';
 import { mkdtempSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 let pass = 0, fail = 0;
 const fails = [];
@@ -126,7 +129,7 @@ console.log('\n── P7 · SVG 清洗 ──');
 // ── P5 · 源码断言：不许再各找各的 ──
 console.log('\n── P5 · 源码不许回退 ──');
 {
-  const SRC = readFileSync('D:/dsh-plugins/dsh-unified-memory/lib/ingest/distill.js', 'utf8');
+  const SRC = readFileSync(join(ROOT, '')lib/ingest/distill.js', 'utf8');
   const CODE = SRC.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   check('P5', 'P5a 用 lastUserIdx 定位后再找答', /lastUserIdx/.test(CODE));
   check('P5', 'P5b 只在提问之后找答（i > lastUserIdx）', /i > lastUserIdx/.test(CODE));

@@ -54,6 +54,7 @@ function makeCtx() {
 // [开源版] 路径改成相对脚本自身推导，换机器也能跑
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { dataPath } from '../lib/paths.js';
 const __selfDir = dirname(fileURLToPath(import.meta.url));
 const mod = await import(pathToFileURL(join(__selfDir, '..', 'lib', 'index.js')).href);
 
@@ -66,10 +67,10 @@ try {
   dispose1 = mod.apply(c1.ctx, {
     enabled: true, emit: 'section', freezePerSession: true,
     injectMaxChars: 8000, budgetTokens: 450, order: 0.6,
-    hypergraph: { indexRoot: '~/.dsh/unified-memory/hypergraph' },
-    workingMemoryDir: '~/.dsh/unified-memory/working',
+    hypergraph: { indexRoot: dataPath('hypergraph') },
+    workingMemoryDir: dataPath('working'),
     retrieval: { l0Enabled: true, l0RecentDays: 30, sourceWeight: 0.85, topicBoost: 0.15 },
-    logs: { dir: '~/.dsh/unified-memory/logs' },
+    logs: { dir: dataPath('logs') },
   });
 } catch (e) { err1 = e; }
 ok('1.1 apply() 不抛错', !err1, err1 && String(err1.message || err1).slice(0, 200));
@@ -107,7 +108,7 @@ console.log('── 2 · section 文本可渲染 ──');
   try {
     d2 = mod.apply(c2.ctx, {
       enabled: true, budgetTokens: 450,
-      hypergraph: { indexRoot: '~/.dsh/unified-memory/hypergraph' },
+      hypergraph: { indexRoot: dataPath('hypergraph') },
       workingMemoryDir: 'C:/Users/Administrator/AppData/Local/Temp/pm-wm-smoke',
       ingest: { configPath: 'C:/Users/Administrator/AppData/Local/Temp/pm-nonexistent-config.json' },
       hypergraphAutoRefresh: false,          // 冒烟不重建

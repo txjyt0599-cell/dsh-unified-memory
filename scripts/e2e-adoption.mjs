@@ -10,8 +10,9 @@ import { readFileSync, writeFileSync, existsSync, mkdtempSync, rmSync, copyFileS
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { isAdopted, commitAdoptions } from '../lib/scoring/adoption.js';
+import { dataPath } from '../lib/paths.js';
 
-const SRC = '~/.dsh/unified-memory/ingest/engrams.jsonl';
+const SRC = dataPath('ingest/engrams.jsonl');
 if (!existsSync(SRC)) { console.error('找不到卡库'); process.exit(1); }
 
 const dir = mkdtempSync(join(tmpdir(), 'adopt-'));

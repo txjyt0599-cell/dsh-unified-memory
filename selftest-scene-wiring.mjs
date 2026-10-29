@@ -13,6 +13,9 @@
 import { createRetriever } from './lib/retrieval/retriever.js';
 import { isVisible } from './lib/scenes.js';
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 let pass = 0, fail = 0;
 const fails = [];
@@ -45,7 +48,7 @@ console.log('════ SCENE-WIRING 接线验收 v4 ════');
 
 // ── A · 接线存在性（源码级）──
 console.log('\n── A · 接线存在性 ──');
-const SRC = readFileSync('D:/dsh-plugins/dsh-unified-memory/lib/retrieval/retriever.js', 'utf8');
+const SRC = readFileSync(join(ROOT, '')lib/retrieval/retriever.js', 'utf8');
 // [2026-10-28] 正则第一次写错：把 `../` 转义成 `\.\.\/` 后与源码不匹配。
 //   这类"断言本身写错导致假红"今天出现过多次 ⇒ 改成不看路径、只看 import 语句本身。
 check('A', 'A1 import 了 isVisible', /import\s*\{[^}]*\bisVisible\b[^}]*\}\s*from/.test(SRC));

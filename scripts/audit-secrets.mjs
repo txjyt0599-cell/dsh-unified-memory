@@ -13,6 +13,7 @@
  */
 import { readCards, readTdaiRecords, readOwnIngest } from '../lib/hypergraph/source.js';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
 
 const VERBOSE = process.argv.includes('--verbose');
 
@@ -78,7 +79,7 @@ if (!offenders.length) {
 
 // ── 顺带扫 live 配置文件（不该含明文密钥）──
 console.log('\n── 活配置扫一遍 ──');
-const CFG = '~/.dsh/unified-memory/ingest/config.json';
+const CFG = dataPath('ingest/config.json');
 if (existsSync(CFG)) {
   const hits = scan(readFileSync(CFG, 'utf8'));
   if (hits.length) {

@@ -18,9 +18,13 @@
  *   ⑥ L0：原话能否召回
  */
 import { readFileSync, existsSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
-const ING = '~/.dsh/unified-memory/ingest';
-const CONV_DIR = '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/conversations';
+const ING = dataPath('ingest');
+const CONV_DIR = dataPath('memory-tencentdb/memory-tdai/conversations');
 
 const cnt = (f) => { try { return readFileSync(f, 'utf8').split('\n').filter(Boolean).length; } catch { return 0; } };
 const rows = [];
@@ -243,7 +247,7 @@ console.log('');
 console.log('── ⑧ 检索延迟 ──');
 try {
   const { readFileSync: rf } = await import('node:fs');
-  const WAKE = '~/.dsh/unified-memory/logs/wake.log';
+  const WAKE = dataPath('logs/wake.log');
   const arr2 = rf(WAKE, 'utf8').split('\n').filter(Boolean)
     .map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
   // [2026-10-25] 取当下运行周期（自最近一次进程启动/暖启动起，或最近 50 条检索），避免历史已修复的陈年记录拉偏当前体检
@@ -308,7 +312,7 @@ try {
 console.log('');
 console.log('── ⑩ 数据源新鲜度 ──');
 try {
-  const SCENE_DIR = '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/scene_blocks';
+  const SCENE_DIR = dataPath('memory-tencentdb/memory-tdai/scene_blocks');
   const fs3 = await import('node:fs');
   let newest = 0, files = 0;
   if (fs3.existsSync(SCENE_DIR)) {
@@ -388,7 +392,7 @@ console.log('── ⑬.5 反例覆盖率 ──');
 try {
   const { execFileSync: ef2 } = await import('node:child_process');
   let o2 = '';
-  try { o2 = ef2(process.execPath, ['D:/dsh-plugins/dsh-unified-memory/scripts/audit-negative-tests.mjs', '--json'], { encoding: 'utf8', timeout: 60000 }); } catch (e) { o2 = String((e && e.stdout) || ''); }
+  try { o2 = ef2(process.execPath, [join(ROOT, '')scripts/audit-negative-tests.mjs', '--json'], { encoding: 'utf8', timeout: 60000 }); } catch (e) { o2 = String((e && e.stdout) || ''); }
   let j2 = null;
   try { j2 = JSON.parse(o2); } catch { /* 下面按失败处理 */ }
   if (j2) {
@@ -415,7 +419,7 @@ try {
   const { execFileSync } = await import('node:child_process');
   let out = '', code = 0;
   try {
-    out = execFileSync(process.execPath, ['D:/dsh-plugins/dsh-unified-memory/scripts/inject-audit.mjs', '--json'], { encoding: 'utf8', timeout: 60000 });
+    out = execFileSync(process.execPath, [join(ROOT, '')scripts/inject-audit.mjs', '--json'], { encoding: 'utf8', timeout: 60000 });
   } catch (e) {
     code = (e && typeof e.status === 'number') ? e.status : 1;
     out = String((e && e.stdout) || '');

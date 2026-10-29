@@ -31,7 +31,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 
-const ROOT = process.env.PHOEBE_MEM_ROOT || (fs.existsSync('D:/dsh-plugins/dsh-unified-memory/lib')
+const ROOT = process.env.PHOEBE_MEM_ROOT || (fs.existsSync(join(ROOT, '')lib')
   ? 'D:/dsh-plugins/dsh-unified-memory' : process.cwd());
 
 const argv = process.argv.slice(2);

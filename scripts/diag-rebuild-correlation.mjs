@@ -17,8 +17,9 @@
  *   若慢检索不再集中在重建分钟，说明是别的原因（别再盲目改签名）。
  */
 import { readFileSync, existsSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
 
-const WAKE = '~/.dsh/unified-memory/logs/wake.log';
+const WAKE = dataPath('logs/wake.log');
 const SLOW_MS = 3000;
 
 if (!existsSync(WAKE)) { console.log('找不到 wake.log'); process.exit(0); }

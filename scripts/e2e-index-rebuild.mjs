@@ -19,8 +19,9 @@
  */
 import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRetriever } from '../lib/retrieval/retriever.js';
+import { dataPath } from '../lib/paths.js';
 
-const P = '~/.dsh/unified-memory/engram-relay/engrams.jsonl';
+const P = dataPath('engram-relay/engrams.jsonl');
 let fail = 0;
 const check = (n, ok, d) => { console.log((ok ? '  ✅ ' : '  ❌ ') + n + (d ? '   ' + d : '')); if (!ok) fail++; };
 

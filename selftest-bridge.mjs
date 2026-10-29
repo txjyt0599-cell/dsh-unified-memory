@@ -7,11 +7,14 @@
  *   本文件**必须走真实入口**：import 插件的 apply()，用假 ctx 拿到真实注册的
  *   pre-step handler 与 section provider，然后把它们串起来跑。
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 
-const LIB = "D:/dsh-plugins/dsh-unified-memory/lib";
-const ENGRAM = "~/.dsh/unified-memory/engram-relay/engrams.jsonl";
+// [2026-10-29 修复] 两处都是硬编码/字面 '~'：
+//   LIB 指向不存在的目录，ENGRAM 的 ~ 不会被 Node 展开。
+import { dataPath } from './lib/paths.js';
+const LIB = new URL('./lib/', import.meta.url).pathname.replace(/^\//, '').replace(/\/$/, '');
+const ENGRAM = dataPath('engram-relay/engrams.jsonl');
 
 let pass = 0, fail = 0;
 const fails = [];
@@ -40,6 +43,17 @@ function makeCtx() {
 
 async function main() {
   console.log("════ BRIDGE SELFTEST · P0 接线层 ════");
+
+  // ── [2026-10-29 开源版适配] 没有真实数据就跳过依赖数据的断言 ──
+  //   这套测试原本是为"已经有几万张卡在跑"的实例写的，
+  //   在全新 clone 上必然 ENOENT。跳过而不是硬失败，同时把事实说清楚。
+  if (!existsSync(ENGRAM)) {
+    console.log("  ⚠️ 跳过：本机没有记忆数据（" + ENGRAM + "）");
+    console.log("     这套测试需要已积累的 engram 数据；全新安装请先跑起来产生记忆后再测。");
+    console.log("\n════ SUMMARY ════");
+    console.log("  SKIPPED（无数据）");
+    process.exit(0);
+  }
 
   // 只读自证：记录源卡与索引状态
   const rawBefore = readFileSync(ENGRAM);

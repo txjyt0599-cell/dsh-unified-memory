@@ -11,6 +11,7 @@
  * 用法：node scripts/compact-engrams.mjs [--file <path>] [--dry]
  */
 import { readFileSync, writeFileSync, renameSync, existsSync, copyFileSync, mkdirSync, statSync } from 'node:fs';
+import { dataPath } from '../lib/paths.js';
 
 const argv = process.argv.slice(2);
 const opt = {};
@@ -23,7 +24,7 @@ for (let i = 0; i < argv.length; i += 1) {
   }
 }
 
-const FILE = String(opt.file || '~/.dsh/unified-memory/engram-relay/engrams.jsonl');
+const FILE = String(opt.file || dataPath('engram-relay/engrams.jsonl'));
 if (!existsSync(FILE)) { console.error('找不到：' + FILE); process.exit(1); }
 
 const before = statSync(FILE).size;
@@ -47,7 +48,7 @@ console.log('  预计字节:', Buffer.byteLength(kept.join('\n') + '\n'));
 if (opt.dry === true) { console.log('（--dry：不落盘）'); process.exit(0); }
 
 // 备份 + 原子写
-const dir = '~/.dsh/unified-memory/diary/backups';
+const dir = dataPath('diary/backups');
 try { mkdirSync(dir, { recursive: true }); } catch {}
 const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
 try { copyFileSync(FILE, dir + '/engrams-before-compact-' + ts + '.jsonl'); } catch (e) { console.error('备份失败，停止：', e.message); process.exit(1); }

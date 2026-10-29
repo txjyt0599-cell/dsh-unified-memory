@@ -23,18 +23,18 @@ console.log('════ SCENES 场景隔离验收 ════');
 
 // ── A · 从 cwd 推断场景 ──
 console.log('\n── A · cwd → 场景 ──');
-check('A', 'A1 记忆系统目录', sceneOfCwd('D:/dsh-plugins/dsh-unified-memory') === 'unified-memory');
-check('A', 'A2 桌宠目录', sceneOfCwd('~/Assistant-live2d-pet') === 'desktop-pet');
-check('A', 'A3 反斜杠也能认', sceneOfCwd('D:\\Assistant Studio\\Assistant-live2d-pet\\src') === 'desktop-pet');
-check('A', 'A4 未知路径返回 null（不瞎猜）', sceneOfCwd('C:/Windows/System32') === null);
+check('A', 'A1 记忆插件目录', sceneOfCwd('/opt/unified-memory/src') === 'memory-plugin');
+check('A', 'A2 桌宠目录', sceneOfCwd('/opt/desktop-pet') === 'desktop-pet');
+check('A', 'A3 反斜杠也能认', sceneOfCwd('\\opt\\desktop-pet\\src') === 'desktop-pet');
+check('A', 'A4 未知路径返回 null（不瞎猜）', sceneOfCwd('/usr/bin') === null);
 check('A', 'A5 空值返回 null', sceneOfCwd('') === null && sceneOfCwd(null) === null);
-check('A', 'A6 最长前缀优先（hub 不被 Assistant studio 抢）',
-  sceneOfCwd('~/HUB/specs') === 'hub', String(sceneOfCwd('~/HUB/specs')));
+check('A', 'A6 最长前缀优先（hub 不被上层目录抢）',
+  sceneOfCwd('/opt/hub/specs') === 'hub', String(sceneOfCwd('/opt/hub/specs')));
 
 // ── B · 卡片场景归属 ──
 console.log('\n── B · 卡片 → 场景 ──');
 check('B', 'B1 显式 scene 字段优先', sceneOfCard({ scene: 'video' }) === 'video');
-check('B', 'B2 无 scene 但有 cwd ⇒ 推断', sceneOfCard({ cwd: 'D:/dsh-plugins/dsh-unified-memory' }) === 'unified-memory');
+check('B', 'B2 无 scene 但有 cwd ⇒ 推断', sceneOfCard({ cwd: '/opt/unified-memory/src' }) === 'memory-plugin');
 check('B', 'B3 都没有 ⇒ null', sceneOfCard({}) === null);
 check('B', 'B4 **绝不从标题猜**（title 里有"桌宠"也不算）',
   sceneOfCard({ title: 'Assistant桌宠的立绘怎么做' }) === null, String(sceneOfCard({ title: 'Assistant桌宠的立绘怎么做' })));

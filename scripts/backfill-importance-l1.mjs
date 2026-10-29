@@ -8,6 +8,7 @@
  */
 import { readFileSync, writeFileSync, renameSync, existsSync, copyFileSync, mkdirSync, readdirSync, statSync } from 'node:fs';
 import { scoreImportance } from '../lib/scoring/importance.js';
+import { dataPath } from '../lib/paths.js';
 
 const argv = process.argv.slice(2);
 const opt = {};
@@ -19,7 +20,7 @@ for (let i = 0; i < argv.length; i += 1) {
     opt[k] = v;
   }
 }
-const REC_DIR = String(opt.dir || '~/.dsh/unified-memory/ingest/records');
+const REC_DIR = String(opt.dir || dataPath('ingest/records'));
 if (!existsSync(REC_DIR)) { console.error('找不到目录：' + REC_DIR); process.exit(1); }
 
 const files = readdirSync(REC_DIR).filter((f) => f.endsWith('.jsonl') && !f.includes('.bak')).sort();
@@ -52,7 +53,7 @@ for (const name of files) {
   }
   if (opt.dry === true) { console.log(name, '→', out.length, '条（待写）'); continue; }
   // 备份 + 原子写
-  const bdir = '~/.dsh/unified-memory/diary/backups/l1-' + new Date().toISOString().slice(0, 10);
+  const bdir = dataPath('diary/backups/l1-') + new Date().toISOString().slice(0, 10);
   try { mkdirSync(bdir, { recursive: true }); copyFileSync(file, bdir + '/' + name); } catch {}
   const tmp = file + '.tmp';
   writeFileSync(tmp, out.join('\n') + '\n', 'utf8');

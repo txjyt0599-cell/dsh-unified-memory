@@ -15,8 +15,9 @@
  */
 import { readFileSync, existsSync } from 'node:fs';
 import { createRetriever } from '../lib/retrieval/retriever.js';
+import { dataPath } from '../lib/paths.js';
 
-const WAKE = '~/.dsh/unified-memory/logs/wake.log';
+const WAKE = dataPath('logs/wake.log');
 const QS = ['完成记忆改造', '显存到底多少G', '我们刚才在做什么', '示例设备A再生怎么操作', '记忆注入为什么会重复'];
 
 function pct(list, p) {

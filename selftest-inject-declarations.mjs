@@ -13,8 +13,11 @@
  *   故意声明一个多余服务 / 故意删一个必需服务，都必须被抓到。
  */
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
-const F = 'D:/dsh-plugins/dsh-unified-memory/lib/index.js';
+const F = join(ROOT, '')lib/index.js';
 let pass = 0, fail = 0;
 const fails = [];
 function check(g, name, ok, detail) {

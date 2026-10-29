@@ -22,6 +22,10 @@ import { runDistill, readOwnEngrams, bigramOverlap, fallbackDistill } from './li
 // [2026-10-23 · 期8.1/8.2] AA 组用：认知信用协议的固定基分（与 lib 常量同源，逐字比对）
 const SOURCE_WEIGHTS_OBS = 0.90;
 import { readOwnIngest } from './lib/hypergraph/source.js';
+import { dataPath } from './lib/paths.js';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 // [2026-10-22 by Assistant] 全局兜底：任何未捕获异常都要可见，不许静默只输出半截。
 process.on('uncaughtException', (e) => {
@@ -772,7 +776,7 @@ console.log('── M · L0 相关性门槛 ──');
   const { createRetriever } = await import('./lib/retrieval/retriever.js');
   const rt = createRetriever({
     l0Enabled: true, l0RecentDays: 30,
-    conversationsDir: '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/conversations',
+    conversationsDir: dataPath('memory-tencentdb/memory-tdai/conversations'),
   });
   await rt.warmup();
   const cases = [
@@ -1349,12 +1353,12 @@ console.log('── Y · 重启前预演 ──');
   const cfgY = {
     __resetMerge: true, enabled: true, emit: 'section', freezePerSession: true,
     injectMaxChars: 8000, budgetTokens: 450, order: 0.6,
-    hypergraph: { indexRoot: '~/.dsh/unified-memory/hypergraph' },
+    hypergraph: { indexRoot: dataPath('hypergraph') },
     hypergraphAutoRefresh: false,
-    workingMemoryDir: '~/.dsh/unified-memory/working',
+    workingMemoryDir: dataPath('working'),
     retrieval: { l0Enabled: true, l0RecentDays: 30, sourceWeight: 0.85, topicBoost: 0.15 },
-    ingest: { configPath: '~/.dsh/unified-memory/ingest/config.json' },
-    logs: { dir: '~/.dsh/unified-memory/logs', wakeSampleRate: 1.0 },
+    ingest: { configPath: dataPath('ingest/config.json') },
+    logs: { dir: dataPath('logs'), wakeSampleRate: 1.0 },
     personaInject: true, personaMaxChars: 3000,
     sceneNavInject: true, sceneNavMaxChars: 4000,
   };
@@ -2033,7 +2037,12 @@ console.log('── AD · 冷却期 session/flush 接线 ──');
 
 // ── AE · 接线金丝雀（红队裁决三：终结"测空图还全绿"）──
 console.log('── AE · 接线金丝雀（端到端）──');
-{
+// [2026-10-29 开源版适配] AE 组依赖本机已积累的卡库（读 engrams.jsonl），
+//   全新安装没有该文件 ⇒ readCards() 直接抛 ENOENT 把整轮输出打断。
+//   无数据就整组跳过，并把原因说清楚。
+if (!existsSync(dataPath('engram-relay/engrams.jsonl'))) {
+  console.log('  ⚠️ 跳过：本机还没有卡库（新装即如此），AE 组需要已积累的 engram 数据');
+} else {
   const { buildIncidence, graphStats } = await import('./lib/ingest/graph.js');
   const S = await import('./lib/hypergraph/source.js');
   const { createRetriever } = await import('./lib/retrieval/retriever.js');
@@ -2184,17 +2193,17 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
   // AF25 · 红白五点逐条判据对齐（User要求：5 点都要有判据）
   {
     // ① 浓度引擎已接线
-    const dsrc = (await import('node:fs')).readFileSync('D:/dsh-plugins/dsh-unified-memory/lib/ingest/distill.js', 'utf8');
+    const dsrc = (await import('node:fs')).readFileSync(join(ROOT, '')lib/ingest/distill.js', 'utf8');
     check('AF', 'AF25 ①浓度引擎已接进 distill 写盘', /ingestWithConcentration/.test(dsrc) && !/existingEngrams/.test(dsrc));
 
     // ② 相关性门控：rrf 有实现 + retriever 有传参
-    const rsrc = (await import('node:fs')).readFileSync('D:/dsh-plugins/dsh-unified-memory/lib/retrieval/rrf.js', 'utf8');
-    const retsrc = (await import('node:fs')).readFileSync('D:/dsh-plugins/dsh-unified-memory/lib/retrieval/retriever.js', 'utf8');
+    const rsrc = (await import('node:fs')).readFileSync(join(ROOT, '')lib/retrieval/rrf.js', 'utf8');
+    const retsrc = (await import('node:fs')).readFileSync(join(ROOT, '')lib/retrieval/retriever.js', 'utf8');
     check('AF', 'AF26 ②门控 rrf 有实现', /gateBoost/.test(rsrc));
     check('AF', 'AF27 ②门控 retriever 有传参', /concentrationBoostEnabled:\s*c\.concentrationBoostEnabled/.test(retsrc) && /cardsById:\s*state\.cardsById/.test(retsrc));
 
     // ③ 公理待审池已接进 section（冷启动合入）
-    const ssrc = (await import('node:fs')).readFileSync('D:/dsh-plugins/dsh-unified-memory/lib/section.js', 'utf8');
+    const ssrc = (await import('node:fs')).readFileSync(join(ROOT, '')lib/section.js', 'utf8');
     check('AF', 'AF28 ③公理已接进 section 冷启动', /consumeAxioms/.test(ssrc) && /established_axioms/.test(ssrc));
     check('AF', 'AF29 ③公理用会话快照（保缓存）', /axiomSnapshots/.test(ssrc));
 
@@ -2239,7 +2248,7 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
     // ③ 开关已生效（生产口径）
     // ④ 【零接线防御】配置必须真的透传到 distill 的 opts（这是第 4 次同类坑）
     {
-      const idxSrc = (await import('node:fs')).readFileSync('D:/dsh-plugins/dsh-unified-memory/lib/ingest/index.js', 'utf8');
+      const idxSrc = (await import('node:fs')).readFileSync(join(ROOT, '')lib/ingest/index.js', 'utf8');
       const m = /const optsOf = \(L\) => \(\{([\s\S]*?)\}\);/ .exec(idxSrc);
       const body = m ? m[1] : '';
       // ⑤ hits 从 0 起步必须 +1（不能 0→2）——真实生产卡 hits 都是 0，这个 bug 会立刻爆
@@ -2307,7 +2316,7 @@ console.log('── AG · 蒸馏窗口角色配额 ──');
   // 真实窗口：折叠后 user 占比必须 ≥30%
   const { dirs: dirs2 } = await import('./lib/ingest/core.js');
   const { readRecentL0ForSession: read2 } = await import('./lib/ingest/distill.js');
-  const dAD = dirs2('~/.dsh/unified-memory/ingest');
+  const dAD = dirs2(dataPath('ingest'));
   const rawAD = read2(dAD, 40, 'session-00000000-0000-0000-a8b1-97e633f439b3');
   if (rawAD.length >= 10) {
     const colAD = collapseAssistantMonologues(rawAD);

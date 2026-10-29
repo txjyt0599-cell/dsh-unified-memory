@@ -16,6 +16,7 @@
 import { createRetriever } from '../lib/retrieval/retriever.js';
 import { createWorkingMemory } from '../lib/working-memory/index.js';
 import { readCards, readTdaiRecords, readOwnIngest } from '../lib/hypergraph/source.js';
+import { dataPath } from '../lib/paths.js';
 
 let fail = 0;
 const check = (n, ok, d) => { console.log((ok ? '  ✅ ' : '  ❌ ') + n + (d ? '   ' + d : '')); if (!ok) fail++; };
@@ -28,7 +29,7 @@ for (const c of (readOwnIngest().cards || [])) if (!map.has(String(c.id))) map.s
 const ret = createRetriever({ l0Enabled: true, l0RecentDays: 30 }, null);
 await ret.warmup();
 const wm = createWorkingMemory({
-  enabled: true, dir: '~/.dsh/unified-memory/working', l0Detail: true,
+  enabled: true, dir: dataPath('working'), l0Detail: true,
   cards: {
     header: (id) => { const c = map.get(String(id)); if (!c) return null; return { id, title: c.title || '', summary: c.summary || '', layer: c.layer || 'global', createdAt: Number(c.createdAt) || 0 }; },
     get: (id) => map.get(String(id)) || null,

@@ -10,6 +10,7 @@
  */
 import { mkdirSync, rmSync, existsSync, writeFileSync, appendFileSync, readFileSync } from 'node:fs';
 import { createRetriever } from './lib/retrieval/retriever.js';
+import { dataPath } from './lib/paths.js';
 
 const results = [];
 function check(group, name, ok, detail) {
@@ -23,7 +24,7 @@ mkdirSync(TMP + '/index', { recursive: true });
 const SRC = TMP + '/engrams.jsonl';
 
 // 用真实源卡的前 150 张做底
-const live = readFileSync('~/.dsh/unified-memory/engram-relay/engrams.jsonl', 'utf8').split('\n').filter(Boolean);
+const live = readFileSync(dataPath('engram-relay/engrams.jsonl'), 'utf8').split('\n').filter(Boolean);
 writeFileSync(SRC, live.slice(0, 150).join('\n') + '\n', 'utf8');
 
 const cfg = {

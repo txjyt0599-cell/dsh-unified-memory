@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
+import { dataPath } from '../lib/paths.js';
 
-const ROOT = '~/.dsh/unified-memory/ingest';
-const TDAI = '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/records';
+const ROOT = dataPath('ingest');
+const TDAI = dataPath('memory-tencentdb/memory-tdai/records');
 const CRED_PATH = '~/.dsh/.credentials.yaml';
-const LOG_PATH = 'D:/dsh-plugins/dsh-unified-memory/_backfill.log';
+const LOG_PATH = join(ROOT, '')_backfill.log';
 
 function log(msg) {
   const line = `[${new Date().toLocaleTimeString()}] ${msg}`;

@@ -13,9 +13,10 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
 import { readCards, readTdaiRecords, readOwnIngest } from '../lib/hypergraph/source.js';
 import { loadLiveConfig } from '../lib/ingest/config.js';
+import { dataPath } from '../lib/paths.js';
 
 const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
-const WAKE = '~/.dsh/unified-memory/logs/wake.log';
+const WAKE = dataPath('logs/wake.log');
 
 const line = (k, v) => console.log('  ' + String(k).padEnd(26) + v);
 

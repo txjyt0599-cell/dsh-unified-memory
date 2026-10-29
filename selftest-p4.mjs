@@ -17,6 +17,7 @@
 
 import { readFileSync, existsSync, statSync, mkdirSync, rmSync, writeFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { dataPath } from './lib/paths.js';
 
 const ARGS = process.argv.slice(2);
 const HAS = (f) => ARGS.includes(f);
@@ -28,8 +29,8 @@ const PLUGIN_ROOT = 'D:/dsh-plugins/dsh-unified-memory';
 const LIB_RETRIEVAL = PLUGIN_ROOT + '/lib/retrieval';
 const LIB_HG = PLUGIN_ROOT + '/lib/hypergraph';
 const LIB_WM = PLUGIN_ROOT + '/lib/working-memory';
-const INDEX_ROOT = '~/.dsh/unified-memory/hypergraph';
-const ENGRAM_PATH = '~/.dsh/unified-memory/engram-relay/engrams.jsonl';
+const INDEX_ROOT = dataPath('hypergraph');
+const ENGRAM_PATH = dataPath('engram-relay/engrams.jsonl');
 const TMP_DIR = '~/_team-v2/p4/_wmselftest';
 
 const results = [];
@@ -589,6 +590,16 @@ async function runH(env) {
 // ============================ main ============================
 async function main() {
   log('════════ P4 SELFTEST · 期4 分层工作记忆 ════════');
+
+  // ── [2026-10-29 开源版适配] 无真实数据则跳过（同 selftest-bridge）──
+  if (!existsSync(ENGRAM_PATH)) {
+    log('⚠️ 跳过：本机没有记忆数据（' + ENGRAM_PATH + '）');
+    log('   这套测试需要已积累的 engram 数据。');
+    log('════ SUMMARY ════');
+    log('SKIPPED（无数据）');
+    process.exit(0);
+  }
+
   const snap = snapshot();
   log('源卡快照: lines=' + snap.lines + ' alive=' + snap.alive + ' bytes=' + snap.bytes + ' sha256(1MB)=' + snap.sha256Head1MB);
 

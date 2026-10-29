@@ -26,6 +26,7 @@ import { readCards, readTdaiRecords, readOwnIngest } from '../lib/hypergraph/sou
 import { applyFourForces } from '../lib/scoring/four-forces.js';
 import { isAdopted, commitAdoptions } from '../lib/scoring/adoption.js';
 import { shouldArchive } from '../lib/scoring/cold-archive.mjs';
+import { dataPath } from '../lib/paths.js';
 
 const D = 86400000;
 const now = Date.now();
@@ -41,7 +42,7 @@ for (const c of (readOwnIngest().cards || [])) if (!map.has(String(c.id))) map.s
 const ret = createRetriever({ l0Enabled: true, l0RecentDays: 30 }, null);
 await ret.warmup();
 const wm = createWorkingMemory({
-  enabled: true, dir: '~/.dsh/unified-memory/working', l0Detail: true,
+  enabled: true, dir: dataPath('working'), l0Detail: true,
   cards: {
     header: (id) => { const c = map.get(String(id)); if (!c) return null; return { id, title: c.title || '', summary: c.summary || '', layer: c.layer || 'global', createdAt: Number(c.createdAt) || 0 }; },
     get: (id) => map.get(String(id)) || null,

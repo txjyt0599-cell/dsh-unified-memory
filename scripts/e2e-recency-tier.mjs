@@ -17,6 +17,7 @@
 import { readCards, readTdaiRecords, readOwnIngest } from '../lib/hypergraph/source.js';
 import { createRetriever } from '../lib/retrieval/retriever.js';
 import { createWorkingMemory } from '../lib/working-memory/index.js';
+import { dataPath } from '../lib/paths.js';
 
 function buildCardMap(includeOwn) {
   const m = new Map();
@@ -46,7 +47,7 @@ console.log('[输入] 检索命中 ' + hits.length + ' 条');
 const map = buildCardMap(true);
 const wm = createWorkingMemory({
   enabled: true,
-  dir: '~/.dsh/unified-memory/working',
+  dir: dataPath('working'),
   cards: {
     header: (id) => { const c = map.get(String(id)); if (!c) return null; return { id, title: c.title || '', summary: c.summary || '', layer: c.layer || 'global', createdAt: Number(c.createdAt) || 0 }; },
     get: (id) => map.get(String(id)) || null,
@@ -79,7 +80,7 @@ check('④ full 档是最新的那几张', (function () {
 // ── 反证：缺 ingest 时必须失败（证明这条测试真的能抓到问题）──
 const mapBad = buildCardMap(false);
 const wmBad = createWorkingMemory({
-  enabled: true, dir: '~/.dsh/unified-memory/working',
+  enabled: true, dir: dataPath('working'),
   cards: {
     header: (id) => { const c = mapBad.get(String(id)); if (!c) return null; return { id, title: c.title || '', summary: c.summary || '', layer: c.layer || 'global', createdAt: Number(c.createdAt) || 0 }; },
     get: (id) => mapBad.get(String(id)) || null,

@@ -15,6 +15,9 @@ import { parseTdaiTime } from './lib/hypergraph/source.js';
 import { hasInstructionalPattern, renderCardLine, sanitizeInjectionText } from './lib/working-memory/budget.js';
 import { saveIndex, loadIndex } from './lib/embedding/index-store.js';
 import { createRetriever } from './lib/retrieval/retriever.js';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 const results = [];
 function check(group, name, ok, detail) {
@@ -117,7 +120,7 @@ console.log('\n── E4 · 向量索引两文件一致性 ──');
 // ═══ E5 攒批状态原子写 ═══
 console.log('\n── E5 · 攒批状态原子写 ──');
 {
-  const src = readFileSync('D:/dsh-plugins/dsh-unified-memory/scripts/restart-batch.mjs', 'utf8');
+  const src = readFileSync(join(ROOT, '')scripts/restart-batch.mjs', 'utf8');
   check('E5', 'E5-1 save 用 tmp+rename',
     src.indexOf("const tmp = STATE + '.tmp'") >= 0 && src.indexOf('renameSync(tmp, STATE)') >= 0);
   check('E5', 'E5-2 load 损坏时存档而不静默', /corrupt-/.test(src));

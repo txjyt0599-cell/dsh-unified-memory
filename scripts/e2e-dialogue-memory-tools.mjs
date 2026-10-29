@@ -17,6 +17,7 @@ import { createRetriever } from '../lib/retrieval/retriever.js';
 import { createMemoryTools } from '../lib/retrieval/tools.js';
 import { renderCardLine } from '../lib/working-memory/budget.js';
 import { renderHits } from '../lib/prefetch.js';
+import { dataPath } from '../lib/paths.js';
 
 let fail = 0;
 const check = (n, ok, d) => { console.log((ok ? '  ✅ ' : '  ❌ ') + n + (d ? '   ' + d : '')); if (!ok) fail++; };
@@ -113,10 +114,10 @@ const prefetcherMock = {
   lastInjectedIds: () => injectedIdsMock,
 };
 
-const MAIN_FILE = '~/.dsh/unified-memory/engram-relay/engrams.jsonl';
+const MAIN_FILE = dataPath('engram-relay/engrams.jsonl');
 const backupMain = readFileSync(MAIN_FILE, 'utf8');
 
-const OWN_FILE = '~/.dsh/unified-memory/ingest/engrams.jsonl';
+const OWN_FILE = dataPath('ingest/engrams.jsonl');
 const backupOwn = existsSync(OWN_FILE) ? readFileSync(OWN_FILE, 'utf8') : '';
 
 try {

@@ -18,10 +18,11 @@
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { execSync } from 'node:child_process';
+import { dataPath } from '../lib/paths.js';
 
 const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
-const ING = '~/.dsh/unified-memory/ingest';
-const HG = '~/.dsh/unified-memory/hypergraph';
+const ING = dataPath('ingest');
+const HG = dataPath('hypergraph');
 const TEAM = '~/_team-v2';
 
 const rows = [];
@@ -95,7 +96,7 @@ console.log('── ③ 检索闭环 ──');
     const { createRetriever } = await import('file:///' + ROOT.replace(/\\/g, '/') + '/lib/retrieval/retriever.js');
     const rt = createRetriever({
       l0Enabled: true, l0RecentDays: 30,
-      conversationsDir: '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/conversations',
+      conversationsDir: dataPath('memory-tencentdb/memory-tdai/conversations'),
     });
     await rt.warmup();
     l0 = rt.health().l0;
@@ -110,7 +111,7 @@ console.log('── ③ 检索闭环 ──');
     const { createRetriever } = await import('file:///' + ROOT.replace(/\\/g, '/') + '/lib/retrieval/retriever.js');
     const rt2 = createRetriever({
       l0Enabled: true, l0RecentDays: 30,
-      conversationsDir: '~/.dsh/unified-memory/memory-tencentdb/memory-tdai/conversations',
+      conversationsDir: dataPath('memory-tencentdb/memory-tdai/conversations'),
     });
     await rt2.warmup();
     const probes = ['你要先把功能做好了才可以关旧的', '刚刚跑的是 CPU'];
