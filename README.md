@@ -3,6 +3,8 @@
 > A **local-first, self-forgetting, self-reinforcing** long-term memory plugin for [DSH](https://github.com/deepseek-ai).
 > No cloud. No external vector DB. No lock-in. Your memory is a folder of JSONL files you own.
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 ---
 
 ## Table of contents
@@ -277,7 +279,7 @@ node scripts/smoke-apply.mjs          # startup smoke: apply() against a fake co
 node selftest-dispatch-machine.mjs    # run one suite
 ```
 
-**35 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, and diary behavior.
+**36 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, and diary behavior.
 
 Design rule followed throughout: **every check has a negative test that actually fails when the invariant breaks.** A check that cannot fail is not a check.
 
