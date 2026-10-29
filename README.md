@@ -324,4 +324,8 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+**PolyForm Noncommercial 1.0.0** — free for personal, research, educational, and other noncommercial use. **Commercial use is not permitted** without a separate commercial license from the author.
+
+See [LICENSE](LICENSE) for the full text.
+
+> Note: because of the noncommercial restriction, this project is **source-available**, not OSI-approved open source.
