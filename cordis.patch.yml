@@ -54,13 +54,20 @@
         #
         #  两个都是 OpenAI 兼容格式。任选一家供应商填即可。
 
-        # ① 开关（都有默认值，通常不用写；写在这里优先于数据目录里的 config.json）
-        #    默认已经是开的：enabled / capture / extract / distill / fourForcesEnabled
-        #    ⚠️ 冷宫归档默认关是故意的 —— 搬卡不可逆，要开请自行确认
+        # ① 开关（都有默认值，通常不用写）
+        #
+        #    ⚠️ 优先级不一样，别混：
+        #      · fourForcesEnabled  —— 写在这里**优先于**数据目录的 config.json
+        #      · enabled / capture / extract / distill / flashbackEnabled /
+        #        coldArchive*       —— **只读** config.json，写在这里**不生效**
+        #      （写入链走活配置，改了即时生效不用重启；这是有意设计）
+        #
+        #    默认值：enabled/capture/extract/distill = true，fourForcesEnabled = true
+        #            coldArchive* = false（故意：搬卡不可逆）
+        #
+        #    要改这些开关，请改 $PM_DATA_ROOT/ingest/config.json；
+        #    同目录有 CONFIG-NOTES.md 说明每一项。
         # fourForcesEnabled: true
-        # flashbackEnabled: false
-        # coldArchiveEnabled: false
-        # coldArchiveAutoApply: false
 
         # ② 产卡用的 LLM（必需，否则不会产生任何记忆卡）
         #    示例：本地 llama.cpp / Ollama、或任意兼容服务

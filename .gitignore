@@ -1,6 +1,12 @@
 # dependencies
 node_modules/
 
+# Literal "~" directory at repo root
+#   Some tests pass "~/.dsh/..." as a *string* instead of expanding it, so Node
+#   creates a real ./~ directory. It contains logs and generated config —
+#   must never be committed.
+~/
+
 # runtime data (never commit)
 data/
 *.jsonl

@@ -144,7 +144,7 @@ That runs `apply(ctx, config)` against a fake context — the same path DSH uses
 
 ## Configuration
 
-All configuration is optional. Defaults are chosen so the plugin does **nothing intrusive** until you turn features on.
+All configuration is optional, and the plugin works without any of it. **Out of the box the writing chain and the four-force gate are already on** — that is what makes a fresh install actually accumulate memories. Two things stay off by default because they are either destructive or optional: cold-archive (moving cards is irreversible) and flashback. See [Defaults](#defaults--what-works-out-of-the-box) for the full table.
 
 ### Environment variables
 

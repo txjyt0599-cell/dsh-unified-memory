@@ -78,6 +78,36 @@ console.log('\n── D5 · 落盘模板内容正确 ──');
   check('D5', 'D5d 模板键数合理（>20）', Object.keys(c).length > 20, String(Object.keys(c).length));
 }
 
+// ── D6 · 配置说明文件（JSON 不能写注释，所以说明单独一份）──
+console.log('\n── D6 · 配置说明文件 ──');
+{
+  const notesPath = path.join(path.dirname(cfgMod.DEFAULT_CONFIG_PATH), 'CONFIG-NOTES.md');
+  check('D6', 'D6a CONFIG-NOTES.md 已生成', fs.existsSync(notesPath));
+  if (fs.existsSync(notesPath)) {
+    const t = fs.readFileSync(notesPath, 'utf8');
+    check('D6', 'D6b 说明了 enabled 的默认值', /enabled/.test(t) && /true/.test(t));
+    check('D6', 'D6c 说明了冷宫默认关的原因', /不可逆|irreversible/.test(t));
+  }
+  // 反例：config.json 必须仍是纯 JSON（加注释会解析失败）
+  let pureJson = false;
+  try { JSON.parse(fs.readFileSync(cfgMod.DEFAULT_CONFIG_PATH, 'utf8')); pureJson = true; } catch { pureJson = false; }
+  check('D6', 'D6d config.json 保持纯 JSON（不许掺注释）', pureJson);
+}
+
+// ── D7 · 优先级：写入链只读活配置，profile 盖不动 ──
+console.log('\n── D7 · 写入链优先级（反例）──');
+{
+  const p = cfgMod.DEFAULT_CONFIG_PATH;
+  const c = JSON.parse(fs.readFileSync(p, 'utf8'));
+  const orig = c.enabled;
+  c.enabled = false;
+  fs.writeFileSync(p, JSON.stringify(c, null, 2), 'utf8');
+  const L2 = cfgMod.loadLiveConfig(p);
+  check('D7', 'D7a config.json 写 false 就生效（活配置优先）', L2.enabled === false, String(L2.enabled));
+  c.enabled = orig;
+  fs.writeFileSync(p, JSON.stringify(c, null, 2), 'utf8');
+}
+
 fs.rmSync(TMP, { recursive: true, force: true });
 
 console.log('\n════ SUMMARY ════');
