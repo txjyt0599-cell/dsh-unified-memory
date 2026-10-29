@@ -15,10 +15,13 @@ import { extractMotifsLLM } from '../lib/ingest/motifs.js';
 import { complete, resolveLlm } from '../lib/ingest/llm.js';
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs';
 import { dataPath } from '../lib/paths.js';
+import { dshHome } from '../lib/paths.js';
+import { join } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
 
 const ROOT = dataPath('ingest');
 const TDAI = dataPath('memory-tencentdb/memory-tdai/records');
-const BAK = '~/_backups/20261023-p8-motifs-backfill';
+const BAK = join(osTmpdir(), '20261023-p8-motifs-backfill');
 
 const DRY = process.argv.includes('--dry');
 const RESET = process.argv.includes('--reset');
@@ -47,7 +50,7 @@ async function autoUnload() {
 async function main() {
   const ep = USE_LOCAL
     ? resolveLlm({ baseUrl: LOCAL_BASE + '/v1', apiKey: 'local', model: LOCAL_MODEL })
-    : resolveLlm({ profilePath: '~/.dsh/profiles/web/cordis.patch.yml' });
+    : resolveLlm({ profilePath: join(dshHome(), 'profiles/web/cordis.patch.yml') });
   if (!ep) { console.log('❌ 无可用端点'); process.exitCode = 1; return; }
   console.log('端点: ' + (USE_LOCAL ? '[本地] ' : '[云端] ') + ep.model + '  并发: ' + CONCURRENCY);
 

@@ -14,11 +14,12 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dataPath } from '../lib/paths.js';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { dshHome } from '../lib/paths.js';
 const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 const INGEST_ROOT = dataPath('ingest');
 const CFG = INGEST_ROOT + '/config.json';
-const PROFILE = '~/.dsh/profiles/web/cordis.patch.yml';
+const PROFILE = join(dshHome(), 'profiles/web/cordis.patch.yml');
 
 let bad = 0;
 const rows = [];

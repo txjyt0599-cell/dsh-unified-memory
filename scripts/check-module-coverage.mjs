@@ -22,7 +22,7 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 
 const REPO = 'D:/dsh-plugins/dsh-unified-memory';
-const STRUCT = '~/normify-unified-memory';
+const STRUCT = 'normify-unified-memory';
 const SCAN_DIRS = ['lib'];                       // 只扫源码，不扫 scripts/ 等
 const EXT = /\.(js|mjs|py)$/;
 const IGNORE = /(^|\/)(node_modules|_tmp|__tests__)\//;

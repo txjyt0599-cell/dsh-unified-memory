@@ -20,6 +20,7 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import { dataPath } from './lib/paths.js';
+import { tmpdir as osTmpdir } from 'node:os';
 
 const ARGS = process.argv.slice(2);
 const HAS = (flag) => ARGS.includes(flag);
@@ -36,8 +37,8 @@ const INDEX_ROOT = dataPath('hypergraph');
 // 这里原本还指旧路径（6241 行 / 5496 活卡），而检索器读的是 live（6440 / 5682）
 // ⇒ p3 的「alive 覆盖」「BM25 扫全部活卡」两条判据必然对不上（测的和用的不是同一份文件）。
 const ENGRAM_PATH = dataPath('engram-relay/engrams.jsonl');
-const ALIAS_PATH = '~/_tmp/engram-triggers-20261018/engram-triggers.preview.jsonl';
-const QUERY_SET = '~/_team-v2/p3/queries-v1.jsonl';
+const ALIAS_PATH = join(osTmpdir(), 'engram-triggers-20261018/engram-triggers.preview.jsonl');
+const QUERY_SET = join(osTmpdir(), 'p3/queries-v1.jsonl');
 
 const results = [];
 let failed = 0;

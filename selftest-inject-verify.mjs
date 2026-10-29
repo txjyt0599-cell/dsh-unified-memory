@@ -11,9 +11,12 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { zstdDecompressSync } from "node:zlib";
 import { createHash } from "node:crypto";
+import { dshHome } from './lib/paths.js';
+import { join } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
 
 const LIB = "D:/dsh-plugins/dsh-unified-memory/lib";
-const LOGDIR = "~/_tmp/wm-selftest-logs";
+const LOGDIR = join(osTmpdir(), "wm-selftest-logs");
 let pass = 0, fail = 0;
 const fails = [];
 function check(group, name, ok, detail) {
@@ -65,7 +68,7 @@ check("B", "B3 null payload 不抛", threw === false);
 
 // ── D · 指纹判据（正例 + 反例 + 抓真 bug 的用例）──
 console.log("\n── D · 指纹判据 ──");
-const SESS = "~/.dsh/sessions/--D-Assistant~0020Studio--";
+const SESS = join(dshHome(), "sessions/--D-Assistant~0020Studio--");
 let rawHit = null, injText = null;
 try {
   const dirs = readdirSync(SESS, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);

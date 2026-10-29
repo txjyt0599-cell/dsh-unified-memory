@@ -17,6 +17,7 @@ import { saveIndex, loadIndex } from './lib/embedding/index-store.js';
 import { createRetriever } from './lib/retrieval/retriever.js';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { tmpdir as osTmpdir } from 'node:os';
 const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 const results = [];
@@ -25,7 +26,7 @@ function check(group, name, ok, detail) {
   console.log((ok ? '  PASS ' : '  FAIL ') + name + (detail !== undefined ? '  ' + detail : ''));
 }
 
-const TMP = '~/_tmp/selftest-p23';
+const TMP = join(osTmpdir(), 'selftest-p23');
 rmSync(TMP, { recursive: true, force: true });
 mkdirSync(TMP, { recursive: true });
 

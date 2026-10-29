@@ -22,9 +22,10 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync, copyFileSync, cpSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, relative } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
 
 const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
-const SNAP_ROOT = '~/_backups/code-snapshots';
+const SNAP_ROOT = join(osTmpdir(), 'code-snapshots');
 
 const argv = process.argv.slice(2);
 const opt = {};

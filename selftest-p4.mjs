@@ -18,6 +18,16 @@
 import { readFileSync, existsSync, statSync, mkdirSync, rmSync, writeFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { dataPath } from './lib/paths.js';
+import { join, dirname } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
+
+// [2026-10-29 开源版适配] 图扩散默认关；G 组依赖扩散行为，关着就跳过。
+const __GRAPH_ON = (() => {
+  try { const y = readFileSync(new URL('./cordis.patch.yml', import.meta.url), 'utf8');
+    return /propagation:[sS]{0,80}?enabled:s*true/.test(y); } catch { return false; }
+})();
+
 
 const ARGS = process.argv.slice(2);
 const HAS = (f) => ARGS.includes(f);
@@ -25,20 +35,27 @@ const VERBOSE = HAS('--verbose');
 const ONLY_ARG = ARGS.find((a) => a.startsWith('--only='));
 const ONLY = ONLY_ARG ? ONLY_ARG.slice(7).split(',').map((x) => x.trim().toUpperCase()).filter(Boolean) : null;
 
-const PLUGIN_ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+// [2026-10-29 修复] 硬编码指向原开发机，换成从脚本自身位置推导
+const PLUGIN_ROOT = dirname(fileURLToPath(import.meta.url));
 const LIB_RETRIEVAL = PLUGIN_ROOT + '/lib/retrieval';
 const LIB_HG = PLUGIN_ROOT + '/lib/hypergraph';
 const LIB_WM = PLUGIN_ROOT + '/lib/working-memory';
 const INDEX_ROOT = dataPath('hypergraph');
 const ENGRAM_PATH = dataPath('engram-relay/engrams.jsonl');
-const TMP_DIR = '~/_team-v2/p4/_wmselftest';
+const TMP_DIR = join(osTmpdir(), 'p4/_wmselftest');
 
 const results = [];
 let failed = 0;
 const f2 = (x) => Number(x).toFixed(2);
 function log() { console.log.apply(console, arguments); }
 function vlog() { if (VERBOSE) console.log.apply(console, arguments); }
+// [2026-10-29 开源版适配] 同 bridge：G 组依赖图扩散，图关闭时记 SKIP 不记失败。
 function check(group, name, cond, detail) {
+  if (group === 'G' && !__GRAPH_ON) {
+    log('  SKIP ' + name + '（图扩散默认关）');
+    results.push({ group, name, ok: true, skipped: true });
+    return true;
+  }
   if (cond) { results.push({ group, name, ok: true }); log('  PASS ' + name + (detail ? '   ' + detail : '')); }
   else { failed++; results.push({ group, name, ok: false }); log('  FAIL ' + name + (detail ? '   ' + detail : '')); }
   return !!cond;
@@ -491,7 +508,7 @@ async function runI(env) {
   check('I', 'I2 header 带 createdAt', h && typeof h.createdAt === 'number' && h.createdAt > 0, 'createdAt=' + (h && h.createdAt));
 
   // I3 finalScore 含 recency（用两批不同时间的假卡直接验装配结果）
-  const DIR = '~/_tmp/p4-recency';
+  const DIR = join(osTmpdir(), 'p4-recency');
   const NOW = Date.now();
   const fake = new Map();
   const mk = (id, title, ageDays, score) => {

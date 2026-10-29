@@ -16,6 +16,8 @@
 import { existsSync } from 'node:fs';
 import * as D from '../lib/diary/index.js';
 import { resolveLlm, complete, llmLabel } from '../lib/ingest/llm.js';
+import { dshHome } from '../lib/paths.js';
+import { join } from 'node:path';
 
 const argv = process.argv.slice(2);
 const cmd = argv[0] || 'status';
@@ -29,7 +31,7 @@ for (let i = 1; i < argv.length; i += 1) {
   }
 }
 
-const ep = resolveLlm({ profilePath: '~/.dsh/profiles/web/cordis.patch.yml' });
+const ep = resolveLlm({ profilePath: join(dshHome(), 'profiles/web/cordis.patch.yml') });
 console.log('[diary] llm =', llmLabel(ep));
 
 function parseRange(s) {

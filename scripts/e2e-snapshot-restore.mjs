@@ -16,8 +16,9 @@ import { mkdirSync, writeFileSync, readFileSync, rmSync, existsSync, readdirSync
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { tmpdir as osTmpdir } from 'node:os';
 
-const SNAP_ROOT = '~/_backups/code-snapshots';
+const SNAP_ROOT = join(osTmpdir(), 'code-snapshots');
 const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
 
 let fail = 0;

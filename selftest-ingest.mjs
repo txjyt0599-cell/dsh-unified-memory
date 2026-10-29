@@ -2142,7 +2142,7 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
 
   // AF13 · 公理只进待审池，绝不实时改 System Prompt
   {
-    const tmp = '~/_tmp/axioms-test-' + Date.now() + '.jsonl';
+    const tmp = join(osTmpdir(), 'axioms-test-') + Date.now() + '.jsonl';
     const s = stageAxioms([{ id: 'ax1', title: '9060XT 是 16GB', content: '真实显存 16GB', hits: 10, confidence: 1, session_keys: ['a','b','c'] }], tmp);
     check('AF', 'AF13 公理写入待审池', s.staged === 1, 'staged=' + s.staged);
     const c = consumeAxioms(tmp);
@@ -2215,7 +2215,7 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
 
     // ⑤ 白队补充2：公理撤销
     const { revokeAxiom, stageAxioms, consumeAxioms } = await import('./lib/ingest/axioms.js');
-    const tmp = '~/_tmp/ax-af-' + Date.now() + '.jsonl';
+    const tmp = join(osTmpdir(), 'ax-af-') + Date.now() + '.jsonl';
     stageAxioms([{ id: 'axX', title: '测试公理', content: '内容', hits: 10, confidence: 1, session_keys: ['a', 'b', 'c'] }], tmp);
     const before = consumeAxioms(tmp).axioms.length;
     revokeAxiom(tmp, 'axX');

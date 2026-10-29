@@ -14,6 +14,8 @@ import { dataPath } from './lib/paths.js';
 // [2026-10-29 开源版适配] 有卡库才能测"检索出结果"；全新安装没有 ⇒ 相关断言标 SKIP。
 import { existsSync as __ex } from 'node:fs';
 import { dataPath as __dp } from './lib/paths.js';
+import { join } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
 const __HAS_CARDS = __ex(__dp('engram-relay/engrams.jsonl'));
 
 
@@ -24,7 +26,7 @@ function check(group, name, ok, detail) {
   console.log(mark + ' ' + name + (detail !== undefined ? '  ' + detail : ''));
 }
 
-const TMP = '~/_tmp/selftest-vector-idx';
+const TMP = join(osTmpdir(), 'selftest-vector-idx');
 if (existsSync(TMP)) rmSync(TMP, { recursive: true, force: true });
 mkdirSync(TMP, { recursive: true });
 

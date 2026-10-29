@@ -12,8 +12,8 @@ process.on('uncaughtException', e => { console.error('[UNCAUGHT]', e && e.messag
  *   dataPath('<X>')  →  dataPath('<X>')
  *   '~/日记'                          →  diaryRoot()
  *   '~/日记/<f>'                      →  normalize(diaryRoot() + '/<f>')
- *   '~/.dsh/sessions'            →  sessionsRoot()
- *   '~/.dsh/<X>'                 →  normalize(dshHome() + '/<X>')
+ *   join(dshHome(), 'sessions')            →  sessionsRoot()
+ *   join(dshHome(), '<X>')                 →  normalize(dshHome() + '/<X>')
  *
  * ## 安全
  *   · 默认 dryRun，只报告不改
@@ -23,14 +23,15 @@ process.on('uncaughtException', e => { console.error('[UNCAUGHT]', e && e.messag
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { dataPath } from '../lib/paths.js';
+import { dshHome } from '../lib/paths.js';
 
 const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
 const LIB = ROOT + '/lib';
 const BACKUP = ROOT + '/_tmp/path-refactor-backup';
 const DRY = !process.argv.includes('--go'); console.error('[DRY_DIAG]', JSON.stringify(process.argv), 'DRY=', DRY);
 
-const DATA_PREFIX = "'~/.dsh/unified-memory";
-const DSH_PREFIX = "'~/.dsh";
+const DATA_PREFIX = "join(dshHome(), 'unified-memory";
+const DSH_PREFIX = "')~/.dsh";
 
 const files = [];
 (function walk(d) {

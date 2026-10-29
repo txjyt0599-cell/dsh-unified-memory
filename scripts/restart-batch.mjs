@@ -26,6 +26,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, readdirSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
 
 const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
 const STATE = join(ROOT, '.restart-batch.json');
@@ -295,7 +296,7 @@ function cmdVerify() {
     //   这个插件不是 git 仓库，重启后若 apply 抛错会很难回退。
     //   之前从没备份过**代码**（只备份数据），这次补上并把提醒接在闸门上。
     try {
-      const snapRoot = '~/_backups/code-snapshots';
+      const snapRoot = join(osTmpdir(), 'code-snapshots');
       let snaps = [];
       try { snaps = readdirSync(snapRoot).filter((n) => !n.startsWith('pre-restore-')); } catch {}
       // [Round 20] files 是**数组**（[{at,note,files:[...]}]），不是字符串

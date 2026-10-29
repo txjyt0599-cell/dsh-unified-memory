@@ -11,6 +11,8 @@
 import { mkdirSync, rmSync, existsSync, writeFileSync, appendFileSync, readFileSync } from 'node:fs';
 import { createRetriever } from './lib/retrieval/retriever.js';
 import { dataPath } from './lib/paths.js';
+import { join } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
 
 const results = [];
 function check(group, name, ok, detail) {
@@ -18,7 +20,7 @@ function check(group, name, ok, detail) {
   console.log((ok ? '  PASS ' : '  FAIL ') + name + (detail !== undefined ? '  ' + detail : ''));
 }
 
-const TMP = '~/_tmp/selftest-hotreload';
+const TMP = join(osTmpdir(), 'selftest-hotreload');
 rmSync(TMP, { recursive: true, force: true });
 mkdirSync(TMP + '/index', { recursive: true });
 const SRC = TMP + '/engrams.jsonl';

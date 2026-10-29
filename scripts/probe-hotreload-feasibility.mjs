@@ -8,8 +8,10 @@
  * 如果拿得到 = 可以直接做一个"热重载工具"
  */
 import { readFileSync } from 'node:fs';
+import { dshHome } from '../lib/paths.js';
+import { join } from 'node:path';
 
-const ROOT = '~/.dsh/profiles/web/node_modules/@deepseek-ai';
+const ROOT = join(dshHome(), 'profiles/web/node_modules/@deepseek-ai');
 
 console.log('════ 热重载可行性最终判定 ════');
 
@@ -36,7 +38,7 @@ console.log('  ⇒ ' + (hasRemove && hasUpdate ? '闭环存在：可以"先 remo
 
 // 4 · 但！DSH 自己的插件是通过 bundle 声明的，remove 后可能无法自己恢复
 console.log('\n── 4 · 关键风险 ──');
-const patchPath = '~/.dsh/profiles/web/cordis.patch.yml';
+const patchPath = join(dshHome(), 'profiles/web/cordis.patch.yml');
 try {
   const patch = readFileSync(patchPath, 'utf8');
   const hasOurPlugin = /unified-memory/.test(patch);

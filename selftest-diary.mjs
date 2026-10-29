@@ -13,6 +13,8 @@
 import { existsSync, readFileSync, writeFileSync, appendFileSync, rmSync, mkdirSync, statSync } from 'node:fs';
 import * as D from './lib/diary/index.js';
 import { maybeNudge, maybeAssemble } from './lib/diary/scheduler.js';
+import { join } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
 
 let pass = 0, fail = 0;
 const T = (name, fn) => {
@@ -56,7 +58,7 @@ T('B2 超量时保留头尾并插省略标记', () => {
 });
 
 // ── C 写盘（沙箱临时本子） ──
-const tmpRoot = '~/_tmp/diary-selftest';
+const tmpRoot = join(osTmpdir(), 'diary-selftest');
 const tmpBook = tmpRoot + '/book.md';
 try { rmSync(tmpRoot, { recursive: true, force: true }); } catch {}
 mkdirSync(tmpRoot, { recursive: true });

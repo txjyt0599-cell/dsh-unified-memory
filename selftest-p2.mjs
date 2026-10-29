@@ -16,10 +16,12 @@ import { writeShard, readShards, writeManifest, readManifest, readAllRecords, re
 import { propagateEmbeddings, holdoutSplit } from './lib/hypergraph/propagate.js';
 import { HARD } from './lib/hypergraph/types.js';
 import { existsSync, rmSync, mkdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
 
 const results = [];
 const ok = (g, n, pass, detail = '') => results.push({ g, n, pass, detail });
-const TMP = '~/_team-v2/p2/_selftest-p2-tmp';
+const TMP = join(osTmpdir(), 'p2/_selftest-p2-tmp');
 
 // ---------- A 结构纪律 ----------
 {

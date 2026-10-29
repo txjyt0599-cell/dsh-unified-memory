@@ -9,8 +9,10 @@
  * ⛔ 这个探针不改任何配置、不碰真实插件。
  */
 import { readFileSync } from 'node:fs';
+import { dshHome } from '../lib/paths.js';
+import { join } from 'node:path';
 
-const ROOT = '~/.dsh/profiles/web/node_modules/@deepseek-ai';
+const ROOT = join(dshHome(), 'profiles/web/node_modules/@deepseek-ai');
 
 console.log('════ 热重载可行性探针 ════');
 

@@ -24,9 +24,10 @@ import { resolveLlm, llmLabel } from '../lib/ingest/llm.js';
 import { readOwnIngest } from '../lib/hypergraph/source.js';
 import { dirs } from '../lib/ingest/core.js';
 import { dataPath } from '../lib/paths.js';
+import { dshHome } from '../lib/paths.js';
 
 const REAL_L0_DIR = dataPath('memory-tencentdb/memory-tdai/conversations');
-const PROFILE = '~/.dsh/profiles/web/cordis.patch.yml';
+const PROFILE = join(dshHome(), 'profiles/web/cordis.patch.yml');
 const KEEP = process.argv.includes('--keep');
 // [2026-10-22] --fake-llm：用确定性的假模型跑完整链路。
 //   为什么要这个：真实模型被限流（429）时，**功能是否闭环**这件事无法用真模型证明；

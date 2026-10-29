@@ -29,9 +29,11 @@
 import { readFileSync, readdirSync, appendFileSync, existsSync, mkdirSync, copyFileSync } from 'node:fs';
 import { sanitizeTitle, isGoodTitle, isGoodEnglishTitle } from '../lib/ingest/normalize.js';
 import { dataPath } from '../lib/paths.js';
+import { join } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
 
 const ING = dataPath('ingest');
-const BACKUP_DIR = '~/_backups/20261023-p8-titles-fix';
+const BACKUP_DIR = join(osTmpdir(), '20261023-p8-titles-fix');
 
 const dry = process.argv.includes('--dry');
 const checkManual = process.argv.includes('--check-manual');

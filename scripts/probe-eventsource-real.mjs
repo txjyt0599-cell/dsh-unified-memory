@@ -5,8 +5,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { zstdDecompressSync } from 'node:zlib';
+import { dshHome } from '../lib/paths.js';
 
-const ROOT = '~/.dsh/sessions';
+const ROOT = join(dshHome(), 'sessions');
 // 找本会话（最近修改的）
 let best = null;
 function walk(d, depth) {

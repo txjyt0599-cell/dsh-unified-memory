@@ -22,6 +22,8 @@ import { createHash } from 'node:crypto';
 import { dirs } from '../lib/ingest/core.js';
 import { extractEntities } from '../lib/ingest/entities.js';
 import { dataPath } from '../lib/paths.js';
+import { join } from 'node:path';
+import { tmpdir as osTmpdir } from 'node:os';
 
 const argv = process.argv.slice(2);
 const has = (f) => argv.some((a) => a === f || a.startsWith(f + '='));
@@ -34,7 +36,7 @@ const val = (f, dflt) => {
 
 const DRY = has('--dry');
 const ROOT = val('--root', dataPath('ingest'));
-const BACKUP_DIR = val('--backup', '~/_backups/20261023-p8-entities');
+const BACKUP_DIR = val('--backup', join(osTmpdir(), '20261023-p8-entities'));
 const MAX_ENTITIES = Number(val('--max', '12'));
 
 function sha256(file) {

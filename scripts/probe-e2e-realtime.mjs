@@ -6,8 +6,10 @@ import fs from 'node:fs';
 import { zstdDecompressSync } from 'node:zlib';
 import { sliceNewEvents } from 'file:///D:/dsh-plugins/dsh-unified-memory/lib/dispatch/event-source.js';
 import { classify, scanEventsForTask, STATE, extractTaskIds } from 'file:///D:/dsh-plugins/dsh-unified-memory/lib/dispatch/state-machine.js';
+import { dshHome } from '../lib/paths.js';
+import { join } from 'node:path';
 
-const P = '~/.dsh/sessions/--D-Assistant~0020Studio--/session-00000000-0000-0000-8157-fb7ded6e48a1/session.v4.jsonl.zstd';
+const P = join(dshHome(), 'sessions/--D-Assistant~0020Studio--/session-00000000-0000-0000-8157-fb7ded6e48a1/session.v4.jsonl.zstd');
 const raw = zstdDecompressSync(fs.readFileSync(P)).toString('utf8');
 const evs = [];
 for (const L of raw.split('\n')) { if (!L.trim()) continue; try { evs.push(JSON.parse(L)); } catch {} }

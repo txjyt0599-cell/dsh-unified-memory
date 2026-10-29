@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import { dataPath } from '../lib/paths.js';
+import { dshHome } from '../lib/paths.js';
+import { join } from 'node:path';
 
 const ROOT = dataPath('ingest');
 const TDAI = dataPath('memory-tencentdb/memory-tdai/records');
-const CRED_PATH = '~/.dsh/.credentials.yaml';
+const CRED_PATH = join(dshHome(), '.credentials.yaml');
 const LOG_PATH = join(ROOT, '')_backfill.log';
 
 function log(msg) {
