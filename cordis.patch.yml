@@ -1,0 +1,78 @@
+# dsh-unified-memory bundle 层：插入插件行。
+# 期1 只占 1 处 systemPrompt.section；期2 加超图后端（默认不建图）。
+- insert:
+    - id: unified-memory
+      name: 'dsh-unified-memory'
+      config:
+        enabled: true
+        emit: 'section'        # section | pre-step
+        freezePerSession: true
+        injectMaxChars: 8000
+        budgetTokens: 450
+        order: 0.6
+        logs:
+          dir: '~/.dsh/unified-memory/logs'
+          wakeSampleRate: 1.0
+          missSampleRate: 0.2
+          maxBytes: 2097152
+          keepRotations: 1
+        # ── 期2 超图（默认 enabled:false：不建图、不占启动时间）──
+        hypergraph:
+          enabled: false
+          indexRoot: '~/.dsh/unified-memory/hypergraph'
+          windowTurns: 8
+          gapMs: 1800000
+          capCards: 24
+          tauUpdate: 0.30
+          tauWeak: 0.22
+          capEpisodes: 20
+          episodesPerShard: 100
+          propagation:
+            enabled: false      # 代理向量实测 λ=0 最优；真向量待期3 验（见 DESIGN §1.5.12）
+            lambda: 0.50
+
+        # ── 期3 三级检索（enabled:false = R0 回滚档，行为等价期2）──
+        retrieval:
+          enabled: true
+          tokenizer: 'bigram'
+          aliasEnabled: true
+          aliasPath: '~/_tmp/engram-triggers-20261018/engram-triggers.preview.jsonl'
+          wEdge: 0.2
+          wAlias: 0.15
+          minEpisodeK: 20
+          maxNeighbors: 24
+
+        # ═══════════════════════════════════════════════════════════
+        #  模型配置 —— 想让它「记得住」，这两段必须填
+        # ═══════════════════════════════════════════════════════════
+        #
+        #  不填会怎样（都不崩，只是静默少功能）：
+        #    · llm 缺失       ⇒ 产卡关闭（extract / distill 全跳过）
+        #                       ⇒ 结果：能搜，但库一直是空的
+        #    · embedding 缺失 ⇒ 向量检索关闭，退回纯 BM25
+        #                       ⇒ 结果：能用，但对「换个说法」的召回变弱
+        #
+        #  两个都是 OpenAI 兼容格式。任选一家供应商填即可。
+
+        # ① 产卡用的 LLM（必需，否则不会产生任何记忆卡）
+        #    示例：本地 llama.cpp / Ollama、或任意兼容服务
+        # llm:
+        #   enabled: true
+        #   baseUrl: 'http://127.0.0.1:8080/v1'
+        #   apiKey: 'not-needed-for-local'
+        #   model: 'your-model-name'
+        #   maxTokens: 4000
+        #   temperature: 0.2
+        #   timeoutMs: 60000
+
+        # ② 向量用的 embedding（可选，不填就纯 BM25）
+        #    注意 dimensions 必须与服务端模型实际维度一致
+        # embedding:
+        #   baseUrl: 'http://127.0.0.1:8080/v1'
+        #   apiKey: 'not-needed-for-local'
+        #   model: 'bge-m3'
+        #   dimensions: 1024
+
+        # ③ 也可以不写在这里，而是让本插件从 DSH profile 继承
+        #    （如果你的 profile 里已有 embedding: 段，会自动读取）
+        #    profilePath: '~/.dsh/profiles/web/cordis.patch.yml'

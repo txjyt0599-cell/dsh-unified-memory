@@ -1,0 +1,48 @@
+{
+  "name": "dsh-unified-memory",
+  "version": "1.0.0",
+  "description": "A local-first long-term memory plugin for DSH: four-force decay, BM25 + vector + hypergraph retrieval, L0/L1/L2 layering, and a dispatch receipt state machine.",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "files": [
+    "lib/",
+    "docs/",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "compatibility": {
+      "dsh": ">=0.1.7-rc.1 <0.3.0",
+      "node": ">=20.18"
+    }
+  },
+  "engines": {
+    "node": ">=20.18"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": "*"
+  },
+  "scripts": {
+    "smoke": "node scripts/smoke-apply.mjs",
+    "audit": "node scripts/security-audit.mjs && node scripts/data-leak-audit.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "memory",
+    "long-term-memory",
+    "rag",
+    "bm25",
+    "hypergraph",
+    "local-first"
+  ],
+  "license": "MIT",
+  "private": false
+}

@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# runtime data (never commit)
+data/
+*.jsonl
+*.jsonl.zstd
+*.zstd
+logs/
+reports/
+embeddings/
+hypergraph/
+dispatch/
+conversations/
+
+# sanitize scratch
+_sanitize-backup/
+
+# local config (may contain keys)
+.env
+.env.*
+*.local.json
+cordis.local.yml
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.vscode/
+.idea/
