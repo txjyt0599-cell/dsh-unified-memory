@@ -279,7 +279,7 @@ node scripts/smoke-apply.mjs          # startup smoke: apply() against a fake co
 node selftest-dispatch-machine.mjs    # run one suite
 ```
 
-**36 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, and diary behavior.
+**37 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults.
 
 Design rule followed throughout: **every check has a negative test that actually fails when the invariant breaks.** A check that cannot fail is not a check.
 
