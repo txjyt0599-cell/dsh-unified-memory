@@ -54,7 +54,15 @@
         #
         #  两个都是 OpenAI 兼容格式。任选一家供应商填即可。
 
-        # ① 产卡用的 LLM（必需，否则不会产生任何记忆卡）
+        # ① 开关（都有默认值，通常不用写；写在这里优先于数据目录里的 config.json）
+        #    默认已经是开的：enabled / capture / extract / distill / fourForcesEnabled
+        #    ⚠️ 冷宫归档默认关是故意的 —— 搬卡不可逆，要开请自行确认
+        # fourForcesEnabled: true
+        # flashbackEnabled: false
+        # coldArchiveEnabled: false
+        # coldArchiveAutoApply: false
+
+        # ② 产卡用的 LLM（必需，否则不会产生任何记忆卡）
         #    示例：本地 llama.cpp / Ollama、或任意兼容服务
         # llm:
         #   enabled: true
@@ -65,7 +73,7 @@
         #   temperature: 0.2
         #   timeoutMs: 60000
 
-        # ② 向量用的 embedding（可选，不填就纯 BM25）
+        # ③ 向量用的 embedding（可选，不填就纯 BM25）
         #    注意 dimensions 必须与服务端模型实际维度一致
         # embedding:
         #   baseUrl: 'http://127.0.0.1:8080/v1'
@@ -73,6 +81,6 @@
         #   model: 'bge-m3'
         #   dimensions: 1024
 
-        # ③ 也可以不写在这里，而是让本插件从 DSH profile 继承
+        # ④ 也可以不写在这里，而是让本插件从 DSH profile 继承
         #    （如果你的 profile 里已有 embedding: 段，会自动读取）
         #    profilePath: '~/.dsh/profiles/web/cordis.patch.yml'

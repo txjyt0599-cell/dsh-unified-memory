@@ -305,6 +305,23 @@ node scripts/data-leak-audit.mjs   # 真实卡片 ID、会话 ID、时间戳
 
 ---
 
+## 默认值 —— 开箱是什么状态
+
+首次启动时，插件会在 `$PM_DATA_ROOT/ingest/config.json` 生成一份配置模板，下面这些**默认已经打开**：
+
+| 开关 | 默认 | 说明 |
+|---|---|---|
+| `enabled` / `capture` / `extract` / `distill` | **开** | 写入链从一开始就在跑 |
+| `fourForcesEnabled` | **开** | 启用乘法门控 + 三档半衰期 |
+| `flashbackEnabled` | 关 | 可选旁路，默认不启用 |
+| `coldArchiveEnabled` / `coldArchiveAutoApply` | **关** | 搬卡是不可逆的物理动作，**故意不自动** |
+
+改动生成的配置文件即可调整，**改完即时生效，不需要重启**。
+
+想退回旧排序：把 `fourForcesEnabled` 改成 `false` —— 一个字段回滚，不用改代码。
+
+---
+
 ## 已知边界
 
 写出来，因为一个把话说太满的记忆系统比没有更糟：

@@ -305,6 +305,23 @@ node scripts/data-leak-audit.mjs   # real card IDs, session IDs, timestamps
 
 ---
 
+## Defaults — what works out of the box
+
+On first start the plugin writes a config template to `$PM_DATA_ROOT/ingest/config.json` and everything below is already on:
+
+| Switch | Default | Notes |
+|---|---|---|
+| `enabled` / `capture` / `extract` / `distill` | **on** | Writing chain active from the start |
+| `fourForcesEnabled` | **on** | Enable the multiplicative gate + three-tier half-life |
+| `flashbackEnabled` | off | Optional side channel, off by default |
+| `coldArchiveEnabled` / `coldArchiveAutoApply` | **off** | Moving cards is a physical, hard-to-undo action — deliberately not automatic |
+
+Edit the generated file to change any of these; **changes take effect immediately, no restart needed.**
+
+To turn the four-force gate back off (the old behaviour), set `fourForcesEnabled: false` — it is a one-field rollback, no code change required.
+
+---
+
 ## Known limitations
 
 Stated explicitly, because a memory system that overstates itself is worse than none:
