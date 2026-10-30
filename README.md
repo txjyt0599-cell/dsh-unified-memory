@@ -275,14 +275,19 @@ $PM_DATA_ROOT/
 ## Testing
 
 ```bash
-node scripts/smoke-apply.mjs              # startup smoke: apply() against a fake context
-node scripts/check-tracked-imports.mjs    # every relative import resolves against what git tracks
+npm run check                             # smoke + tracked imports + syntax (the three cheap gates)
 node selftest-dispatch-machine.mjs        # run one suite
 ```
 
-**Run `check-tracked-imports` right after cloning and before publishing.** `smoke-apply` only proves the files on *your* disk link up; this one asks the stricter question — is everything `lib/` imports actually *committed*? A source directory silently dropped by `.gitignore` passes every local test and fails on every fresh clone.
+The three gates answer three different questions, and each one exists because the other two missed something real:
 
-**37 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults.
+| Gate | Question | Fails when |
+|---|---|---|
+| `scripts/smoke-apply.mjs` | Does `apply()` survive a fake context? | The plugin would crash the host on startup |
+| `scripts/check-tracked-imports.mjs` | Is everything `lib/` imports actually **committed**? | A source directory was silently dropped by `.gitignore` — every local test passes, every fresh clone dies |
+| `scripts/check-syntax.mjs` | Does every committed JS file even **parse**? | A file that nothing imports was left broken; it never loads, so nothing else notices |
+
+**37 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults. Suites that need an existing card store, tdai conversations, a persona file or scene blocks **skip with a printed reason** on a fresh install — a missing input is not a failing check, and it must not look like one.
 
 Design rule followed throughout: **every check has a negative test that actually fails when the invariant breaks.** A check that cannot fail is not a check.
 

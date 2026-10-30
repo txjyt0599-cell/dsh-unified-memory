@@ -275,14 +275,19 @@ $PM_DATA_ROOT/
 ## 测试
 
 ```bash
-node scripts/smoke-apply.mjs              # 启动冒烟：用假 ctx 跑 apply()
-node scripts/check-tracked-imports.mjs    # 每条相对 import 都能在「git 已跟踪」里找到落点
+npm run check                             # 冒烟 + 跟踪导入 + 语法（三道便宜闸）
 node selftest-dispatch-machine.mjs        # 跑单个套件
 ```
 
-**clone 完、发布前先跑 `check-tracked-imports`。** `smoke-apply` 只证明**你机器上**的文件连得通；这一条问的是更严格的问题——`lib/` 引用的东西真的**提交**了吗？源码目录被 `.gitignore` 悄悄排掉时，本地测试全绿，而任何一次全新 clone 必崩。
+这三道闸问的是三个不同的问题，每一道都是因为另外两道漏掉过真问题才加上来的：
 
-共 **37 个测试套件**，覆盖接线、检索、渲染、跨源合并、缓存契约、派单状态迁移、日记行为、开箱默认值。
+| 闸 | 问什么 | 什么时候会红 |
+|---|---|---|
+| `scripts/smoke-apply.mjs` | `apply()` 在假 ctx 上跑得通吗 | 插件会让宿主机启动就崩 |
+| `scripts/check-tracked-imports.mjs` | `lib/` 引用的东西真的**提交**了吗 | 源码目录被 `.gitignore` 静默排掉 —— 本地测试全绿，全新 clone 必崩 |
+| `scripts/check-syntax.mjs` | 每个已提交的 JS 文件**能不能解析** | 某个没人 import 的文件坏着躺在那儿 —— 它从不加载，别的检查都看不见 |
+
+共 **37 个测试套件**，覆盖接线、检索、渲染、跨源合并、缓存契约、派单状态迁移、日记行为、开箱默认值。需要**已有数据**的套件（卡库 / tdai 对话 / 画像文件 / 场景块）在全新安装上会**打印原因后跳过**——缺素材不是判据失败，更不能伪装成失败或伪装成通过。
 
 贯穿始终的设计原则：**每一个检查都要配一个真的会失败的负例。** 不会失败的检查不是检查。
 
