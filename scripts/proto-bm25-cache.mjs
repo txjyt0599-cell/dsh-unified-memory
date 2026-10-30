@@ -255,7 +255,14 @@ try {
   const idx = createBm25Index(DOCS, tok);
   const ser = serialize(idx, DOCS, TMP, 'g1');
   const sizeMB = ser.file.length / 1024 / 1024;
-  console.log('  文件大小 =', sizeMB.toFixed(2), 'MB');
+  // ⚠️ 原型里的 postings 是**等量模拟**（真实 postings 在 WeakMap 里取不到），
+  //    所以这个文件大小不是真实值。真实值只能按统计量估算：
+  //    term 表 ≈ vocab*(2+平均词长+4) + pairs*12 + ids + lens
+  const estTerm = idx.vocabSize * (2 + 6 + 4);
+  const estPairs = idx.postingsPairs * 12;
+  const realEstMB = (estTerm + estPairs) / 1024 / 1024;
+  console.log('  文件大小 =', sizeMB.toFixed(2), 'MB  ⚠️ 模拟值，不可当真');
+  console.log('  真实估算 ≈', realEstMB.toFixed(2), 'MB（term 表 ' + (estTerm / 1024 / 1024).toFixed(2) + ' + postings ' + (estPairs / 1024 / 1024).toFixed(2) + '）');
 
   const lat = [];
   for (let i = 0; i < RUNS; i++) { const t0 = performance.now(); deserialize(ser.path); lat.push(performance.now() - t0); }
