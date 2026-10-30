@@ -18,7 +18,7 @@
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+import { dirname, join } from 'node:path';
 import { dataPath } from './lib/paths.js';
 import { tmpdir as osTmpdir } from 'node:os';
 

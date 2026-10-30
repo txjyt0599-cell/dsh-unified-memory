@@ -17,7 +17,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
-const F = join(ROOT, '')lib/index.js';
+const F = join(ROOT, 'lib/index.js');
 let pass = 0, fail = 0;
 const fails = [];
 function check(g, name, ok, detail) {

@@ -41,7 +41,13 @@ console.log('\n── A3 · 源签名加强（防原地覆盖同字节漏检）�
   const rt = createRetriever({ indexRoot: TMP + '/idx1', engramPath: SRC, tdaiEnabled: false, embedding: null });
   await rt.warmup();
   const sig1 = rt.health().index.srcSig;
-  check('A3', 'A3-1 签名含 4 段（mtime/ctime/size/head）', (sig1.split(':').length >= 5), sig1);
+  // [2026-10-30 · 开源版修复] 签名契约已经换了：
+  //   旧契约 = mtime/ctime/size/head 四段（Round 40 之前）
+  //   新契约 = 内容指纹三段 e:<engram>|t:<tdai>|i:<ingest>（Round 40 之后，为了不因 hits+1 重建）
+  //   断言不能钉在"有几段"，要钉在"该有的三段都在，且是内容指纹不是文件戳"。
+  check('A3', 'A3-1 签名含 e:/t:/i: 三段内容指纹',
+    /^e:/.test(sig1) && sig1.split('|').length >= 3 && sig1.includes('|i'),
+    sig1);
 
   // 原地覆盖：**大小相同**但内容不同（这正是旧签名会漏检的场景）
   const sameSize = '{"id":"a","title":"乙","summary":"内容乙","layer":"global","createdAt":1,"status":"active"}';
@@ -121,7 +127,7 @@ console.log('\n── E4 · 向量索引两文件一致性 ──');
 // ═══ E5 攒批状态原子写 ═══
 console.log('\n── E5 · 攒批状态原子写 ──');
 {
-  const src = readFileSync(join(ROOT, '')scripts/restart-batch.mjs', 'utf8');
+  const src = readFileSync(join(ROOT, 'scripts/restart-batch.mjs'), 'utf8');
   check('E5', 'E5-1 save 用 tmp+rename',
     src.indexOf("const tmp = STATE + '.tmp'") >= 0 && src.indexOf('renameSync(tmp, STATE)') >= 0);
   check('E5', 'E5-2 load 损坏时存档而不静默', /corrupt-/.test(src));

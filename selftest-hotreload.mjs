@@ -20,6 +20,15 @@ function check(group, name, ok, detail) {
   console.log((ok ? '  PASS ' : '  FAIL ') + name + (detail !== undefined ? '  ' + detail : ''));
 }
 
+
+// [2026-10-30 · 开源版] 全新安装没有卡库 ⇒ 本套依赖真实 engram 数据，直接读会抛 ENOENT。
+//   照 selftest-p3 的既有写法：无数据就明确跳过，不伪装通过、也不把栈甩给使用者。
+if (!existsSync(dataPath('engram-relay/engrams.jsonl'))) {
+  console.log('⚠️ 跳过：本机还没有卡库（新装即如此），本套需要已积累的 engram 数据');
+  console.log('SKIPPED（无数据）');
+  process.exit(0);
+}
+
 const TMP = join(osTmpdir(), 'selftest-hotreload');
 rmSync(TMP, { recursive: true, force: true });
 mkdirSync(TMP + '/index', { recursive: true });

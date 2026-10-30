@@ -18,13 +18,14 @@
  * 另有 H 组：inactive 不许判死（把今天最危险的误杀单独钉住）
  */
 
-import {
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
+import {
   STATE, DEFAULTS, extractTaskIds, resolveTaskId, scanEventsForTask,
   classify, nextLedgerState, findCrashedPending,
 } from './lib/dispatch/state-machine.js';
+
+const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 let pass = 0, fail = 0;
 const fails = [];
@@ -230,7 +231,7 @@ console.log('\n── K · provisioning 超时语义 ──');
 // ── L · 已废除字段的守门 ──
 console.log('\n── L · 防回潮 ──');
 {
-  const src = (await import('node:fs')).readFileSync(join(ROOT, '')lib/dispatch/state-machine.js', 'utf8');
+  const src = (await import('node:fs')).readFileSync(join(ROOT, 'lib/dispatch/state-machine.js'), 'utf8');
   // 代码里不许出现 turnCount 判据（注释里的"已废除"说明除外）
   const codeOnly = src.split('\n').filter(l => !l.trim().startsWith('*') && !l.trim().startsWith('//')).join('\n');
   check('L', 'L1 代码里不出现 turnCount', !/turnCount/.test(codeOnly));

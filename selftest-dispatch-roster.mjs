@@ -22,7 +22,6 @@ import { join } from 'node:path';
 import { createLedger } from './lib/dispatch/ledger.js';
 import { createDispatchTools } from './lib/dispatch/tool.js';
 import { classify, STATE } from './lib/dispatch/state-machine.js';
-import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
@@ -179,7 +178,7 @@ console.log('\n── F2 · 解析不到 ──');
 console.log('\n── G · caller 兜底 ──');
 {
   const { readFileSync } = await import('node:fs');
-  const SRC = readFileSync(join(ROOT, '')lib/index.js', 'utf8');
+  const SRC = readFileSync(join(ROOT, 'lib/index.js'), 'utf8');
   const CODE = SRC.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   check('G', 'G1 有 __lastSendCaller（记住发单用的 caller）', /__lastSendCaller/.test(CODE));
   check('G', 'G2 sendMessage 成功后记住 caller', /__rememberSendCaller\(caller\)/.test(CODE));
@@ -193,7 +192,7 @@ console.log('\n── G · caller 兜底 ──');
 console.log('\n── E · 源码断言 ──');
 {
   const { readFileSync } = await import('node:fs');
-  const SRC = readFileSync(join(ROOT, '')lib/index.js', 'utf8');
+  const SRC = readFileSync(join(ROOT, 'lib/index.js'), 'utf8');
   const CODE = SRC.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   check('E', 'E1 用 listMembers（不是 listAgents）', /teams\.listMembers\(/.test(CODE), '找到 listMembers');
   check('E', 'E2 没有残留 listAgents 调用', !/teams\.listAgents\(/.test(CODE));
@@ -207,7 +206,7 @@ console.log('\n── E · 源码断言 ──');
 console.log('\n── H · 磁盘反查兜底 ──');
 {
   const { readFileSync } = await import('node:fs');
-  const SRC = readFileSync(join(ROOT, '')lib/index.js', 'utf8');
+  const SRC = readFileSync(join(ROOT, 'lib/index.js'), 'utf8');
   const CODE = SRC.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   check('H', 'H1 有 __findSessionByTaskId 兜底函数', /__findSessionByTaskId/.test(CODE));
   check('H', 'H2 解析失败时会调用兜底', /if \(!sid && key\)/.test(CODE));

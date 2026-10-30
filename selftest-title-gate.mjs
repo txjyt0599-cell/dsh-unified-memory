@@ -13,7 +13,12 @@
  *   ③ 喂纯 HTML 碎片 ⇒ 必须提炼，不许把标签当标题
  *   ④ 提炼也提炼不出来（正文也是垃圾）⇒ **必须保持不合格**（不许伪造标题骗体检）
  */
-const LIB = "D:/dsh-plugins/dsh-unified-memory/lib";
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { existsSync } from 'node:fs';
+import { dataPath } from './lib/paths.js';
+
+const LIB = join(dirname(fileURLToPath(import.meta.url)), 'lib');
 let pass = 0, fail = 0;
 const fails = [];
 function check(group, name, ok, detail) {
@@ -55,11 +60,16 @@ check("C", "C2 合格英文标题不被误杀", isGoodTitle(enOut) === true, JSO
 
 // ── D · 真实卡库全量：读侧出口必须一条不合格都不剩 ──
 console.log("\n── D · 真实卡库全量 ──");
-const own = readOwnIngest();
-const bad = own.cards.filter((c) => !isGoodTitle(String(c.title || "")));
-check("D", "D1 真实卡库经读侧出口后 0 张不合格", bad.length === 0,
-  bad.length ? bad.slice(0, 3).map((c) => JSON.stringify(c.title)).join(" | ") : "共 " + own.cards.length + " 张");
-check("D", "D2 卡数没有因为闸门而减少（不许静默丢卡）", own.cards.length > 1000, "cards=" + own.cards.length);
+// [2026-10-30 · 开源版] 本组是对**已积累卡库**的全量体检；新装池子是空的 ⇒ 0 张不代表闸门坏。
+if (!existsSync(dataPath('engram-relay/engrams.jsonl'))) {
+  console.log("  ⚠️ 跳过 D1/D2：本机还没有卡库（新装即如此），无存量可体检");
+} else {
+  const own = readOwnIngest();
+  const bad = own.cards.filter((c) => !isGoodTitle(String(c.title || "")));
+  check("D", "D1 真实卡库经读侧出口后 0 张不合格", bad.length === 0,
+    bad.length ? bad.slice(0, 3).map((c) => JSON.stringify(c.title)).join(" | ") : "共 " + own.cards.length + " 张");
+  check("D", "D2 卡数没有因为闸门而减少（不许静默丢卡）", own.cards.length > 1000, "cards=" + own.cards.length);
+}
 
 console.log("\n════ SUMMARY ════");
 console.log("  pass=" + pass + " fail=" + fail);

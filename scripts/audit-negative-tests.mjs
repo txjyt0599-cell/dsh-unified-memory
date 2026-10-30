@@ -30,9 +30,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = process.env.PHOEBE_MEM_ROOT || (fs.existsSync(join(ROOT, '')lib')
-  ? 'D:/dsh-plugins/dsh-unified-memory' : process.cwd());
+const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = process.env.PHOEBE_MEM_ROOT || (fs.existsSync(join(REPO, 'lib')) ? REPO : process.cwd());
 
 const argv = process.argv.slice(2);
 const AS_JSON = argv.includes('--json');

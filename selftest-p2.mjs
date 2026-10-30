@@ -18,6 +18,14 @@ import { HARD } from './lib/hypergraph/types.js';
 import { existsSync, rmSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir as osTmpdir } from 'node:os';
+import { dataPath } from './lib/paths.js';
+
+// [2026-10-30 · 开源版] 本套要读真实卡库；新装没有 engram 文件 ⇒ 明确跳过而不是抛 ENOENT。
+if (!existsSync(dataPath('engram-relay/engrams.jsonl'))) {
+  console.log('⚠️ 跳过：本机还没有卡库（新装即如此），本套需要已积累的 engram 数据');
+  console.log('SKIPPED（无数据）');
+  process.exit(0);
+}
 
 const results = [];
 const ok = (g, n, pass, detail = '') => results.push({ g, n, pass, detail });

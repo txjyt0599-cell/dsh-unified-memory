@@ -101,7 +101,7 @@ const eS = applyFourForces(err, 0.9, now).score;
 const fS = applyFourForces(fix, 0.9, now).score;
 item('纠错卡能压过老错误卡', fS > eS * 1.5, (fS / eS).toFixed(2) + 'x');
 const { readFileSync } = await import('node:fs');
-const rsrc = readFileSync(join(ROOT, '')lib/retrieval/retriever.js', 'utf8');
+const rsrc = readFileSync(join(ROOT, 'lib/retrieval/retriever.js'), 'utf8');
 item('被推翻的卡会被降权（refute_by 有人读）', /refute_by/.test(rsrc));
 
 // ── ⑥ 别乱联想 ──

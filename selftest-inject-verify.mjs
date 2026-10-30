@@ -15,7 +15,10 @@ import { dshHome } from './lib/paths.js';
 import { join } from 'node:path';
 import { tmpdir as osTmpdir } from 'node:os';
 
-const LIB = "D:/dsh-plugins/dsh-unified-memory/lib";
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const LIB = join(dirname(fileURLToPath(import.meta.url)), 'lib');
 const LOGDIR = join(osTmpdir(), "wm-selftest-logs");
 let pass = 0, fail = 0;
 const fails = [];
@@ -93,7 +96,14 @@ try {
   }
 } catch (e) { console.log("  （会话读取失败: " + (e && e.message) + "）"); }
 
-check("D", "D1 拿到真实注入正文", !!injText, injText ? "len=" + injText.length : "none");
+// [2026-10-30 · 开源版] D 组是「拿真实落盘会话反查」，依赖使用者本机已有的 DSH 会话日志。
+//   全新安装没有可查的注入记录 ⇒ 明示跳过，不报成判定逻辑坏了。
+const noSample = !injText;
+if (noSample) {
+  console.log("  ⚠️ 跳过 D1~D5：本机没有含 unified-memory 注入记录的会话日志（新装即如此）");
+} else {
+  check("D", "D1 拿到真实注入正文", true, "len=" + injText.length);
+}
 
 if (injText) {
   const fp = injText.replace(/\s+/g, " ").slice(120, 200);

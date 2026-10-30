@@ -14,9 +14,10 @@
  * 只报不修 —— 人工判断哪是真的死代码。
  */
 import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = join(ROOT, '')lib';
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', 'lib');
 const files = [];
 function walk(d) {
   for (const e of readdirSync(d, { withFileTypes: true })) {

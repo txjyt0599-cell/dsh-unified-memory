@@ -13,9 +13,10 @@
  * 判据：产卡对象（含 id: 或 engrams 落盘）必须带这些键。
  */
 import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = join(ROOT, '')lib';
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', 'lib');
 const REQUIRED = ['importance', 'is_axiom', 'createdAt', 'entities'];
 
 // 产卡标志：出现这些说明在构造一张要落盘的卡

@@ -12,9 +12,10 @@
  */
 import { createRetriever } from './lib/retrieval/retriever.js';
 import { isVisible } from './lib/scenes.js';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { dataPath } from './lib/paths.js';
 const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 let pass = 0, fail = 0;
@@ -48,7 +49,7 @@ console.log('════ SCENE-WIRING 接线验收 v4 ════');
 
 // ── A · 接线存在性（源码级）──
 console.log('\n── A · 接线存在性 ──');
-const SRC = readFileSync(join(ROOT, '')lib/retrieval/retriever.js', 'utf8');
+const SRC = readFileSync(join(ROOT, 'lib/retrieval/retriever.js'), 'utf8');
 // [2026-10-28] 正则第一次写错：把 `../` 转义成 `\.\.\/` 后与源码不匹配。
 //   这类"断言本身写错导致假红"今天出现过多次 ⇒ 改成不看路径、只看 import 语句本身。
 check('A', 'A1 import 了 isVisible', /import\s*\{[^}]*\bisVisible\b[^}]*\}\s*from/.test(SRC));
@@ -126,7 +127,10 @@ check('G', 'G4 null 卡不抛', isVisible(null, 'memory') === true);
 
 // ── H · 真实卡库不受影响 ──
 console.log('\n── H · 真实卡库（无 scene 字段）──');
-{
+// [2026-10-30 · 开源版] H 组要真实卡库才谈得上"真实卡不被误挡"；新装池子空 ⇒ 跳过并说清楚。
+if (!existsSync(dataPath('engram-relay/engrams.jsonl'))) {
+  console.log('  ⚠️ 跳过 H1/H2：本机还没有卡库（新装即如此），无真实卡可验');
+} else {
   const real = createRetriever({ l0Enabled: false }, null);
   await real.warmup();
   const r = await real.search('记忆系统', { k: 30, sceneIsolation: true, scene: 'memory' });

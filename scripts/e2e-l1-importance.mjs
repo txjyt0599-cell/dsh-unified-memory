@@ -12,7 +12,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
-const SRC = join(ROOT, '')lib/ingest/extract.js';
+const SRC = join(ROOT, 'lib/ingest/extract.js');
 const s = readFileSync(SRC, 'utf8');
 
 let fail = 0;

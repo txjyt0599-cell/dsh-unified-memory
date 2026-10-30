@@ -10,7 +10,6 @@
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 // [2026-10-28 关键修正] 原来用**静态 import**：一旦源码有语法错误（正是本套要查的病），
@@ -41,7 +40,7 @@ console.log('\n── H2 · 字符串字面量断行（今天这个 bug）──
       if (e.isDirectory()) walk(p);
       else if (e.name.endsWith('.js')) files.push(p);
     }
-  })(join(ROOT, '')lib');
+  })(join(ROOT, 'lib'));
 
   // [2026-10-28 修正] 第一版判据太糙：用"单引号个数是奇数"，
   //   但正常英文缩写（don't / it's）本身就有奇数个单引号 ⇒ 全是误报。
@@ -88,7 +87,7 @@ console.log('\n── H2 · 字符串字面量断行（今天这个 bug）──
         }
         const oddQuotes = q % 2 === 1;
         if (oddQuotes || /^['"]/.test(nxt)) {
-          bad.push(f.replace(join(ROOT, '')', '') + ':' + (i + 1) + ' 尾=' + JSON.stringify(tail.slice(-22)));
+          bad.push(f.replace(ROOT + '/', '').replace(ROOT + '\\', '') + ':' + (i + 1) + ' 尾=' + JSON.stringify(tail.slice(-22)));
         }
       }
     }

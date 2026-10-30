@@ -1,8 +1,8 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
-const FILE = join(ROOT, '')lib/dispatch/event-source.js';
-const STATE = join(ROOT, '')lib/dispatch/state-machine.js';
+const FILE = join(ROOT, 'lib/dispatch/event-source.js');
+const STATE = join(ROOT, 'lib/dispatch/state-machine.js');
 const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
 
 const cases = [

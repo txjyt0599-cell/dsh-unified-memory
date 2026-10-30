@@ -17,7 +17,7 @@ let fail = 0;
 const check = (n, ok, d) => { console.log((ok ? '  ✅ ' : '  ❌ ') + n + (d ? '   ' + d : '')); if (!ok) fail++; };
 
 // 从脚本里把 PATTERNS 抠出来做单测（不依赖真实数据）
-const SRC = join(ROOT, '')scripts/audit-secrets.mjs';
+const SRC = join(ROOT, 'scripts/audit-secrets.mjs');
 const code = readFileSync(SRC, 'utf8');
 const m = /const PATTERNS = \[([\s\S]*?)\n\];/.exec(code);
 check('能提取到 PATTERNS 定义', !!m);

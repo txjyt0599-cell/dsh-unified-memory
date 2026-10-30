@@ -41,7 +41,7 @@ console.log('');
 {
   const conv = listJsonl(INGEST_ROOT + '/conversations');
   const oldFiles = listJsonl(dataPath('memory-tencentdb/memory-tdai/conversations'));
-  const hasImpl = existsSync(join(ROOT, '')lib/ingest/capture.js');
+  const hasImpl = existsSync(join(ROOT, 'lib/ingest/capture.js'));
   const on = !!(cfg && cfg.enabled && cfg.capture);
   row('L0 对话捕获',
     'tdai auto-capture.js → conversations/',
@@ -57,7 +57,7 @@ console.log('');
   const rec = listJsonl(INGEST_ROOT + '/records');
   let cards = 0;
   for (const f of rec) cards += countLines(INGEST_ROOT + '/records/' + f);
-  const hasImpl = existsSync(join(ROOT, '')lib/ingest/extract.js');
+  const hasImpl = existsSync(join(ROOT, 'lib/ingest/extract.js'));
   const on = !!(cfg && cfg.enabled && cfg.extract);
   // 模型端点能不能解析（不打印 key）
   let llm = '未解析';
@@ -79,7 +79,7 @@ console.log('');
 {
   const eng = INGEST_ROOT + '/engrams.jsonl';
   const n = existsSync(eng) ? countLines(eng) : 0;
-  const hasImpl = existsSync(join(ROOT, '')lib/ingest/distill.js');
+  const hasImpl = existsSync(join(ROOT, 'lib/ingest/distill.js'));
   const on = !!(cfg && cfg.enabled && cfg.distill);
   row('engram 蒸馏',
     'engram-relay relay.js:625 maybeDistill()',

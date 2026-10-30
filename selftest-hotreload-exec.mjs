@@ -82,7 +82,7 @@ console.log('\n── E3 · 重装失败要出声 ──');
 // ── E4 · 源码里不许再有"用 p.ctx 重新 apply"（死因）──
 console.log('\n── E4 · 死因不许复发 ──');
 {
-  const SRC = readFileSync(join(ROOT, '')lib/dispatch/hotreload-exec.js', 'utf8');
+  const SRC = readFileSync(join(ROOT, 'lib/dispatch/hotreload-exec.js'), 'utf8');
   const CODE = SRC.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   check('E4', 'E4a 没有 mod.apply(p.ctx 这种旧写法',
     !/mod\.apply\(\s*p\.ctx/.test(CODE), /mod\.apply\(\s*p\.ctx/.test(CODE) ? '仍存在！' : '已清除');

@@ -16,7 +16,10 @@ import { readFileSync, existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const LIB = "D:/dsh-plugins/dsh-unified-memory/lib";
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const LIB = join(dirname(fileURLToPath(import.meta.url)), 'lib');
 let pass = 0, fail = 0;
 const fails = [];
 function check(group, name, ok, detail) {

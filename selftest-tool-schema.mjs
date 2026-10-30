@@ -2,8 +2,8 @@
  * 用真实 schema 校验器验证三个工具能否通过注册。
  * 判据来自运行时错误信息：must declare output { schema, render, presentationMeta? }
  */
-import { createLedger } from 'file:///D:/dsh-plugins/dsh-unified-memory/lib/dispatch/ledger.js';
-import { createDispatchTools } from 'file:///D:/dsh-plugins/dsh-unified-memory/lib/dispatch/tool.js';
+import { createLedger } from './lib/dispatch/ledger.js';
+import { createDispatchTools } from './lib/dispatch/tool.js';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';

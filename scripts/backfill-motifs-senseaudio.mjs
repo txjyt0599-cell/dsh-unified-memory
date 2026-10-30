@@ -7,7 +7,7 @@ import { join } from 'node:path';
 const ROOT = dataPath('ingest');
 const TDAI = dataPath('memory-tencentdb/memory-tdai/records');
 const CRED_PATH = join(dshHome(), '.credentials.yaml');
-const LOG_PATH = join(ROOT, '')_backfill.log';
+const LOG_PATH = join(ROOT, '_backfill.log');
 
 function log(msg) {
   const line = `[${new Date().toLocaleTimeString()}] ${msg}`;

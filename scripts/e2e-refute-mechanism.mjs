@@ -57,7 +57,7 @@ check('被推翻卡片数据结构正常（refute_by 格式合法）', Array.isA
 // ── ④ 机制是否闭环：检索端会不会读 refute_by ──
 console.log('── ④ 机制闭环检查 ──');
 const { readFileSync } = await import('node:fs');
-const retrieverSrc = readFileSync(join(ROOT, '')lib/retrieval/retriever.js', 'utf8');
+const retrieverSrc = readFileSync(join(ROOT, 'lib/retrieval/retriever.js'), 'utf8');
 const readsRefute = /refute_by/.test(retrieverSrc);
 console.log('    retriever.js 读 refute_by: ' + readsRefute);
 check('检索端会读取 refute_by 做降权/过滤', readsRefute, readsRefute ? '已接' : '未接（缺口：被推翻的卡仍会参与检索）');

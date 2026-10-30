@@ -21,7 +21,6 @@ import { join } from 'node:path';
 import { createLedger } from './lib/dispatch/ledger.js';
 import { createDispatchTools } from './lib/dispatch/tool.js';
 import { STATE } from './lib/dispatch/state-machine.js';
-import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
@@ -134,7 +133,7 @@ console.log('\n── B · 反例：request 结构必须正确 ──');
 // ── C · 源码断言：接线层必须传两个参数 ──
 console.log('\n── C · 源码断言（接线层）──');
 {
-  const SRC = readFileSync(join(ROOT, '')lib/index.js', 'utf8');
+  const SRC = readFileSync(join(ROOT, 'lib/index.js'), 'utf8');
   const CODE = SRC.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   check('C', 'C1 接线代码里 sendMessage 传了两个参数（caller + request）',
     /teams\.sendMessage\(\s*caller\s*,/.test(CODE) || /sendMessage\(\s*[a-zA-Z_]+\s*,\s*\{/.test(CODE),

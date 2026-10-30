@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
-const F = join(ROOT, '')lib/dispatch/state-machine.js';
+const F = join(ROOT, 'lib/dispatch/state-machine.js');
 const original = fs.readFileSync(F, 'utf8');
 const results = [];
 

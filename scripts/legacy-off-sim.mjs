@@ -19,7 +19,6 @@ import { captureTurn } from '../lib/ingest/capture.js';
 import { runExtract, readOwnRecords } from '../lib/ingest/extract.js';
 import { runDistill, readOwnEngrams } from '../lib/ingest/distill.js';
 import { readOwnIngest } from '../lib/hypergraph/source.js';
-import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
@@ -76,7 +75,7 @@ console.log('');
 console.log('── ⑤ 依赖审计：新链路有没有偷偷读旧路径 ──');
 {
   // 静态检查：ingest/ 目录下的代码不应出现 tdai/engram-relay 的生产路径读取
-  const dir = join(ROOT, '')lib/ingest';
+  const dir = join(ROOT, 'lib/ingest');
   let suspicious = [];
   for (const f of readdirSync(dir).filter((x) => x.endsWith('.js'))) {
     const raw = readFileSync(dir + '/' + f, 'utf8');
