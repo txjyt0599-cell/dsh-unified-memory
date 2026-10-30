@@ -10,12 +10,14 @@
  * 它把散落在各处的关键指标汇总成一张表：
  *   卡片规模 / 字段覆盖 / 代谢状态 / 检索能力 / 测试规模 / 运行环境
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
 import { readCards, readTdaiRecords, readOwnIngest } from '../lib/hypergraph/source.js';
 import { loadLiveConfig } from '../lib/ingest/config.js';
 import { dataPath } from '../lib/paths.js';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const WAKE = dataPath('logs/wake.log');
 
 const line = (k, v) => console.log('  ' + String(k).padEnd(26) + v);

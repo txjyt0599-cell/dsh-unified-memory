@@ -16,14 +16,19 @@
  * 用法：node scripts/final-acceptance.mjs
  * 退出码：0 = 全部达成；1 = 有未达成项（会列出还差什么）
  */
+import { dirname, resolve, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { dataPath } from '../lib/paths.js';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ING = dataPath('ingest');
 const HG = dataPath('hypergraph');
-const TEAM = '~/_team-v2';
+// [2026-10-30] 这是开发期的工作目录，开源版里不存在。
+//   用环境变量可覆盖，默认指向一个**必然不存在**的位置 ⇒ 相关检查自然判为"没有红队报告"，
+//   而不是去当前目录下找了一个叫 "~" 的文件夹。
+const TEAM = process.env.PM_TEAM_DIR || join(dataPath('.'), '_team-v2');
 
 const rows = [];
 const mark = (layer, name, ok, evidence) => {

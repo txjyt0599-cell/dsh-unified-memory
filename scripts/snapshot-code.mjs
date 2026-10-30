@@ -19,12 +19,14 @@
  *   node scripts/snapshot-code.mjs --list          # 列出已有快照
  *   node scripts/snapshot-code.mjs --restore <名>  # 还原（需 --yes）
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync, copyFileSync, cpSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join, relative } from 'node:path';
 import { tmpdir as osTmpdir } from 'node:os';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SNAP_ROOT = join(osTmpdir(), 'code-snapshots');
 
 const argv = process.argv.slice(2);
@@ -141,7 +143,7 @@ writeFileSync(join(dir, 'STATUS.txt'), [
   '  · 当前待重启批次包含大量改动，重启后若出错需要能快速回退',
   '',
   '【还原方法】',
-  '  cd D:/dsh-plugins/dsh-unified-memory',
+  '  cd ' + ROOT,
   '  node scripts/snapshot-code.mjs --restore ' + ts + ' --yes',
   '  然后跑：node scripts/preflight-restart.mjs',
   '  （还原脚本会自动先给当前状态打一份保命快照，不会丢东西）',

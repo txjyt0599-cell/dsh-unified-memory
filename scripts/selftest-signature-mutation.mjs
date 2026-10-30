@@ -6,10 +6,12 @@
  *   G2 用 message 而非 content → request.content missing
  *   G3 不传 signal             → signals[0] is not of type AbortSignal
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/dispatch/tool.js';
 const TEST = 'selftest-dispatch-signature.mjs';
 

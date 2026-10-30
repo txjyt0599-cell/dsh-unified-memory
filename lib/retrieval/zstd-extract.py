@@ -38,9 +38,19 @@ def main():
         reg = re.compile(re.escape(pat), re.IGNORECASE)
 
     # 递归查找匹配的 session 归档文件
-    matches = glob.glob("C:/Users/Administrator/.dsh/sessions/**/" + sid + "*/session.v4.jsonl.zstd", recursive=True)
+    #
+    # [2026-10-30 · 开源版修复] 原来这里写死 "C:/Users/Administrator/.dsh/sessions" ——
+    #   换台机器、换个用户名这条通道就永远 not_found，而且**静默**（调用方只拿到 no_match，
+    #   看起来像"这张卡没有原始对话"，实际是路径根本没找对地方）。
+    #   ⇒ 由调用方把 sessions 根目录作为 argv[5] 传进来；没传就退回 ~/.dsh/sessions。
+    import os
+    sessions_root = sys.argv[5].strip() if len(sys.argv) > 5 and sys.argv[5].strip() else os.path.join(
+        os.path.expanduser("~"), ".dsh", "sessions"
+    )
+    sessions_root = sessions_root.replace("\\", "/").rstrip("/")
+    matches = glob.glob(sessions_root + "/**/" + sid + "*/session.v4.jsonl.zstd", recursive=True)
     if not matches:
-        matches = glob.glob("C:/Users/Administrator/.dsh/sessions/**/*" + sid + "*/session.v4.jsonl.zstd", recursive=True)
+        matches = glob.glob(sessions_root + "/**/*" + sid + "*/session.v4.jsonl.zstd", recursive=True)
 
     candidate_truncated = len(matches) > 3
 

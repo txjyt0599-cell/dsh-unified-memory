@@ -1,6 +1,7 @@
 const { execSync } = require('node:child_process');
 const fs = require('node:fs');
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+// [2026-10-30] CJS 文件用 __dirname，别混 ESM 写法
+const ROOT = require('node:path').resolve(__dirname, '..');
 const F = ROOT + '/lib/dispatch/event-source.js';
 const TEST = 'selftest-dispatch-eventsource.mjs';
 const orig = fs.readFileSync(F, 'utf8');

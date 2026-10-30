@@ -6,10 +6,12 @@
  *   S2 当前场景未声明时也隔离 → 一换会话就断片
  *   S3 从标题猜场景 → 张冠李戴
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/scenes.js';
 const TEST = 'selftest-scenes.mjs';
 

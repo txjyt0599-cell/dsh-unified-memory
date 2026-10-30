@@ -14,9 +14,11 @@
  *   ③ 提到的**每个 lib 模块必须真实存在**
  *   ④ 关键机制真的在代码里（四股力 / 采纳 / 冷宫 / 时间意图）
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { readFileSync, existsSync } from 'node:fs';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const md = readFileSync(ROOT + '/README.md', 'utf8');
 
 let fail = 0;
@@ -56,7 +58,7 @@ console.log('── ⑤ 状态数字没有明显错位 ──');
 // README 声明的卡片数 vs 实际
 let actual = 0;
 try {
-  const { readCards } = await import('file:///D:/dsh-plugins/dsh-unified-memory/lib/hypergraph/source.js');
+  const { readCards } = await import(new URL('../lib/hypergraph/source.js', import.meta.url).href);
   actual = readCards().alive.length;
 } catch {}
 const m = /记忆卡片 \| ([\d,]+) 张/.exec(md);

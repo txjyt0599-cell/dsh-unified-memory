@@ -20,8 +20,11 @@
  * 退出码：0 = 全覆盖；1 = 有未覆盖文件（可接进 CI / verify）
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const REPO = 'D:/dsh-plugins/dsh-unified-memory';
+// [2026-10-30] 从脚本位置推导，别再写死开发机路径
+const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const STRUCT = 'normify-unified-memory';
 const SCAN_DIRS = ['lib'];                       // 只扫源码，不扫 scripts/ 等
 const EXT = /\.(js|mjs|py)$/;

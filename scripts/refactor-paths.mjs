@@ -20,12 +20,14 @@ process.on('uncaughtException', e => { console.error('[UNCAUGHT]', e && e.messag
  *   · --go 才真改，改前把原文件备份到 _tmp/path-refactor-backup/
  *   · 只改**字符串字面量**，不碰注释（注释里保留原路径反而有历史价值）
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { dataPath } from '../lib/paths.js';
 import { dshHome } from '../lib/paths.js';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const LIB = ROOT + '/lib';
 const BACKUP = ROOT + '/_tmp/path-refactor-backup';
 const DRY = !process.argv.includes('--go'); console.error('[DRY_DIAG]', JSON.stringify(process.argv), 'DRY=', DRY);

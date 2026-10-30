@@ -12,6 +12,8 @@
  *
  * 只在临时目录做，不碰生产代码。
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { mkdirSync, writeFileSync, readFileSync, rmSync, existsSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
@@ -19,7 +21,7 @@ import { execFileSync } from 'node:child_process';
 import { tmpdir as osTmpdir } from 'node:os';
 
 const SNAP_ROOT = join(osTmpdir(), 'code-snapshots');
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 let fail = 0;
 const check = (n, ok, d) => { console.log((ok ? '  ✅ ' : '  ❌ ') + n + (d ? '   ' + d : '')); if (!ok) fail++; };

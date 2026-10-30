@@ -4,8 +4,8 @@
  */
 import fs from 'node:fs';
 import { zstdDecompressSync } from 'node:zlib';
-import { sliceNewEvents } from 'file:///D:/dsh-plugins/dsh-unified-memory/lib/dispatch/event-source.js';
-import { classify, scanEventsForTask, STATE, extractTaskIds } from 'file:///D:/dsh-plugins/dsh-unified-memory/lib/dispatch/state-machine.js';
+import { sliceNewEvents } from '../lib/dispatch/event-source.js';
+import { classify, scanEventsForTask, STATE, extractTaskIds } from '../lib/dispatch/state-machine.js';
 import { dshHome } from '../lib/paths.js';
 import { join } from 'node:path';
 

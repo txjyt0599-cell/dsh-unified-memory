@@ -1,9 +1,11 @@
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
 const FILE = join(ROOT, 'lib/dispatch/event-source.js');
 const STATE = join(ROOT, 'lib/dispatch/state-machine.js');
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const cases = [
   { file: FILE, name: 'E1 读不到时返回 ok:true',

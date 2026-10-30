@@ -1,7 +1,9 @@
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const BACKUP = ROOT + '/_tmp/path-refactor-backup';
 const DRY = !process.argv.includes('--go');
 

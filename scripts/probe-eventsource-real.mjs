@@ -38,7 +38,7 @@ if (best) {
   console.log('  事件类型分布（前 6）:', Object.entries(types).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>k+'='+v).join(' '));
 
   // 用 sliceNewEvents 真跑一遍：取最近 10 条之后作为"新增"
-  const { sliceNewEvents } = await import('file:///D:/dsh-plugins/dsh-unified-memory/lib/dispatch/event-source.js');
+  const { sliceNewEvents } = await import(new URL('../lib/dispatch/event-source.js', import.meta.url).href);
   const cut = Math.max(0, evs.length - 10);
   const sliced = sliceNewEvents(evs, { eventCountBefore: cut });
   console.log('\nsliceNewEvents(eventCountBefore=' + cut + ') 结果:', sliced.length, '条（预期 10）');

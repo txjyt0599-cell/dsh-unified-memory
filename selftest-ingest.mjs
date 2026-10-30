@@ -1251,8 +1251,8 @@ if (!existsSync(dataPath('memory-tencentdb/memory-tdai/persona.md'))) {
   };
   const baseCfg = {
     __resetMerge: true, enabled: true, hypergraphAutoRefresh: false,
-    ingest: { configPath: 'C:/Users/Administrator/AppData/Local/Temp/pm-none-w.json' },
-    logs: { dir: 'C:/Users/Administrator/AppData/Local/Temp/pm-w-logs' },
+    ingest: { configPath: join(osTmpdir(), 'pm-none-w.json') },
+    logs: { dir: join(osTmpdir(), 'pm-w-logs') },
   };
 
   // ① 关闭时不注入
@@ -1327,8 +1327,8 @@ if (!existsSync(dataPath('memory-tencentdb/memory-tdai/scene_blocks'))) {
   const dX = modX.apply(ctxX, {
     __resetMerge: true, enabled: true, hypergraphAutoRefresh: false,
     sceneNavInject: true, sceneNavMaxChars: 1200,
-    ingest: { configPath: 'C:/Users/Administrator/AppData/Local/Temp/pm-none-x.json' },
-    logs: { dir: 'C:/Users/Administrator/AppData/Local/Temp/pm-x-logs' },
+    ingest: { configPath: join(osTmpdir(), 'pm-none-x.json') },
+    logs: { dir: join(osTmpdir(), 'pm-x-logs') },
   });
   const hookX = (hooksX.get('system-prompt/assemble') || [])[0];
   const asmX = { sections: [], contexts: [], agent: { session: { id: 'x1' } } };
@@ -1352,8 +1352,8 @@ if (!existsSync(dataPath('memory-tencentdb/memory-tdai/scene_blocks'))) {
   };
   const dY = modX.apply(ctxY, {
     __resetMerge: true, enabled: true, hypergraphAutoRefresh: false, sceneNavInject: false,
-    ingest: { configPath: 'C:/Users/Administrator/AppData/Local/Temp/pm-none-x2.json' },
-    logs: { dir: 'C:/Users/Administrator/AppData/Local/Temp/pm-x-logs2' },
+    ingest: { configPath: join(osTmpdir(), 'pm-none-x2.json') },
+    logs: { dir: join(osTmpdir(), 'pm-x-logs2') },
   });
   const hookY = (hooksY.get('system-prompt/assemble') || [])[0];
   const asmY = { sections: [], contexts: [], agent: { session: { id: 'x2' } } };

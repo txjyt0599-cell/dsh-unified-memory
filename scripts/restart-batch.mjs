@@ -23,12 +23,13 @@
  *   - 每完成一项改动立刻 add，别攒到最后忘
  *   - 重启成功后立刻 clear，别让旧记录污染下一批
  */
+import { fileURLToPath } from 'node:url';
 import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync, readdirSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-import { dirname, join } from 'node:path';
+import { dirname, resolve, join } from 'node:path';
 import { tmpdir as osTmpdir } from 'node:os';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const STATE = join(ROOT, '.restart-batch.json');
 const HISTORY = join(ROOT, '.restart-batch-history.jsonl');
 

@@ -5,10 +5,12 @@
  *   H2 不检查 fiber（有 entry 就当可行）
  *   H3 探针自己去调 dispose（破坏只读性）
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/dispatch/hotreload-probe.js';
 const TEST = 'selftest-hotreload-probe.mjs';
 

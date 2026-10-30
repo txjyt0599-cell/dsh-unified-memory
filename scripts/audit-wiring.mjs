@@ -10,10 +10,12 @@
  * 判据：每个目标字段在 lib/ 下的**非注释**出现次数 > 0（含定义处，但定义处通常也是消费链起点）。
  * 更严的一档可以加「排除定义文件」，暂时够用。
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const files = [];
 function walk(d) {
   for (const e of readdirSync(d, { withFileTypes: true })) {

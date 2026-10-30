@@ -40,7 +40,7 @@ async function run() {
     process.exit(1);
   }
 
-  const { MOTIF_SYSTEM_PROMPT } = await import('file:///D:/dsh-plugins/dsh-unified-memory/lib/ingest/motifs.js');
+  const { MOTIF_SYSTEM_PROMPT } = await import(new URL('../lib/ingest/motifs.js', import.meta.url).href);
 
   const FILES = [
     ROOT + '/engrams.jsonl',

@@ -275,19 +275,22 @@ $PM_DATA_ROOT/
 ## Testing
 
 ```bash
-npm run check                             # smoke + tracked imports + syntax (the three cheap gates)
+npm run check                             # the four cheap gates (see below)
 node selftest-dispatch-machine.mjs        # run one suite
 ```
 
-The three gates answer three different questions, and each one exists because the other two missed something real:
+Each gate answers a different question, and each exists because the others missed something real:
 
 | Gate | Question | Fails when |
 |---|---|---|
 | `scripts/smoke-apply.mjs` | Does `apply()` survive a fake context? | The plugin would crash the host on startup |
 | `scripts/check-tracked-imports.mjs` | Is everything `lib/` imports actually **committed**? | A source directory was silently dropped by `.gitignore` — every local test passes, every fresh clone dies |
 | `scripts/check-syntax.mjs` | Does every committed JS file even **parse**? | A file that nothing imports was left broken; it never loads, so nothing else notices |
+| `scripts/check-hardcodes.mjs` | Does any shipped path point at *my* machine? | A `C:/Users/…` or an unexpanded `~/…` reaches your box — Node does not expand `~`, so it becomes a **relative** path and quietly creates a directory literally named `~` |
 
-**37 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults. Suites that need an existing card store, tdai conversations, a persona file or scene blocks **skip with a printed reason** on a fresh install — a missing input is not a failing check, and it must not look like one.
+**37 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults. Suites that need an existing card store, tdai conversations, a persona file or scene blocks **skip with a printed reason** on a fresh install — a missing input is not a failing check, and it must not look like one. They were re-run against a full read-only copy of a real store (2 069 cards, 52/52 cross-source, 70/70 p4, 430/430 ingest) to confirm the skip is not hiding a break.
+
+**One rule that applies to every path in this repo:** never write `~/…`. Node does not expand it. Use the `lib/paths.js` helpers (`dataPath()`, `dshHome()`, `sessionsRoot()`) or an absolute path — `check-hardcodes` enforces the rest.
 
 Design rule followed throughout: **every check has a negative test that actually fails when the invariant breaks.** A check that cannot fail is not a check.
 

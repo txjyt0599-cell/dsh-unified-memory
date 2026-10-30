@@ -31,7 +31,7 @@
   },
   "scripts": {
     "smoke": "node scripts/smoke-apply.mjs",
-    "check": "node scripts/smoke-apply.mjs && node scripts/check-tracked-imports.mjs && node scripts/check-syntax.mjs",
+    "check": "node scripts/smoke-apply.mjs && node scripts/check-tracked-imports.mjs && node scripts/check-syntax.mjs && node scripts/check-hardcodes.mjs",
     "audit": "node scripts/security-audit.mjs && node scripts/data-leak-audit.mjs"
   },
   "keywords": [

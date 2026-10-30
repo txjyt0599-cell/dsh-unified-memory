@@ -74,9 +74,9 @@ mark('L1 在 2 小时内有产出', recAge >= 0 && recAge < 120, recAge + ' 分�
 // ③ 质量
 console.log('');
 console.log('── ③ 卡片质量 ──');
-const { readOwnIngest } = await import('file:///D:/dsh-plugins/dsh-unified-memory/lib/hypergraph/source.js');
+const { readOwnIngest } = await import(new URL('../lib/hypergraph/source.js', import.meta.url).href);
 // [2026-10-23 甲案] 标题合格判据与 normalize.js **同源一份**，不再各维护一份
-const { isGoodTitle } = await import('file:///D:/dsh-plugins/dsh-unified-memory/lib/ingest/normalize.js');
+const { isGoodTitle } = await import(new URL('../lib/ingest/normalize.js', import.meta.url).href);
 const own = readOwnIngest();
 // [2026-10-22 精修] 只判**标题本身**，且场景模板必须锚定在开头。
 //   之前用 /第\s*\d+\s*轮/ 没锚定，把「真数据跑一次产出4张卡，标题完全一样如「超图记忆改造第13轮」」
@@ -168,7 +168,7 @@ const kws = ['定时器', 'Idle', '降级链', 'L0', '门槛', '标题', '画像
 const missing = [];
 let probeRt = null;
 try {
-  const { createRetriever } = await import('file:///D:/dsh-plugins/dsh-unified-memory/lib/retrieval/retriever.js');
+  const { createRetriever } = await import(new URL('../lib/retrieval/retriever.js', import.meta.url).href);
   probeRt = createRetriever({ l0Enabled: false });
   await probeRt.warmup();
 } catch {}
@@ -196,7 +196,7 @@ console.log('');
 console.log('── ⑤ 检索命中可读性 ──');
 let rc = null;
 try {
-  const { createRetriever } = await import('file:///D:/dsh-plugins/dsh-unified-memory/lib/retrieval/retriever.js');
+  const { createRetriever } = await import(new URL('../lib/retrieval/retriever.js', import.meta.url).href);
   const rt = createRetriever({ l0Enabled: false });
   await rt.warmup();
   rc = await rt.search('L0 门槛');
@@ -212,7 +212,7 @@ console.log('');
 console.log('── ⑥ L0 原话检索 ──');
 let l0 = null;
 try {
-  const { createRetriever } = await import('file:///D:/dsh-plugins/dsh-unified-memory/lib/retrieval/retriever.js');
+  const { createRetriever } = await import(new URL('../lib/retrieval/retriever.js', import.meta.url).href);
   const rt2 = createRetriever({ l0Enabled: true, l0RecentDays: 30, conversationsDir: CONV_DIR });
   await rt2.warmup();
   l0 = rt2.health().l0;
@@ -347,7 +347,7 @@ try {
 console.log('');
 console.log('── ⑪ 跨会话脉搏通路 ──');
 try {
-  const { createRetriever } = await import('file:///D:/dsh-plugins/dsh-unified-memory/lib/retrieval/retriever.js');
+  const { createRetriever } = await import(new URL('../lib/retrieval/retriever.js', import.meta.url).href);
   const rt3 = createRetriever({ l0Enabled: false });
   await rt3.warmup();
   const pulse7d = rt3.recentCrossSession({ sinceMs: 7 * 86400000, excludeSessionId: '__health_probe__', limit: 5 });
@@ -372,7 +372,7 @@ try {
 console.log('');
 console.log('── ⑫ 故障登记 ──');
 try {
-  const { recentFaults, listFaults } = await import('file:///D:/dsh-plugins/dsh-unified-memory/lib/faults.js');
+  const { recentFaults, listFaults } = await import(new URL('../lib/faults.js', import.meta.url).href);
   const all = listFaults();
   const recent = recentFaults(60 * 60 * 1000);
   console.log('  登记簿可用：' + (Array.isArray(all) ? '是' : '否') + '   本进程近期故障=' + recent.length + ' 条');

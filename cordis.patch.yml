@@ -11,7 +11,12 @@
         budgetTokens: 450
         order: 0.6
         logs:
-          dir: '~/.dsh/unified-memory/logs'
+          # ⚠️ [2026-10-30] 这里**故意不写 dir**。
+          #   原来写的是 '~/.dsh/unified-memory/logs' —— 而 Node 不展开 ~，
+          #   它会被当成**相对路径**，在当前工作目录下真的建出一个名叫 "~" 的目录。
+          #   不写 ⇒ 走默认 <PM_DATA_ROOT>/logs，跟随 DSH_HOME，换机器自动正确。
+          #   确实要自定义再取消下面一行的注释，并写**绝对路径**：
+          # dir: '/your/abs/path/logs'
           wakeSampleRate: 1.0
           missSampleRate: 0.2
           maxBytes: 2097152
@@ -19,7 +24,8 @@
         # ── 期2 超图（默认 enabled:false：不建图、不占启动时间）──
         hypergraph:
           enabled: false
-          indexRoot: '~/.dsh/unified-memory/hypergraph'
+          # ⚠️ 同理：indexRoot 也用默认 <PM_DATA_ROOT>/hypergraph，别写 ~
+          # indexRoot: '/your/abs/path/hypergraph'
           windowTurns: 8
           gapMs: 1800000
           capCards: 24
@@ -36,7 +42,9 @@
           enabled: true
           tokenizer: 'bigram'
           aliasEnabled: true
-          aliasPath: '~/_tmp/engram-triggers-20261018/engram-triggers.preview.jsonl'
+          # ⚠️ 同理：aliasPath 默认 <PM_DATA_ROOT>/alias/engram-triggers.preview.jsonl
+          #   文件不存在时 alias 通道自动关闭（不报错、不影响 BM25），所以不用管它。
+          # aliasPath: '/your/abs/path/engram-triggers.preview.jsonl'
           wEdge: 0.2
           wAlias: 0.15
           minEpisodeK: 20
@@ -90,4 +98,6 @@
 
         # ④ 也可以不写在这里，而是让本插件从 DSH profile 继承
         #    （如果你的 profile 里已有 embedding: 段，会自动读取）
-        #    profilePath: '~/.dsh/profiles/web/cordis.patch.yml'
+        #    ⚠️ 不写 profilePath 才是推荐做法：默认就是 <DSH_HOME>/profiles/web/cordis.patch.yml。
+        #       要自定义就写**绝对路径**（'~' 不会被展开，Windows 上写 D:/... 或 C:/...）。
+        #    profilePath: 'D:/Users/you/.dsh/profiles/web/cordis.patch.yml'

@@ -54,7 +54,14 @@ function makeCtx() {
 // [开源版] 路径改成相对脚本自身推导，换机器也能跑
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { dataPath } from '../lib/paths.js';
+
+// [2026-10-30 · 开源版修复] 原来这里有 9 处写死 'C:/Users/Administrator/AppData/Local/Temp/...'。
+//   那不是"某台机器恰好能用"的小瑕疵：换个用户名，mkdir 会 EPERM，
+//   于是冒烟测的就变成"路径不存在能不能扛住"，而不是"插件能不能加载"。
+//   ⇒ 一律走 os.tmpdir()。
+const SMOKE_TMP = join(tmpdir(), 'pm-smoke');
 const __selfDir = dirname(fileURLToPath(import.meta.url));
 const mod = await import(pathToFileURL(join(__selfDir, '..', 'lib', 'index.js')).href);
 
@@ -109,10 +116,10 @@ console.log('── 2 · section 文本可渲染 ──');
     d2 = mod.apply(c2.ctx, {
       enabled: true, budgetTokens: 450,
       hypergraph: { indexRoot: dataPath('hypergraph') },
-      workingMemoryDir: 'C:/Users/Administrator/AppData/Local/Temp/pm-wm-smoke',
-      ingest: { configPath: 'C:/Users/Administrator/AppData/Local/Temp/pm-nonexistent-config.json' },
+      workingMemoryDir: join(SMOKE_TMP, 'pm-wm-smoke'),
+      ingest: { configPath: join(SMOKE_TMP, 'pm-nonexistent-config.json') },
       hypergraphAutoRefresh: false,          // 冒烟不重建
-      logs: { dir: 'C:/Users/Administrator/AppData/Local/Temp/pm-logs-smoke' },
+      logs: { dir: join(SMOKE_TMP, 'pm-logs-smoke') },
     });
   } catch (e) { console.log('    apply 抛错: ' + String(e && e.message).slice(0, 120)); }
   const sec = c2.sections[0];
@@ -146,9 +153,9 @@ console.log('── 4 · 热重载 ──');
   let e4 = null;
   let d4 = null;
   try {
-    d4 = mod.apply(c4.ctx, { enabled: true, hypergraphAutoRefresh: false, ingest: { configPath: '/nonexistent.json' }, logs: { dir: 'C:/Users/Administrator/AppData/Local/Temp/pm-logs-smoke2' } });
+    d4 = mod.apply(c4.ctx, { enabled: true, hypergraphAutoRefresh: false, ingest: { configPath: '/nonexistent.json' }, logs: { dir: join(SMOKE_TMP, 'pm-logs-smoke2') } });
     if (typeof d4 === 'function') d4();
-    d4 = mod.apply(c4.ctx, { enabled: true, hypergraphAutoRefresh: false, ingest: { configPath: '/nonexistent.json' }, logs: { dir: 'C:/Users/Administrator/AppData/Local/Temp/pm-logs-smoke2' } });
+    d4 = mod.apply(c4.ctx, { enabled: true, hypergraphAutoRefresh: false, ingest: { configPath: '/nonexistent.json' }, logs: { dir: join(SMOKE_TMP, 'pm-logs-smoke2') } });
   } catch (e) { e4 = e; }
   ok('4.1 卸载后重新 apply 不抛（热重载安全）', !e4, e4 && String(e4.message || e4).slice(0, 200));
   if (typeof d4 === 'function') { try { d4(); } catch {} }
@@ -162,8 +169,8 @@ console.log('── 5 · 空配置幂等 ──');
   // 先带完整配置 apply
   d5 = mod.apply(c5.ctx, {
     enabled: true, hypergraphAutoRefresh: false,
-    ingest: { configPath: 'C:/Users/Administrator/AppData/Local/Temp/pm-nonexistent.json' },
-    logs: { dir: 'C:/Users/Administrator/AppData/Local/Temp/pm-logs-smoke3' },
+    ingest: { configPath: join(SMOKE_TMP, 'pm-nonexistent.json') },
+    logs: { dir: join(SMOKE_TMP, 'pm-logs-smoke3') },
   });
   const sectionsAfterFull = c5.sections.length;
   // 关键：再 apply 一次**空配置**（模拟 DSH 热装配传空对象）
@@ -186,8 +193,8 @@ console.log('── 6 · 配置按段合并 ──');
   d6 = mod.apply(c6.ctx, {
     enabled: true, hypergraphAutoRefresh: false,
     retrieval: { l0Enabled: true, l0RecentDays: 30 },
-    ingest: { configPath: 'C:/Users/Administrator/AppData/Local/Temp/pm-nonexistent.json' },
-    logs: { dir: 'C:/Users/Administrator/AppData/Local/Temp/pm-logs-smoke4' },
+    ingest: { configPath: join(SMOKE_TMP, 'pm-nonexistent.json') },
+    logs: { dir: join(SMOKE_TMP, 'pm-logs-smoke4') },
   });
   // ② 再 apply 一份「非空但缺 retrieval」的配置（真实 bug 的形态）
   mod.apply(c6.ctx, { enabled: true, budgetTokens: 450 });

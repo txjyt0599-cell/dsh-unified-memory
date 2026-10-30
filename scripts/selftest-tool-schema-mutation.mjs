@@ -12,10 +12,12 @@
  *   ② 必须区分「测试失败(status=1)」和「命令没跑起来」——后者是假阳性
  *   ③ 每轮跑完必须还原，且还原要有断言
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/dispatch/tool.js';
 const TEST_REL = 'selftest-tool-schema.mjs';
 const TEST_ABS = ROOT + '/' + TEST_REL;

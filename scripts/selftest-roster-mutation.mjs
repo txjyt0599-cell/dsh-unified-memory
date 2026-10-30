@@ -4,10 +4,12 @@
  *   M1 把 listMembers 改回 listAgents（方法名写错 → 恒空 → 全判死）
  *   M2 去掉 rosterUnreadable 分支（读失败也判死）
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const TEST = 'selftest-dispatch-roster.mjs';
 
 const cases = [

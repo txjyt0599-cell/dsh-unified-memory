@@ -17,8 +17,9 @@ import { join } from 'node:path';
 import { dirs, ensureDirs } from '../lib/ingest/core.js';
 
 const N = 8;
-const CAPTURE_URL = 'file:///D:/dsh-plugins/dsh-unified-memory/lib/ingest/capture.js';
-const CORE_URL = 'file:///D:/dsh-plugins/dsh-unified-memory/lib/ingest/core.js';
+// [2026-10-30] 相对本文件推导
+const CAPTURE_URL = new URL('../lib/ingest/capture.js', import.meta.url).href;
+const CORE_URL = new URL('../lib/ingest/core.js', import.meta.url).href;
 const root = mkdtempSync(join(tmpdir(), 'pm-conc-'));
 const d = dirs(root);
 ensureDirs(d);

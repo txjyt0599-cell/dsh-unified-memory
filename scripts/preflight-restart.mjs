@@ -13,12 +13,13 @@
  *
  * 用法：node scripts/preflight-restart.mjs
  */
+import { fileURLToPath } from 'node:url';
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, resolve, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { dataPath } from '../lib/paths.js';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fail = 0;
 const step = (n) => console.log('\n── ' + n + ' ──');
 const bad = (m) => { console.log('  ✗ ' + m); fail++; };

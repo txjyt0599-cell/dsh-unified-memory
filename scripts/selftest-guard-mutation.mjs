@@ -6,10 +6,12 @@
  *   K2 reload 抛错时把保险撤掉（等于不救）
  *   K3 没有保险函数也强行 dispose（裸拆）
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/dispatch/hotreload-guard.js';
 const TEST = 'selftest-hotreload-guard.mjs';
 

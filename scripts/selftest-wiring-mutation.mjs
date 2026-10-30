@@ -13,7 +13,7 @@ const results = [];
 
 function runOnce(label) {
   try {
-    execSync('node selftest-dispatch-wiring.mjs', { cwd: 'D:/dsh-plugins/dsh-unified-memory', stdio: 'pipe' });
+    execSync('node selftest-dispatch-wiring.mjs', { cwd: ROOT, stdio: 'pipe' });
     return { label, caught: false };
   } catch (e) {
     const out = String(e.stdout || '');

@@ -1,6 +1,8 @@
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const TF = ROOT + '/lib/dispatch/hotreload-tools.js';
 const TEST = 'selftest-hotreload-tools.mjs';
 const original = fs.readFileSync(TF, 'utf8');

@@ -9,10 +9,12 @@
  *   X2 从 cwd 自动推断场景（在哪个目录开就只看那类）
  *   X3 过滤时对判错的卡"挡掉"而不是"放行"（误挡）
  */
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
-const ROOT = 'D:/dsh-plugins/dsh-unified-memory';
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/retrieval/retriever.js';
 const TEST = 'selftest-scene-wiring.mjs';
 
