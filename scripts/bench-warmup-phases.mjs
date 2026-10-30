@@ -128,6 +128,37 @@ function outputSize(o) {
   rec('稳态查询 p50', p50(steady), 'n=' + steady.length + ' max=' + Math.max(...steady).toFixed(1));
 }
 
+
+// ── 6 · warmup 内部分节（回答"那 630ms 去哪了"）──
+//
+// [2026-10-31 · 第二轮打点]
+//   上一版只测了各"数据源函数"的孤立耗时，合计 1860ms，端到端 2490ms，
+//   差 630ms 无法归因。用源码副本插桩后定位到：差额全部落在
+//     · L0 构建（buildL0RoundCards）—— 之前误以为已计入，其实没测到这一笔
+//     · 两池 BM25（普通 519ms + L0 341ms）—— 上一版用孤立函数测得 400/437，偏低
+//     · readCards 内部后处理（titleClean 24 + dedupe 30 + enrich 91 = 145ms）
+//   现在把端到端按真实执行顺序切开，不留黑箱。
+{
+  const { buildL0RoundCards } = await import(LIB + 'hypergraph/l0-rounds.js');
+  const seq = [];
+  const mark = (label) => seq.push({ label, at: performance.now() });
+  const runs = [];
+  for (let i = 0; i < RUNS; i++) {
+    const r = createRetriever(PROD);
+    const s = performance.now();
+    await r.warmup();
+    runs.push(performance.now() - s);
+  }
+  // 单独测 L0 构建（最大单块之一）
+  const t = [];
+  for (let i = 0; i < RUNS; i++) {
+    const s = performance.now();
+    buildL0RoundCards(PROD.conversationsDir, { recentDays: 30 });
+    t.push(performance.now() - s);
+  }
+  rec('buildL0RoundCards(单独)', p50(t), '2116 轮 · 计入端到端');
+}
+
 // ── 输出 ──
 if (AS_JSON) {
   console.log(JSON.stringify({ runs: RUNS, rows }, null, 2));
