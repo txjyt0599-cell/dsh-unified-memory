@@ -275,9 +275,12 @@ $PM_DATA_ROOT/
 ## Testing
 
 ```bash
-node scripts/smoke-apply.mjs          # startup smoke: apply() against a fake context
-node selftest-dispatch-machine.mjs    # run one suite
+node scripts/smoke-apply.mjs              # startup smoke: apply() against a fake context
+node scripts/check-tracked-imports.mjs    # every relative import resolves against what git tracks
+node selftest-dispatch-machine.mjs        # run one suite
 ```
+
+**Run `check-tracked-imports` right after cloning and before publishing.** `smoke-apply` only proves the files on *your* disk link up; this one asks the stricter question — is everything `lib/` imports actually *committed*? A source directory silently dropped by `.gitignore` passes every local test and fails on every fresh clone.
 
 **37 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults.
 

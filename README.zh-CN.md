@@ -275,9 +275,12 @@ $PM_DATA_ROOT/
 ## 测试
 
 ```bash
-node scripts/smoke-apply.mjs          # 启动冒烟：用假 ctx 跑 apply()
-node selftest-dispatch-machine.mjs    # 跑单个套件
+node scripts/smoke-apply.mjs              # 启动冒烟：用假 ctx 跑 apply()
+node scripts/check-tracked-imports.mjs    # 每条相对 import 都能在「git 已跟踪」里找到落点
+node selftest-dispatch-machine.mjs        # 跑单个套件
 ```
+
+**clone 完、发布前先跑 `check-tracked-imports`。** `smoke-apply` 只证明**你机器上**的文件连得通；这一条问的是更严格的问题——`lib/` 引用的东西真的**提交**了吗？源码目录被 `.gitignore` 悄悄排掉时，本地测试全绿，而任何一次全新 clone 必崩。
 
 共 **37 个测试套件**，覆盖接线、检索、渲染、跨源合并、缓存契约、派单状态迁移、日记行为、开箱默认值。
 

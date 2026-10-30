@@ -8,16 +8,20 @@ node_modules/
 ~/
 
 # runtime data (never commit)
-data/
-*.jsonl
-*.jsonl.zstd
-*.zstd
-logs/
-reports/
-embeddings/
-hypergraph/
-dispatch/
-conversations/
+#   ⚠️ 必须写成 /xxx/ —— 带前导斜杠 = 只匹配仓库根下的同名目录。
+#   写成 "hypergraph/" 这种裸目录名，git 会匹配**任意层级**的同名目录，
+#   于是 lib/hypergraph（源码）被整个排除，clone 下来直接 ERR_MODULE_NOT_FOUND。
+#   （2026-10-30 事故：lib/hypergraph + lib/dispatch 两大源码目录漏提交）
+/data/
+/*.jsonl
+/*.jsonl.zstd
+/*.zstd
+/logs/
+/reports/
+/embeddings/
+/hypergraph/
+/dispatch/
+/conversations/
 
 # sanitize scratch
 _sanitize-backup/
