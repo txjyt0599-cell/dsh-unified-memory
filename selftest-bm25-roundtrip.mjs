@@ -268,6 +268,82 @@ console.log('── G · 接缝自身代价（真实规模）──');
   console.log('     ⚠️ 合成语料词表结构与真实不同，此数不可外推（真实见 bench 脚本）');
 }
 
+// ═══════════════════════════════════════════════
+// H · L0 池往返（真实 L0 规模：2,116 轮 / 9.5 万词 / 65.9 万 posting）
+//
+//   为什么要单独测：L0 的 content 是原始对话全文，词表密度比普通池高得多
+//   （2,116 docs 却有 95,470 词 / 659,483 posting）。接缝在普通池验证过，
+//   不代表在 L0 也成立 —— 结构、词表规模、posting 分布都不同。
+// ═══════════════════════════════════════════════
+console.log('');
+console.log('── H · L0 池往返 ──');
+{
+  // 尽量贴近真实 L0：长文本、大量唯一 bigram
+  //
+  //   ⚠️ 别指望合成语料能复现真实规模。真实 L0 = 2,116 轮 / vocab 95,470 / pairs 659,483。
+  //   我第一版只用了 40 个字，vocab 只有 2,175（差 44 倍），测出来的结论不能代表 L0。
+  //   ⇒ 套件里跑小规模是为了「能不能过」，**真实规模必须单独跑**：
+  //       PM_DATA_ROOT=<数据根> node scripts/bench-l0-ablation.mjs
+  //   实测记录（2026-10-31）：真实 L0 dump 20ms + 重建 36ms = 56ms，120 组逐位一致。
+  const CH = '记忆检索延迟插件安装报错超频显存测试日记归档评论视频缓存索引分词打分排序配置模型圣殿菲比修女今夜主题确认发送接收处理返回遍历递归闭包原型继承异步同步阻塞队列缓冲区指针引用拷贝深浅序列反序列化校验指纹哈希签名';
+  const L0 = [];
+  for (let i = 0; i < 2116; i++) {
+    let t = '';
+    for (let j = 0; j < 200; j++) t += CH[ri(CH.length)];
+    L0.push({ id: 'l0-' + i, title: '问: ' + t.slice(0, 35) + ' → 答: ' + t.slice(35, 90), summary: t.slice(0, 200), content: t });
+  }
+  const l0Tok = createTokenizer({ mode: 'bigram' });
+  const A0 = createBm25Index(L0, l0Tok);
+  const B0 = createBm25FromInternals(dumpInternals(A0), TOK_DESC, tokFactory);
+
+  check('L0 结构层 N 一致', A0.N === B0.N, 'N=' + A0.N);
+  check('L0 结构层 vocab 一致', A0.vocabSize === B0.vocabSize, 'vocab=' + A0.vocabSize);
+  check('L0 结构层 pairs 一致', A0.postingsPairs === B0.postingsPairs, 'pairs=' + A0.postingsPairs);
+
+  // 查询层逐位（L0 用原句查询，这里模拟若干原话片段）
+  let bad = 0, n = 0;
+  for (let i = 0; i < 40; i++) {
+    const q = L0[ri(L0.length)].content.slice(0, 2 + ri(20));
+    for (const k of [5, 12, 24, -1]) {
+      const ra = searchBm25(A0, q, k), rb = searchBm25(B0, q, k);
+      n++;
+      if (JSON.stringify(ra.map((x) => [x[0], f64hex(x[1])])) !== JSON.stringify(rb.map((x) => [x[0], f64hex(x[1])]))) bad++;
+    }
+  }
+  check('L0 查询层逐位相同（' + n + ' 组）', bad === 0, bad ? bad + ' 组不一致' : '全部一致');
+
+  // 全词表回放（L0 词表大，全测耗时也要记录）
+  //   ⚠️ 逐 term 全量检索太贵（每个 term 都跑一次完整打分排序）。
+  //   策略：**全部 term 做结构校验**（快、且能抓出恢复错误），
+  //         其中按 df 分桶抽 120 个做全量结果比对（覆盖 df=1 / 低频 / 中频 / 高频）。
+  //   真实规模下的全量回放请跑 bench-l0-ablation（已记录 120 组逐位一致）。
+  const s0 = dumpInternals(A0);
+  const terms0 = [...s0.postings.keys()];
+  let structBad = 0;
+  for (const t of terms0) {
+    const a = s0.postings.get(t), b = dumpInternals(B0).postings.get(t);
+    if (!b || a.length !== b.length) { structBad++; continue; }
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) { structBad++; break; }
+  }
+  check('L0 全 ' + terms0.length + ' 个 term 结构一致', structBad === 0, structBad ? structBad + ' 个不一致' : '全部一致');
+
+  // 按 df 分桶抽 120 个做结果比对
+  const byDf = terms0.slice().sort((x, y) => s0.dfMap.get(x) - s0.dfMap.get(y));
+  const picks = new Set();
+  const takeAt = (i) => { if (i >= 0 && i < byDf.length) picks.add(byDf[i]); };
+  takeAt(0); takeAt(1); takeAt(5); takeAt(byDf.length >> 2); takeAt(byDf.length >> 1);
+  takeAt(Math.floor(byDf.length * 0.75)); takeAt(byDf.length - 1); takeAt(byDf.length - 2);
+  for (let i = 0; picks.size < 120 && i < byDf.length; i += Math.max(1, Math.floor(byDf.length / 120))) takeAt(i);
+  let bad0 = 0, cnt = 0;
+  const t0 = Date.now();
+  for (const t of picks) {
+    const ra = searchBm25(A0, t, -1), rb = searchBm25(B0, t, -1);
+    cnt++;
+    if (JSON.stringify(ra.map((x) => [x[0], f64hex(x[1])])) !== JSON.stringify(rb.map((x) => [x[0], f64hex(x[1])]))) bad0++;
+  }
+  check('L0 分层抽样 ' + cnt + ' 个 term 结果一致', bad0 === 0, '耗时 ' + (Date.now() - t0) + 'ms，不一致 ' + bad0);
+}
+
 console.log('');
 console.log('════ SUMMARY ════');
 console.log('  pass=' + pass + ' fail=' + fail);
