@@ -826,7 +826,17 @@ console.log('── N · 事件驱动补跑 ──');
     logger: { info() {}, warn() {}, debug() {} },
   };
   writeFileSync(cfgN, JSON.stringify({ enabled: true, capture: true, extract: true, distill: false }), 'utf8');
-  const ingN = createIngest(ctxN, { configPath: cfgN, root: dataN }, null);
+  // [2026-10-30 · 陌生人自测抓到的假假设]
+  //   这组原来靠 profilePath 默认值去**本机的 DSH profile** 里捞 llm 配置。
+  //   换成别的用户（空 home）就没有那段 —— extract 老老实实不跑（它是对的：没有 LLM 就不产卡），
+  //   于是 N3/N4 报红。那不是产品坏了，是测试偷偷依赖了"这台机器配过 LLM"。
+  //   ⇒ 显式给一个假端点：这组验的是"钩子会不会补跑 extract"，不是"能不能连上模型"
+  //     （runExtract 在拿不到真响应时会走失败分支，但 extractRuns 一样会 +1，判据依然成立）。
+  const ingN = createIngest(ctxN, {
+    configPath: cfgN,
+    root: dataN,
+    llm: { baseUrl: 'http://127.0.0.1:9/v1', apiKey: 'test-not-a-real-key', model: 'selftest-stub', maxTokens: 64, timeoutMs: 2000 },
+  }, null);
   const flushN = (hooksN.get('session/flush') || [])[0];
   check('N', 'N1 注册了 session/flush', typeof flushN === 'function');
 

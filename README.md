@@ -275,8 +275,10 @@ $PM_DATA_ROOT/
 ## Testing
 
 ```bash
-npm run check                             # the four cheap gates (see below)
-node selftest-dispatch-machine.mjs        # run one suite
+npm run check                    # four cheap gates — ~20s, run this constantly
+npm run check:as-stranger        # pretend to be someone else — ~40s
+npm run check:release            # everything, including all 37 suites as a stranger — ~2min
+node selftest-dispatch-machine.mjs   # run one suite
 ```
 
 Each gate answers a different question, and each exists because the others missed something real:
@@ -289,6 +291,19 @@ Each gate answers a different question, and each exists because the others misse
 | `scripts/check-hardcodes.mjs` | Does any shipped path point at *my* machine? | A `C:/Users/…` or an unexpanded `~/…` reaches your box — Node does not expand `~`, so it becomes a **relative** path and quietly creates a directory literally named `~` |
 
 **37 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults. Suites that need an existing card store, tdai conversations, a persona file or scene blocks **skip with a printed reason** on a fresh install — a missing input is not a failing check, and it must not look like one. They were re-run against a full read-only copy of a real store (2 069 cards, 52/52 cross-source, 70/70 p4, 430/430 ingest) to confirm the skip is not hiding a break.
+
+### The gate that matters most: `check-as-stranger`
+
+Every check above runs on **your** machine, with **your** home directory and **your** accumulated data. Passing them proves nothing about a fresh clone — and that gap is exactly where three bugs lived: a `~/…` in the shipped config that created a directory named `~`, a hardcoded `C:/Users/…` in the session-archive reader, and a smoke test that measured "does a bad path crash?" instead of "does the plugin load?".
+
+`check-as-stranger` closes it. It copies the repo, points `USERPROFILE` / `HOME` at an **empty directory**, points `PM_DATA_ROOT` at **empty data**, and then:
+
+1. runs all four gates as that stranger;
+2. loads your shipped `cordis.patch.yml` verbatim and calls `apply()` for real;
+3. asserts no directory named `~` appeared, that data landed under `PM_DATA_ROOT`, and that no dev-machine path survives in `lib/` or `scripts/`;
+4. with `--full`, runs all 37 suites as that stranger.
+
+It refuses to grade what it could not run: if `apply()` throws, the "no `~` directory" check reports **skipped**, not passed — because a crashed `apply()` builds no directories, and a green tick there would be a lie.
 
 **One rule that applies to every path in this repo:** never write `~/…`. Node does not expand it. Use the `lib/paths.js` helpers (`dataPath()`, `dshHome()`, `sessionsRoot()`) or an absolute path — `check-hardcodes` enforces the rest.
 

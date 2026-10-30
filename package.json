@@ -32,6 +32,8 @@
   "scripts": {
     "smoke": "node scripts/smoke-apply.mjs",
     "check": "node scripts/smoke-apply.mjs && node scripts/check-tracked-imports.mjs && node scripts/check-syntax.mjs && node scripts/check-hardcodes.mjs",
+    "check:as-stranger": "node scripts/check-as-stranger.mjs",
+    "check:release": "npm run check && node scripts/check-as-stranger.mjs --full && npm run audit",
     "audit": "node scripts/security-audit.mjs && node scripts/data-leak-audit.mjs"
   },
   "keywords": [
