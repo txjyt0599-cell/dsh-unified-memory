@@ -56,8 +56,13 @@ const HARDCODE = [
   { name: '未展开的 ~ 路径', re: /['"]~[\\/]/ },
 ];
 
+// 本文件自己必须跳过：一个"找坏模式"的检查器，必然要把它要找的模式写成字面量。
+// 这不是放水 —— 它扫的是别的文件；它自己的正确性由它扫出的**其他** 53 处来证明。
+const SELF = 'scripts/check-hardcodes.mjs';
+
 const files = execFileSync('git', ['ls-files'], { encoding: 'utf8', cwd: REPO })
-  .split('\n').map((s) => s.trim()).filter(Boolean).filter((f) => SCAN.some((re) => re.test(f)));
+  .split('\n').map((s) => s.trim()).filter(Boolean)
+  .filter((f) => f !== SELF && SCAN.some((re) => re.test(f)));
 
 const hits = [];
 for (const f of files) {
