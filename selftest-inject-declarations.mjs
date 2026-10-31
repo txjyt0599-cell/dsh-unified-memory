@@ -38,7 +38,16 @@ function findCtxServices(src) {
   // 去掉注释行，避免注释里的 ctx.tools 干扰
   const lines = src.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l));
   const clean = lines.join('\n');
-  for (const m of clean.matchAll(/ctx\.([a-zA-Z_][a-zA-Z0-9_]*)/g)) set.add(m[1]);
+  // [2026-10-31 · 软依赖支持] 先剔除 ctx.get('xxx') —— 那是**不受 inject 约束**的
+  //   可选服务读取（cordis 注释原文："Read a service from the store without the
+  //   inject requirement"）。它本来就不该出现在 inject 里，否则会让插件在
+  //   缺少该服务的宿主上永不激活（GitHub issue 报的就是这个）。
+  //   若不剔除，正则会把方法名 get 当成服务名，产生"未声明: get"的假失败。
+  const withoutGet = clean.replace(/ctx\.get\(\s*['"][^'"]+['"]/g, 'ctx.__OPTIONAL__');
+  for (const m of withoutGet.matchAll(/ctx\.([a-zA-Z_][a-zA-Z0-9_]*)/g)) {
+    if (m[1] === '__OPTIONAL__') continue;
+    set.add(m[1]);
+  }
   return set;
 }
 
@@ -49,10 +58,19 @@ console.log('\n── A · 声明 ──');
 const src = readFileSync(F, 'utf8');
 const declared = parseInject(src);
 check('A', 'A1 能解析出 inject 数组', Array.isArray(declared) && declared.length > 0, JSON.stringify(declared));
-const REQUIRED = ['systemPrompt', 'tools', 'agents', 'agentTeams'];
+// [2026-10-31 · GitHub issue] agentTeams 从 REQUIRED 移除，并改判「必须是软依赖」。
+//   它由 @deepseek-ai/dsh-experimental-agent-team 提供；写进 inject 会让
+//   默认 profile（没装实验插件）上**整个插件永不激活**。
+const REQUIRED = ['systemPrompt', 'tools', 'agents'];
 for (const r of REQUIRED) {
   check('A', 'A2 声明包含 ' + r, declared.includes(r));
 }
+// 反向断言：agentTeams 绝不能进 inject，且必须用 ctx.get 软取
+check('A', 'A2b agentTeams 不在 inject（软依赖）', !declared.includes('agentTeams'),
+  declared.includes('agentTeams') ? '在 inject 里 ⇒ 缺该服务的宿主将永不激活' : 'ok');
+check('A', 'A2c agentTeams 用 ctx.get 软取',
+  /ctx\.get\(\s*['"]agentTeams['"]/.test(src),
+  /ctx\.get\(\s*['"]agentTeams['"]/.test(src) ? 'ok' : '找不到 ctx.get("agentTeams")');
 
 // ── B · 代码里读的 ctx.xxx 必须都已声明（排除节点内建）──
 console.log('\n── B · 静态对账 ──');

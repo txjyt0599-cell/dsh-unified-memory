@@ -11,7 +11,11 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-const ROOT = process.argv[2] || 'C:/Users/Administrator/.dsh/phoebe-memory/probe';
+// [2026-10-31 · check-as-stranger 抓到] 原来这里写死开发机路径。
+//   改成从 lib/paths.js 推导，换机器自动正确。
+const LIB = 'file:///' + new URL('..', import.meta.url).pathname.replace(/^\//, '').replace(/^\/+/, '') + 'lib/';
+const { dataPath } = await import(LIB + 'paths.js');
+const ROOT = process.argv[2] || dataPath('probe');
 const files = ['section-register.jsonl', 'section-register.jsonl.1']
   .map(f => join(ROOT, f)).filter(existsSync);
 
@@ -35,6 +39,13 @@ if (ms.length) {
   console.log('min:', Math.min(...ms).toFixed(0), ' p50:', q(ms, 0.5).toFixed(0), ' p90:', q(ms, 0.9).toFixed(0), ' max:', Math.max(...ms).toFixed(0));
   console.log('均值:', (ms.reduce((a, b) => a + b, 0) / ms.length).toFixed(0), 'ms');
 }
+// [2026-10-31 · 口径修正] 日志会混入测试进程写下的 warm=1ms 记录，
+//   直接算 p50 会被稀释成 1ms（完全失真）。按 src 分开看才是真实暖机：
+//     src=dsh  → 真实用户会话（最接近感受）
+//     src=cli  → CLI 场景
+//     src=test → 自测进程，大量重复 warmup，**不能代表暖机**
+console.log('');
+console.log('⚠️ 以下"整体"数字含 src=test 的重复预热，会偏低；看分 src 那节更准。');
 console.log('');
 console.log('最近 15 条:');
 for (const r of recs.slice(-15)) {
