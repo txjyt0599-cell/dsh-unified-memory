@@ -19,6 +19,7 @@
 - [Testing](#testing)
 - [Security model](#security-model)
 - [Known limitations](#known-limitations)
+- [Release notes](#release-notes)
 - [License](#license)
 
 ---
@@ -155,6 +156,30 @@ All configuration is optional, and the plugin works without any of it. **Out of 
 | `PM_DIARY_ROOT` | `<data root>/diary` | Where diary files are written |
 | `PM_SESSIONS_ROOT` | `~/.dsh/sessions` | DSH session storage (read for event sourcing) |
 | `PM_DIARY_PROMPTS` | *(unset)* | Path to a JSON file overriding diary prompts |
+
+### Machine facts and scene roots — opt-in, empty by default
+
+Both are **empty by default**: the plugin assumes nothing about your hardware or your
+directory layout. Declare them only if you want that behaviour.
+
+```yaml
+config:
+  # Facts you want the model to treat as ground truth for YOUR machine.
+  # Rendered as a <host_axioms> block at the top of the static system section.
+  # (Static text only — keep it short; it is re-sent every turn and costs tokens.)
+  hostAxioms:
+    - '主显卡 <model>，显存 <N> GB'
+    - '本机 CPU <model>，<N> 核'
+
+  # Directory prefixes used by scene isolation (path prefix match, no guessing).
+  # Empty = no inference at all; every card stays visible.
+  sceneRoots:
+    project-a: ['/path/to/project-a']
+    project-b: ['C:/work/project-b']
+```
+
+> v1.x shipped the author's own values here (a specific GPU model and a fixed set of
+> project folders). **v2.0.0 removed them** — see [docs/RELEASE-v2.0.0.md](docs/RELEASE-v2.0.0.md).
 
 ### Models — the part that catches everyone
 
@@ -364,6 +389,14 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 | **No cross-machine sync** | Bring your own (this is a folder — rsync works fine). |
 
 ---
+
+## Release notes
+
+| Version | Date | Highlights |
+|---|---|---|
+| [v2.0.0](docs/RELEASE-v2.0.0.md) | 2026-11-07 | De-personalised runtime; enumerate tier; k only raises; paged retrieval (30/20/10); `memory_search` pagination |
+| v1.1.1 | 2026-11-03 | Patch release |
+| v1.1.0 | 2026-11-01 | Verbatim anchors + two-stage source elevator |
 
 ## License
 
