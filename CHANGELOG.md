@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.0.1 — 2026-11-07
+
+### 修复
+
+- **热度直通区不是严格时间倒序**：`buildHotBuffer` 先拼「近期轮次(3)」再拼「近期卡(5)」，两段各自有序但拼接后整体无序
+  （实测 17:53 → 17:52 → 16:08 → **17:54** → 14:49）。改为两段先收集、合并后统一 `b.t - a.t` 排序，再按 2200 字预算截断。
+- **cross-session-pulse 与 hot 卡段重复**：两者调用同一个 `recentCrossSession`（同 4h 窗口、同 perSessionCap，limit 4 vs 5）
+  ⇒ pulse 必然是 hot 的子集，同一事件被注入两遍。pulse 现在跳过 hot 已送出的 id。
+
+### 测试
+
+- 新增 `selftest-prefetch-hot.mjs`（4 项）：hot 块非空、整体严格时间倒序、最新卡在最前、pulse 同源不重复。
+- 生产 verify 全绿；开源 selftest 42/42；check-as-stranger --full 43 套件全绿。
+
 ## v2.0.0 — 2026-11-07
 
 ### 本版新增（定版补充）
