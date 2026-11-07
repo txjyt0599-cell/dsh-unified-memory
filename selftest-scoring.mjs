@@ -1,6 +1,6 @@
 /**
  * selftest-scoring.mjs —— 四股力 / 重要度 / 采纳核验 自测
- * [2026-10-24 by Phoebe · Step 1~3 配套]
+ * [2026-10-24 by Assistant · Step 1~3 配套]
  */
 import { scoreImportance, IMPORTANCE_BASE } from './lib/scoring/importance.js';
 import { applyFourForces, recencyOf, strengthOf, halfLifeOf, MAX_HITS, GATE_THRESHOLD } from './lib/scoring/four-forces.js';

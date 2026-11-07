@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-07T07:37:28.994Z",
+  "generatedAt": "2026-11-07T08:07:20.305Z",
   "totals": {
     "files": 99,
     "modules": 13,
@@ -19,7 +19,7 @@
     "(root)": {
       "files": 9,
       "exports": 36,
-      "lines": 3066,
+      "lines": 3072,
       "names": [
         "card-session.js",
         "faults.js",
@@ -198,6 +198,1637 @@
       ]
     }
   },
+  "files": [
+    {
+      "path": "lib/backends/engram.js",
+      "mod": "backends",
+      "exports": [
+        "DEFAULT_ENGRAM_PATH",
+        "createEngramBackend"
+      ],
+      "lines": 40
+    },
+    {
+      "path": "lib/backends/journal.js",
+      "mod": "backends",
+      "exports": [
+        "DEFAULT_JOURNAL_PATHS",
+        "createJournalBackend"
+      ],
+      "lines": 58
+    },
+    {
+      "path": "lib/card-session.js",
+      "mod": "(root)",
+      "exports": [
+        "SESSION_FIELDS",
+        "sessionIdOf"
+      ],
+      "lines": 50
+    },
+    {
+      "path": "lib/diary/index.js",
+      "mod": "diary",
+      "exports": [
+        "DIARY_ROOT",
+        "BOOKS",
+        "LIVE_ROOT",
+        "STATE_PATH",
+        "INDEX_DIR",
+        "BACKUP_DIR",
+        "LOCK_PATH",
+        "CONFIG_PATH",
+        "DEFAULT_L0_DIRS",
+        "DEFAULT_CONFIG",
+        "localDate",
+        "localTime",
+        "shiftDate",
+        "loadConfig",
+        "saveConfig",
+        "acquireLock",
+        "l0File",
+        "collectDay",
+        "toSlice",
+        "buildSample",
+        "BOOK_PROMPTS",
+        "buildUserPrompt",
+        "pencilBody",
+        "renderEntry",
+        "writtenDates",
+        "readEntry",
+        "readRecentEntries",
+        "backupOnce",
+        "indexLine",
+        "writeEntry",
+        "readState",
+        "writeState",
+        "sanitizeBody",
+        "resolveBookPrompts"
+      ],
+      "lines": 395
+    },
+    {
+      "path": "lib/diary/scheduler.js",
+      "mod": "diary",
+      "exports": [
+        "maybeNudge",
+        "maybeAssemble",
+        "diaryHealth"
+      ],
+      "lines": 91
+    },
+    {
+      "path": "lib/diary/tool.js",
+      "mod": "diary",
+      "exports": [
+        "DIARY_WRITE",
+        "DIARY_CONFIG",
+        "DIARY_READ",
+        "createDiaryTools",
+        "diaryStatus",
+        "readEntry"
+      ],
+      "lines": 235
+    },
+    {
+      "path": "lib/dispatch/event-source.js",
+      "mod": "dispatch",
+      "exports": [
+        "sliceNewEvents",
+        "createEventSource"
+      ],
+      "lines": 184
+    },
+    {
+      "path": "lib/dispatch/hotreload-exec.js",
+      "mod": "dispatch",
+      "exports": [
+        "reloadSelf",
+        "rotateSelf"
+      ],
+      "lines": 164
+    },
+    {
+      "path": "lib/dispatch/hotreload-guard.js",
+      "mod": "dispatch",
+      "exports": [
+        "createHotReloadGuard"
+      ],
+      "lines": 164
+    },
+    {
+      "path": "lib/dispatch/hotreload-probe.js",
+      "mod": "dispatch",
+      "exports": [
+        "createHotReloadProbe"
+      ],
+      "lines": 101
+    },
+    {
+      "path": "lib/dispatch/hotreload-tools.js",
+      "mod": "dispatch",
+      "exports": [
+        "RELOAD_TEST_MARK",
+        "createHotReloadTools"
+      ],
+      "lines": 170
+    },
+    {
+      "path": "lib/dispatch/ledger.js",
+      "mod": "dispatch",
+      "exports": [
+        "DEFAULT_LEDGER_PATH",
+        "createLedger"
+      ],
+      "lines": 161
+    },
+    {
+      "path": "lib/dispatch/state-machine.js",
+      "mod": "dispatch",
+      "exports": [
+        "STATE",
+        "DEFAULTS",
+        "extractTaskIds",
+        "resolveTaskId",
+        "scanEventsForTask",
+        "classify",
+        "nextLedgerState",
+        "findCrashedPending"
+      ],
+      "lines": 319
+    },
+    {
+      "path": "lib/dispatch/tool.js",
+      "mod": "dispatch",
+      "exports": [
+        "newTaskId",
+        "frameMessage",
+        "createDispatchTools"
+      ],
+      "lines": 357
+    },
+    {
+      "path": "lib/embedding/auto-build.js",
+      "mod": "embedding",
+      "exports": [
+        "collectCards",
+        "vecText",
+        "buildMissing"
+      ],
+      "lines": 128
+    },
+    {
+      "path": "lib/embedding/client.js",
+      "mod": "embedding",
+      "exports": [
+        "inheritFromProfile",
+        "resolveEndpoint",
+        "endpointLabel",
+        "embedTexts",
+        "embedQuery",
+        "sanitizeText",
+        "normalize",
+        "dot"
+      ],
+      "lines": 189
+    },
+    {
+      "path": "lib/embedding/index-store.js",
+      "mod": "embedding",
+      "exports": [
+        "EMBEDDINGS_DIR",
+        "loadIndex",
+        "vectorOf",
+        "saveIndex",
+        "isCompatible",
+        "searchVector",
+        "indexStats"
+      ],
+      "lines": 174
+    },
+    {
+      "path": "lib/faults.js",
+      "mod": "(root)",
+      "exports": [
+        "recordFault",
+        "listFaults",
+        "recentFaults",
+        "faultSummary",
+        "clearFaults"
+      ],
+      "lines": 96
+    },
+    {
+      "path": "lib/hypergraph/auto-refresh.js",
+      "mod": "hypergraph",
+      "exports": [
+        "sourceSignature",
+        "indexSignature",
+        "createAutoRefresh"
+      ],
+      "lines": 182
+    },
+    {
+      "path": "lib/hypergraph/backend.js",
+      "mod": "hypergraph",
+      "exports": [
+        "createHypergraphBackend"
+      ],
+      "lines": 112
+    },
+    {
+      "path": "lib/hypergraph/build.js",
+      "mod": "hypergraph",
+      "exports": [
+        "buildHypergraph",
+        "verifyInvariants"
+      ],
+      "lines": 91
+    },
+    {
+      "path": "lib/hypergraph/dedupe-titles.mjs",
+      "mod": "hypergraph",
+      "exports": [
+        "dedupeTitles"
+      ],
+      "lines": 126
+    },
+    {
+      "path": "lib/hypergraph/edge.js",
+      "mod": "hypergraph",
+      "exports": [
+        "chunkEpisode",
+        "assignFactRole",
+        "assignWeights",
+        "buildFactEdge",
+        "assignEpisodeRole",
+        "buildEpisodeEdge",
+        "applyCompletenessPenalty"
+      ],
+      "lines": 143
+    },
+    {
+      "path": "lib/hypergraph/episode.js",
+      "mod": "hypergraph",
+      "exports": [
+        "splitEpisodes",
+        "eligibleEpisodes"
+      ],
+      "lines": 73
+    },
+    {
+      "path": "lib/hypergraph/index-shard.js",
+      "mod": "hypergraph",
+      "exports": [
+        "computeShardSourceHash",
+        "computeParamsHash",
+        "planRebuild",
+        "planShards"
+      ],
+      "lines": 66
+    },
+    {
+      "path": "lib/hypergraph/l0-cache.js",
+      "mod": "hypergraph",
+      "exports": [
+        "getL0IndexCached",
+        "l0CacheStats",
+        "resetL0Cache"
+      ],
+      "lines": 249
+    },
+    {
+      "path": "lib/hypergraph/l0-rounds.js",
+      "mod": "hypergraph",
+      "exports": [
+        "DEFAULT_L0_RECENT_DAYS",
+        "normalizeConvDirs",
+        "stripMarkup",
+        "buildDualAnchorTitle",
+        "buildL0RoundCards"
+      ],
+      "lines": 284
+    },
+    {
+      "path": "lib/hypergraph/lock.js",
+      "mod": "hypergraph",
+      "exports": [
+        "acquireLock",
+        "releaseLock",
+        "peekLock"
+      ],
+      "lines": 53
+    },
+    {
+      "path": "lib/hypergraph/pipeline.js",
+      "mod": "hypergraph",
+      "exports": [
+        "DEFAULT_INDEX_ROOT",
+        "buildAndPersist"
+      ],
+      "lines": 148
+    },
+    {
+      "path": "lib/hypergraph/propagate.js",
+      "mod": "hypergraph",
+      "exports": [
+        "propagateEmbeddings",
+        "holdoutSplit",
+        "gridSearchLambda"
+      ],
+      "lines": 107
+    },
+    {
+      "path": "lib/hypergraph/source.js",
+      "mod": "hypergraph",
+      "exports": [
+        "DEFAULT_ENGRAM_PATH",
+        "readCards",
+        "DEFAULT_TDAI_DIR",
+        "parseTdaiTime",
+        "KIND_TO_LAYER",
+        "readTdaiRecords",
+        "parseSourceMessageId",
+        "l0IngestText",
+        "buildL0Index",
+        "lookupRound",
+        "DEFAULT_SOULMD_ROOT",
+        "readSoulMdCards",
+        "DEFAULT_INGEST_ROOT",
+        "finalizeTitle",
+        "readOwnIngest"
+      ],
+      "lines": 916
+    },
+    {
+      "path": "lib/hypergraph/store.js",
+      "mod": "hypergraph",
+      "exports": [
+        "shardPath",
+        "writeShard",
+        "readShards",
+        "writeManifest",
+        "readManifest",
+        "listShards",
+        "GLOBAL_FILES",
+        "GLOBAL_TYPE_TO_FILE",
+        "writeGlobal",
+        "readGlobal",
+        "readGlobals",
+        "readAllRecords",
+        "globalBytes"
+      ],
+      "lines": 164
+    },
+    {
+      "path": "lib/hypergraph/topic.js",
+      "mod": "hypergraph",
+      "exports": [
+        "inclusionSim",
+        "termsOf",
+        "decideTopicState",
+        "buildTopics",
+        "assignEpisodeRoles"
+      ],
+      "lines": 126
+    },
+    {
+      "path": "lib/hypergraph/types.js",
+      "mod": "hypergraph",
+      "exports": [
+        "FactRole",
+        "EpisodeRole",
+        "HyperEdgeKind",
+        "TopicState",
+        "HARD",
+        "assertMemberCount",
+        "normalizeWeights"
+      ],
+      "lines": 53
+    },
+    {
+      "path": "lib/index.js",
+      "mod": "(root)",
+      "exports": [
+        "name",
+        "inject",
+        "apply"
+      ],
+      "lines": 1635
+    },
+    {
+      "path": "lib/ingest/axioms.js",
+      "mod": "ingest",
+      "exports": [
+        "AXIOM_RULES",
+        "qualifiesAsAxiom",
+        "stageAxioms",
+        "consumeAxioms",
+        "revokeAxiom"
+      ],
+      "lines": 109
+    },
+    {
+      "path": "lib/ingest/belief.js",
+      "mod": "ingest",
+      "exports": [
+        "SOURCE_WEIGHTS",
+        "STATUS",
+        "REFUTE_MARGIN",
+        "LEGACY_DEFAULTS",
+        "inferSourceWeight",
+        "scopeDelta",
+        "judgeConflict",
+        "normalizeEngramV2",
+        "filterEngrams",
+        "detectQueryScopes"
+      ],
+      "lines": 259
+    },
+    {
+      "path": "lib/ingest/capture.js",
+      "mod": "ingest",
+      "exports": [
+        "normalizeForMatch",
+        "looksInjected",
+        "sanitizeText",
+        "shouldCapture",
+        "extractText",
+        "isRealUser",
+        "captureTurn",
+        "readPendingScope",
+        "readCaptured"
+      ],
+      "lines": 373
+    },
+    {
+      "path": "lib/ingest/concentrate.js",
+      "mod": "ingest",
+      "exports": [
+        "CONCENTRATION",
+        "extractNumbers",
+        "hasNumberConflict",
+        "isUserCorrection",
+        "fingerprint",
+        "ingestWithConcentration",
+        "gateBoost"
+      ],
+      "lines": 209
+    },
+    {
+      "path": "lib/ingest/config.js",
+      "mod": "ingest",
+      "exports": [
+        "DEFAULT_CONFIG_PATH",
+        "DEFAULT_LIVE",
+        "loadLiveConfig",
+        "writeDefaultConfig"
+      ],
+      "lines": 143
+    },
+    {
+      "path": "lib/ingest/consolidate.js",
+      "mod": "ingest",
+      "exports": [
+        "IDLE_CONSOLIDATE_MS",
+        "createConsolidation"
+      ],
+      "lines": 335
+    },
+    {
+      "path": "lib/ingest/core.js",
+      "mod": "ingest",
+      "exports": [
+        "DEFAULT_INGEST_ROOT",
+        "LEGACY_DIRS",
+        "dirs",
+        "ensureDirs",
+        "localDate",
+        "sha1_16",
+        "messageKey",
+        "atomicWriteJson",
+        "atomicWriteText",
+        "acquireLock",
+        "readJson",
+        "rotateIfBig",
+        "sigOfIngest",
+        "appendLines",
+        "cursorFile",
+        "loadCursor",
+        "saveCursor"
+      ],
+      "lines": 394
+    },
+    {
+      "path": "lib/ingest/distill.js",
+      "mod": "ingest",
+      "exports": [
+        "DISTILL_SYSTEM_PROMPT",
+        "readOwnEngrams",
+        "bigramOverlap",
+        "fallbackDistill",
+        "readTailFilesForSession",
+        "readRecentL0ForSession",
+        "normalizeSid",
+        "resolveDistillSession",
+        "readRecentL0",
+        "summarizeIntermediateAssistant",
+        "collapseAssistantMonologues",
+        "writeOngoingThread",
+        "runDistill"
+      ],
+      "lines": 1219
+    },
+    {
+      "path": "lib/ingest/entities.js",
+      "mod": "ingest",
+      "exports": [
+        "DEFAULT_ENTITIES_CONFIG_PATH",
+        "DEFAULT_ENTITIES",
+        "loadEntitiesConfig",
+        "extractEntities",
+        "benchExtractEntities"
+      ],
+      "lines": 272
+    },
+    {
+      "path": "lib/ingest/entry-shadow.js",
+      "mod": "ingest",
+      "exports": [
+        "SHADOW_LOG_MAX_BYTES",
+        "shadowLogPath",
+        "buildShadowQuery",
+        "noCauseRate",
+        "recordEntryShadow"
+      ],
+      "lines": 177
+    },
+    {
+      "path": "lib/ingest/extract.js",
+      "mod": "ingest",
+      "exports": [
+        "epochMsOf",
+        "EXTRACT_SYSTEM_PROMPT",
+        "heuristicExtract",
+        "readL0Messages",
+        "planWindows",
+        "runExtract",
+        "readOwnRecords"
+      ],
+      "lines": 846
+    },
+    {
+      "path": "lib/ingest/graph.js",
+      "mod": "ingest",
+      "exports": [
+        "MAX_EDGE_ABS",
+        "ALPHA",
+        "DEFAULT_MAX_BOOST_FACTS",
+        "buildIncidence",
+        "computeDynamicThreshold",
+        "expandOneHop",
+        "graphStats",
+        "deriveEntities"
+      ],
+      "lines": 355
+    },
+    {
+      "path": "lib/ingest/html-strip.js",
+      "mod": "ingest",
+      "exports": [
+        "stripHtml"
+      ],
+      "lines": 27
+    },
+    {
+      "path": "lib/ingest/index.js",
+      "mod": "ingest",
+      "exports": [
+        "deriveTurnMessages",
+        "createIngest"
+      ],
+      "lines": 548
+    },
+    {
+      "path": "lib/ingest/llm.js",
+      "mod": "ingest",
+      "exports": [
+        "inheritLlmFromProfile",
+        "resolveLlm",
+        "llmLabel",
+        "complete",
+        "parseJsonArray"
+      ],
+      "lines": 229
+    },
+    {
+      "path": "lib/ingest/motifs.js",
+      "mod": "ingest",
+      "exports": [
+        "extractMotifs",
+        "shouldHaveMotifs",
+        "MOTIF_SYSTEM_PROMPT",
+        "extractMotifsLLM"
+      ],
+      "lines": 263
+    },
+    {
+      "path": "lib/ingest/normalize.js",
+      "mod": "ingest",
+      "exports": [
+        "isIdLikeTitle",
+        "isTooShortVague",
+        "isGoodEnglishTitle",
+        "isGoodTitle",
+        "sanitizeTitle",
+        "normalizeL1",
+        "normalizeEngrams"
+      ],
+      "lines": 585
+    },
+    {
+      "path": "lib/ingest/persona-drift.js",
+      "mod": "ingest",
+      "exports": [
+        "DRIFT_RULES",
+        "detectPersonaDrift",
+        "demoteFactor"
+      ],
+      "lines": 183
+    },
+    {
+      "path": "lib/ingest/persona.js",
+      "mod": "ingest",
+      "exports": [
+        "DEFAULT_PERSONA_SRC",
+        "OWN_PERSONA_NOTES",
+        "readPersona",
+        "extractPersonaFacts",
+        "appendPersonaFacts"
+      ],
+      "lines": 115
+    },
+    {
+      "path": "lib/ingest/refute-scan.js",
+      "mod": "ingest",
+      "exports": [
+        "scopeKeywords",
+        "findAffectedEngrams",
+        "buildRefuteLines"
+      ],
+      "lines": 107
+    },
+    {
+      "path": "lib/ingest/resolution.js",
+      "mod": "ingest",
+      "exports": [
+        "problemSubject",
+        "isProblemCard",
+        "ENTRY_QUANTUM_MS",
+        "quantizeTs",
+        "buildEntryList",
+        "lifecycleFingerprint",
+        "buildEntryListStable",
+        "detectResolution"
+      ],
+      "lines": 447
+    },
+    {
+      "path": "lib/ingest/scene-nav.js",
+      "mod": "ingest",
+      "exports": [
+        "DEFAULT_SCENE_DIR",
+        "generateSceneNavigation"
+      ],
+      "lines": 93
+    },
+    {
+      "path": "lib/ingest/signal-miss.js",
+      "mod": "ingest",
+      "exports": [
+        "DEFAULT_MISS_PATH",
+        "MISS_DEFAULTS",
+        "isFiller",
+        "buildContext",
+        "collectLlmMisses",
+        "createMissPool"
+      ],
+      "lines": 303
+    },
+    {
+      "path": "lib/ingest/title-clean.js",
+      "mod": "ingest",
+      "exports": [
+        "cleanTitle",
+        "isDirtyTitle",
+        "betterTdaiTitle",
+        "cutAtWord"
+      ],
+      "lines": 216
+    },
+    {
+      "path": "lib/ingest/verbatim-lookup.js",
+      "mod": "ingest",
+      "exports": [
+        "CONVERSATION_DIRS",
+        "buildVerbatimIndex",
+        "ensureVerbatimIndex",
+        "lookupOne",
+        "lookupMany",
+        "resolveCardVerbatim",
+        "verbatimStats",
+        "resetVerbatimIndex"
+      ],
+      "lines": 175
+    },
+    {
+      "path": "lib/memory/card-locator.js",
+      "mod": "memory",
+      "exports": [
+        "toRawId",
+        "candidateFiles",
+        "foldRowsAcrossFiles",
+        "locateCard",
+        "withCardLock"
+      ],
+      "lines": 211
+    },
+    {
+      "path": "lib/memory/l1-l2-link.js",
+      "mod": "memory",
+      "exports": [
+        "DUPLICATE_SIM",
+        "buildSourceIndex",
+        "buildSourceIndexFromCards",
+        "findL1OfL2",
+        "bigramCoverage",
+        "classifyRelation",
+        "_clearCache"
+      ],
+      "lines": 237
+    },
+    {
+      "path": "lib/observe/log.js",
+      "mod": "observe",
+      "exports": [
+        "createLogger"
+      ],
+      "lines": 58
+    },
+    {
+      "path": "lib/observe/rotate.js",
+      "mod": "observe",
+      "exports": [
+        "compact"
+      ],
+      "lines": 17
+    },
+    {
+      "path": "lib/orchestrator.js",
+      "mod": "(root)",
+      "exports": [
+        "DEGRADE_LEVELS",
+        "FIXED_TEXT",
+        "createOrchestrator"
+      ],
+      "lines": 97
+    },
+    {
+      "path": "lib/paths.js",
+      "mod": "(root)",
+      "exports": [
+        "dshHome",
+        "dataRoot",
+        "dataPath",
+        "diaryRoot",
+        "sessionsRoot",
+        "normalize",
+        "DIARY_FILENAME",
+        "diaryPaths"
+      ],
+      "lines": 112
+    },
+    {
+      "path": "lib/prefetch.js",
+      "mod": "(root)",
+      "exports": [
+        "extractQuery",
+        "renderHits",
+        "createPrefetcher"
+      ],
+      "lines": 681
+    },
+    {
+      "path": "lib/retrieval/alias.js",
+      "mod": "retrieval",
+      "exports": [
+        "createAliasIndex",
+        "matchAlias",
+        "aliasHealth"
+      ],
+      "lines": 188
+    },
+    {
+      "path": "lib/retrieval/bm25.js",
+      "mod": "retrieval",
+      "exports": [
+        "createBm25Index",
+        "searchBm25",
+        "bm25Meta",
+        "dumpInternals",
+        "createBm25FromInternals"
+      ],
+      "lines": 217
+    },
+    {
+      "path": "lib/retrieval/breaker.js",
+      "mod": "retrieval",
+      "exports": [
+        "createBreaker"
+      ],
+      "lines": 86
+    },
+    {
+      "path": "lib/retrieval/embed-fallback-server.js",
+      "mod": "retrieval",
+      "exports": [
+        "DEFAULT_LLAMA_SERVER",
+        "DEFAULT_EMBED_MODEL",
+        "DEFAULT_EMBED_PORT",
+        "DEFAULT_IDLE_SHUTDOWN_MS",
+        "isEmbedServerAvailable",
+        "stopEmbedServer",
+        "ensureEmbedServer",
+        "touchEmbedServer"
+      ],
+      "lines": 144
+    },
+    {
+      "path": "lib/retrieval/l0-normalize.js",
+      "mod": "retrieval",
+      "exports": [
+        "DEFAULT_L0_SAT_K",
+        "DEFAULT_L0_NORM_CAP",
+        "DEFAULT_L0_SEAT_MAX",
+        "saturateScore",
+        "normalizeL0Rows"
+      ],
+      "lines": 82
+    },
+    {
+      "path": "lib/retrieval/query-terms.js",
+      "mod": "retrieval",
+      "exports": [
+        "COMMON_QW",
+        "stripVirtual",
+        "qTermsOf",
+        "stripAskTemplate",
+        "literalsHit",
+        "TIME_WORD",
+        "EXPLICIT_TIME_INTENT",
+        "IN_SCOPE_WORD",
+        "OUT_OF_SCOPE"
+      ],
+      "lines": 163
+    },
+    {
+      "path": "lib/retrieval/retriever.js",
+      "mod": "retrieval",
+      "exports": [
+        "DEFAULT_INDEX_ROOT",
+        "resolveGraphWeight",
+        "DEFAULT_ENGRAM_PATH",
+        "DEFAULT_ALIAS_PATH",
+        "createRetriever"
+      ],
+      "lines": 2840
+    },
+    {
+      "path": "lib/retrieval/rrf.js",
+      "mod": "retrieval",
+      "exports": [
+        "rrfFuse",
+        "weightedFuse",
+        "classifyTemporal",
+        "normalizeScores",
+        "pageSizeFor",
+        "resolveAdaptiveK",
+        "classifyQuery"
+      ],
+      "lines": 331
+    },
+    {
+      "path": "lib/retrieval/source-tracer.js",
+      "mod": "retrieval",
+      "exports": [
+        "resolveSourceRef",
+        "traceSourceSnippets"
+      ],
+      "lines": 308
+    },
+    {
+      "path": "lib/retrieval/stages.js",
+      "mod": "retrieval",
+      "exports": [
+        "stage1",
+        "stage2",
+        "stage3",
+        "expandHypergraph",
+        "expandOneHop"
+      ],
+      "lines": 279
+    },
+    {
+      "path": "lib/retrieval/startlux-rerank.js",
+      "mod": "retrieval",
+      "exports": [
+        "DEFAULT_LLAMA_SERVER",
+        "DEFAULT_STARTLUX_MODEL",
+        "DEFAULT_PORT",
+        "DEFAULT_CONTEXT_SIZE",
+        "DEFAULT_IDLE_SHUTDOWN_MS",
+        "isStartLuxAvailable",
+        "stopStartLuxServer",
+        "ensureStartLuxServer",
+        "rerankL0Candidates"
+      ],
+      "lines": 230
+    },
+    {
+      "path": "lib/retrieval/time-window.js",
+      "mod": "retrieval",
+      "exports": [
+        "parseTimeWindow",
+        "stripTimeWords",
+        "isPureTimeQuery",
+        "ageDaysOf",
+        "prominenceOf"
+      ],
+      "lines": 235
+    },
+    {
+      "path": "lib/retrieval/tokenize.js",
+      "mod": "retrieval",
+      "exports": [
+        "createTokenizer",
+        "tokenizeBigram",
+        "tokenizeSegment",
+        "tokenizeUnigram",
+        "splitRuns"
+      ],
+      "lines": 101
+    },
+    {
+      "path": "lib/retrieval/tools.js",
+      "mod": "retrieval",
+      "exports": [
+        "MEMORY_SEARCH",
+        "MEMORY_GET",
+        "MEMORY_REFUTE",
+        "createMemoryTools"
+      ],
+      "lines": 823
+    },
+    {
+      "path": "lib/retrieval/types.js",
+      "mod": "retrieval",
+      "exports": [
+        "FIELD_WEIGHT",
+        "ADAPTIVE_K",
+        "STAGE_GUARD",
+        "ALIAS_RULES",
+        "STOPWORDS",
+        "DEGRADE_LEVELS",
+        "isDomainTerm",
+        "assertPathHops",
+        "assertRelationEdges",
+        "estimateTokens"
+      ],
+      "lines": 164
+    },
+    {
+      "path": "lib/retrieval/zstd-extract.py",
+      "mod": "retrieval",
+      "exports": [],
+      "lines": 129
+    },
+    {
+      "path": "lib/scenes.js",
+      "mod": "(root)",
+      "exports": [
+        "SCENE_ROOTS",
+        "makeSceneRoots",
+        "sceneOfCwd",
+        "sceneOfCard",
+        "isVisible",
+        "summarize"
+      ],
+      "lines": 129
+    },
+    {
+      "path": "lib/scorer/baseline.js",
+      "mod": "scorer",
+      "exports": [
+        "createScorer"
+      ],
+      "lines": 49
+    },
+    {
+      "path": "lib/scoring/adoption.js",
+      "mod": "scoring",
+      "exports": [
+        "isAdopted",
+        "commitAdoptions"
+      ],
+      "lines": 195
+    },
+    {
+      "path": "lib/scoring/cold-archive.mjs",
+      "mod": "scoring",
+      "exports": [
+        "COLD_ARCHIVE_PATH",
+        "BACKUP_DIR",
+        "shouldArchive",
+        "runColdArchive",
+        "restoreFromArchive"
+      ],
+      "lines": 158
+    },
+    {
+      "path": "lib/scoring/four-forces.js",
+      "mod": "scoring",
+      "exports": [
+        "GATE_THRESHOLD",
+        "REL_EXACT_FOR_EXEMPT",
+        "REL_TIME_ONLY_FOR_EXEMPT",
+        "isTimeMatchedHit",
+        "inferQueryTitleType",
+        "isExactKeywordHit",
+        "MAX_HITS",
+        "W",
+        "HALF_LIFE",
+        "LIN",
+        "DYN_HL",
+        "halfLifeOf",
+        "decayAnchorOf",
+        "dayFloor",
+        "recencyOf",
+        "strengthOf",
+        "applyFourForces",
+        "rerankWithFourForces"
+      ],
+      "lines": 683
+    },
+    {
+      "path": "lib/scoring/importance.js",
+      "mod": "scoring",
+      "exports": [
+        "IMPORTANCE_BASE",
+        "scoreImportance",
+        "backfillCard"
+      ],
+      "lines": 127
+    },
+    {
+      "path": "lib/scoring/shadow-decay.js",
+      "mod": "scoring",
+      "exports": [
+        "FALLBACK_PROD",
+        "SHADOW_VARIANTS",
+        "resolveProdBaseline",
+        "runShadowDecay"
+      ],
+      "lines": 145
+    },
+    {
+      "path": "lib/section.js",
+      "mod": "(root)",
+      "exports": [
+        "createSectionRenderer"
+      ],
+      "lines": 154
+    },
+    {
+      "path": "lib/shard-files.js",
+      "mod": "(root)",
+      "exports": [
+        "ARCHIVE_DIR_NAME",
+        "listShardFiles",
+        "compareDataFiles",
+        "listShardNames",
+        "shardStats"
+      ],
+      "lines": 118
+    },
+    {
+      "path": "lib/working-memory/activation-store.js",
+      "mod": "working-memory",
+      "exports": [
+        "DEFAULT_WM_DIR",
+        "ACTIVATION_FILE",
+        "decayedActivation",
+        "mergeActivation",
+        "mergeActivationFiles",
+        "createActivationStore"
+      ],
+      "lines": 323
+    },
+    {
+      "path": "lib/working-memory/budget.js",
+      "mod": "working-memory",
+      "exports": [
+        "computeL0Budget",
+        "sanitizeInjectionText",
+        "hasInstructionalPattern",
+        "renderCardLine",
+        "finalScore",
+        "isIntersection"
+      ],
+      "lines": 309
+    },
+    {
+      "path": "lib/working-memory/evict.js",
+      "mod": "working-memory",
+      "exports": [
+        "planEviction"
+      ],
+      "lines": 64
+    },
+    {
+      "path": "lib/working-memory/index.js",
+      "mod": "working-memory",
+      "exports": [
+        "WM_LEVELS",
+        "RENDER_TIER",
+        "WM_REASON",
+        "WM_DEFAULTS",
+        "WM_HARD",
+        "resolveConfig",
+        "normalizeActivation",
+        "computeL0Budget",
+        "renderCardLine",
+        "finalScore",
+        "isIntersection",
+        "createGraphAdapter",
+        "createSpreader",
+        "MaxHeap",
+        "createActivationStore",
+        "mergeActivation",
+        "mergeActivationFiles",
+        "decayedActivation",
+        "DEFAULT_WM_DIR",
+        "ACTIVATION_FILE",
+        "planEviction",
+        "createWorkingMemory",
+        "STATE_PREFIX"
+      ],
+      "lines": 25
+    },
+    {
+      "path": "lib/working-memory/spread.js",
+      "mod": "working-memory",
+      "exports": [
+        "createGraphAdapter",
+        "createSpreader",
+        "MaxHeap"
+      ],
+      "lines": 257
+    },
+    {
+      "path": "lib/working-memory/types.js",
+      "mod": "working-memory",
+      "exports": [
+        "WM_LEVELS",
+        "RENDER_TIER",
+        "WM_REASON",
+        "WM_DEFAULTS",
+        "WM_HARD",
+        "resolveConfig",
+        "normalizeActivation"
+      ],
+      "lines": 173
+    },
+    {
+      "path": "lib/working-memory/working-memory.js",
+      "mod": "working-memory",
+      "exports": [
+        "STATE_PREFIX",
+        "createWorkingMemory",
+        "DEFAULT_WM_DIR"
+      ],
+      "lines": 726
+    }
+  ],
+  "fileEdges": [
+    {
+      "from": "lib/backends/engram.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/backends/journal.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/diary/index.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/dispatch/ledger.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/embedding/auto-build.js",
+      "to": "lib/hypergraph/source.js"
+    },
+    {
+      "from": "lib/embedding/index-store.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/hypergraph/l0-cache.js",
+      "to": "lib/shard-files.js"
+    },
+    {
+      "from": "lib/hypergraph/pipeline.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/hypergraph/source.js",
+      "to": "lib/ingest/title-clean.js"
+    },
+    {
+      "from": "lib/hypergraph/source.js",
+      "to": "lib/ingest/normalize.js"
+    },
+    {
+      "from": "lib/hypergraph/source.js",
+      "to": "lib/scoring/importance.js"
+    },
+    {
+      "from": "lib/hypergraph/source.js",
+      "to": "lib/ingest/entities.js"
+    },
+    {
+      "from": "lib/hypergraph/source.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/hypergraph/source.js",
+      "to": "lib/shard-files.js"
+    },
+    {
+      "from": "lib/hypergraph/source.js",
+      "to": "lib/memory/l1-l2-link.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/backends/journal.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/backends/engram.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/scorer/baseline.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/observe/log.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/hypergraph/backend.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/retrieval/retriever.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/embedding/client.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/embedding/auto-build.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/ingest/axioms.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/working-memory/index.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/hypergraph/source.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/hypergraph/l0-cache.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/ingest/index.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/ingest/persona.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/ingest/scene-nav.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/hypergraph/auto-refresh.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/diary/tool.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/retrieval/tools.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/diary/scheduler.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/dispatch/ledger.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/dispatch/tool.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/dispatch/event-source.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/dispatch/hotreload-probe.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/dispatch/hotreload-tools.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/scoring/adoption.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/ingest/config.js"
+    },
+    {
+      "from": "lib/index.js",
+      "to": "lib/scoring/cold-archive.mjs"
+    },
+    {
+      "from": "lib/ingest/axioms.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/capture.js",
+      "to": "lib/shard-files.js"
+    },
+    {
+      "from": "lib/ingest/config.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/core.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/core.js",
+      "to": "lib/faults.js"
+    },
+    {
+      "from": "lib/ingest/distill.js",
+      "to": "lib/faults.js"
+    },
+    {
+      "from": "lib/ingest/distill.js",
+      "to": "lib/hypergraph/source.js"
+    },
+    {
+      "from": "lib/ingest/distill.js",
+      "to": "lib/shard-files.js"
+    },
+    {
+      "from": "lib/ingest/distill.js",
+      "to": "lib/scoring/importance.js"
+    },
+    {
+      "from": "lib/ingest/distill.js",
+      "to": "lib/card-session.js"
+    },
+    {
+      "from": "lib/ingest/entities.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/entry-shadow.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/entry-shadow.js",
+      "to": "lib/faults.js"
+    },
+    {
+      "from": "lib/ingest/extract.js",
+      "to": "lib/faults.js"
+    },
+    {
+      "from": "lib/ingest/extract.js",
+      "to": "lib/scoring/importance.js"
+    },
+    {
+      "from": "lib/ingest/index.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/persona.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/resolution.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/scene-nav.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/signal-miss.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/verbatim-lookup.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/ingest/verbatim-lookup.js",
+      "to": "lib/shard-files.js"
+    },
+    {
+      "from": "lib/memory/card-locator.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/memory/card-locator.js",
+      "to": "lib/shard-files.js"
+    },
+    {
+      "from": "lib/memory/l1-l2-link.js",
+      "to": "lib/shard-files.js"
+    },
+    {
+      "from": "lib/observe/log.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/prefetch.js",
+      "to": "lib/working-memory/budget.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/faults.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/hypergraph/store.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/hypergraph/source.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/hypergraph/l0-rounds.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/ingest/core.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/scenes.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/scoring/four-forces.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/scoring/shadow-decay.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/ingest/config.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/embedding/client.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/embedding/index-store.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/ingest/graph.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/ingest/motifs.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/card-session.js"
+    },
+    {
+      "from": "lib/retrieval/retriever.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/retrieval/rrf.js",
+      "to": "lib/ingest/concentrate.js"
+    },
+    {
+      "from": "lib/retrieval/source-tracer.js",
+      "to": "lib/card-session.js"
+    },
+    {
+      "from": "lib/retrieval/source-tracer.js",
+      "to": "lib/ingest/verbatim-lookup.js"
+    },
+    {
+      "from": "lib/retrieval/source-tracer.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/retrieval/tools.js",
+      "to": "lib/ingest/entities.js"
+    },
+    {
+      "from": "lib/retrieval/tools.js",
+      "to": "lib/ingest/title-clean.js"
+    },
+    {
+      "from": "lib/retrieval/tools.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/retrieval/tools.js",
+      "to": "lib/memory/card-locator.js"
+    },
+    {
+      "from": "lib/retrieval/tools.js",
+      "to": "lib/faults.js"
+    },
+    {
+      "from": "lib/scoring/adoption.js",
+      "to": "lib/memory/card-locator.js"
+    },
+    {
+      "from": "lib/scoring/shadow-decay.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/section.js",
+      "to": "lib/ingest/persona.js"
+    },
+    {
+      "from": "lib/section.js",
+      "to": "lib/ingest/axioms.js"
+    },
+    {
+      "from": "lib/working-memory/activation-store.js",
+      "to": "lib/hypergraph/lock.js"
+    },
+    {
+      "from": "lib/working-memory/activation-store.js",
+      "to": "lib/paths.js"
+    },
+    {
+      "from": "lib/working-memory/budget.js",
+      "to": "lib/retrieval/types.js"
+    },
+    {
+      "from": "lib/working-memory/working-memory.js",
+      "to": "lib/retrieval/types.js"
+    },
+    {
+      "from": "lib/working-memory/working-memory.js",
+      "to": "lib/hypergraph/source.js"
+    }
+  ],
   "edgeList": [
     {
       "from": "ingest",

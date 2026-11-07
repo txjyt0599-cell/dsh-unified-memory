@@ -21,7 +21,7 @@
  *
  * ## 用法
  *   node scripts/check-as-stranger.mjs           # 快速档（约 30s）
- *   node scripts/check-as-stranger.mjs --full    # 加跑全部 37 套件
+ *   node scripts/check-as-stranger.mjs --full    # 加跑全部套件
  *   node scripts/check-as-stranger.mjs --json
  *
  * 退出码：0 = 陌生人也能用；1 = 有只在我机器上成立的假设
@@ -216,14 +216,14 @@ info('── 3 · 症状断言（这三条正是前两轮漏掉的） ──');
 // ── 4 · 全套件（可选，慢） ──
 if (FULL) {
   info('');
-  info('── 4 · 全部 37 套件（在别人机器上） ──');
+  info('── 4 · 全部套件（在别人机器上） ──');
   const suites = readdirSync(CLONE).filter((f) => /^selftest.*\.mjs$/.test(f)).sort();
   let bad = [];
   for (const s of suites) {
     const r = asStranger([s], { timeout: 300000 });
     if (r.code !== 0) bad.push(s + ' (exit=' + r.code + ')');
   }
-  check('37 套件全绿', bad.length === 0, bad.length ? bad.slice(0, 5).join(', ') : '共 ' + suites.length + ' 套');
+  check('全部套件全绿', bad.length === 0, bad.length ? bad.slice(0, 5).join(', ') : '共 ' + suites.length + ' 套');
 }
 
 // ── 收尾 ──

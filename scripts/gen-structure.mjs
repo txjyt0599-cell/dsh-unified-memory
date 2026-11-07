@@ -54,6 +54,7 @@ for (const f of files) {
   info.set(f, { rel: rel(f), mod: modOf(f), exports: [...exports], imports, lines: t.split('\n').length });
 }
 
+const fileEdgeMap = new Map();
 const edgeMap = new Map();
 for (const [f, v] of info) {
   for (const spec of v.imports) {
@@ -66,6 +67,7 @@ for (const [f, v] of info) {
     if (a === b) continue;
     const k = a + ' -> ' + b;
     edgeMap.set(k, (edgeMap.get(k) || 0) + 1);
+    fileEdgeMap.set(rel(f) + ' -> ' + info.get(target).rel, 1);
   }
 }
 
@@ -78,10 +80,11 @@ for (const [, v] of info) {
 for (const m of Object.values(mods)) m.names.sort();
 
 const edgeList = [...edgeMap.entries()].map(([k, n]) => { const [from, to] = k.split(' -> '); return { from, to, n }; }).sort((a, b) => b.n - a.n || a.from.localeCompare(b.from));
+const fileList = [...info.values()].map((v) => ({ path: v.rel, mod: v.mod, exports: v.exports, lines: v.lines })).sort((a, b) => a.path.localeCompare(b.path));
 const totals = { files: files.length, modules: Object.keys(mods).length, exports: Object.values(mods).reduce((a, b) => a + b.exports, 0), edges: edgeList.length };
 
 if (!existsSync(DOCS)) mkdirSync(DOCS);
-writeFileSync(join(DOCS, 'structure.json'), JSON.stringify({ generatedAt: new Date().toISOString(), totals, mods, edgeList }, null, 2), 'utf8');
+writeFileSync(join(DOCS, 'structure.json'), JSON.stringify({ generatedAt: new Date().toISOString(), totals, mods, files: fileList, fileEdges: [...fileEdgeMap.keys()].map((k) => { const [from, to] = k.split(' -> '); return { from, to }; }), edgeList }, null, 2), 'utf8');
 
 const order = ['(root)', 'ingest', 'retrieval', 'hypergraph', 'memory', 'working-memory', 'scoring', 'scorer', 'diary', 'dispatch', 'embedding', 'backends', 'observe'];
 const rows = order.filter((k) => mods[k]).map((k) => {
@@ -166,7 +169,7 @@ const md = [
   '',
   '- 本图只覆盖 lib/（插件运行时代码），不含 scripts/（测试/工具）。',
   '- 边为相对 import 的静态解析结果；动态 import() 若带变量不会被计入。',
-  '- 与生产版（normify-phoebe-memory）分属两棵树：本图只描述开源仓库自身。',
+  '- 与生产版（normify-unified-memory）分属两棵树：本图只描述开源仓库自身。',
 ].join('\n');
 writeFileSync(join(DOCS, 'STRUCTURE.md'), md, 'utf8');
 console.log('structure: ' + totals.files + ' files / ' + totals.modules + ' modules / ' + totals.exports + ' exports / ' + totals.edges + ' edges');

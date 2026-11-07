@@ -1,7 +1,7 @@
 # 开源版结构图（dsh-unified-memory）
 
 > 自动生成，勿手改。重新生成：node scripts/gen-structure.mjs（或 npm run structure）
-> 生成时间：2026-11-07T07:37:28.995Z
+> 生成时间：2026-11-07T08:07:20.307Z
 
 ## 一 · 总览
 
@@ -55,7 +55,7 @@ flowchart TD
 
 | 模块 | 职责 | 文件 | 导出 | 行数 |
 |---|---|---:|---:|---:|
-| `(root)` | 入口与编排 | 9 | 36 | 3066 |
+| `(root)` | 入口与编排 | 9 | 36 | 3072 |
 | `ingest` | 写入链（L0 捕获 / L1 提取 / L2 蒸馏） | 25 | 150 | 7982 |
 | `retrieval` | 检索链（BM25 / 重排 / 工具） | 16 | 83 | 6320 |
 | `hypergraph` | 超图存储与索引 | 16 | 76 | 2893 |
@@ -254,4 +254,4 @@ flowchart TD
 
 - 本图只覆盖 lib/（插件运行时代码），不含 scripts/（测试/工具）。
 - 边为相对 import 的静态解析结果；动态 import() 若带变量不会被计入。
-- 与生产版（normify-phoebe-memory）分属两棵树：本图只描述开源仓库自身。
+- 与生产版（normify-unified-memory）分属两棵树：本图只描述开源仓库自身。

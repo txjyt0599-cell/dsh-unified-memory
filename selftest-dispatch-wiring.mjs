@@ -168,7 +168,7 @@ console.log('\n── F · 原子写 ──');
   const raw = readFileSync(p, 'utf8');
   check('F', 'F1 落盘是合法 JSON', (() => { try { JSON.parse(raw); return true; } catch { return false; } })());
   check('F', 'F2 没有留下 .tmp 残file', !existsSync(p + '.tmp') || true);
-  check('F', 'F3 schema 字段存在', JSON.parse(raw).schema === 'phoebe-dispatch-ledger.v1');
+  check('F', 'F3 schema 字段存在', JSON.parse(raw).schema === 'assistant-dispatch-ledger.v1');
 }
 
 try { rmSync(tmp, { recursive: true, force: true }); } catch {}

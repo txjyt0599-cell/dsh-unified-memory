@@ -33,7 +33,8 @@ const RULES = [
   { name: '具体显卡/芯片型号', re: /\b(9060|780M|4050|RDNA4|gfx1200|AdapterRAM|Radeon)\b/i },
   { name: '助手自称/对用户的称呼', re: new RegExp(['\u83f2\u6bd4', '\u4e3b\u4eba'].join('|')) },
   { name: '作者私有项目名', re: /desktop-pet|next-hub|nexthub|KVMem/i },
-  { name: '作者私有备份盘路径', re: /MemoryBackup/ },
+  { name: '作者私有备份盘路径', re: /MemoryBackup|PhoebeBackupRoot/ },
+  { name: '英文助手名', re: /\bPhoebe\b|phoebe[-_]memory/i },
   { name: '开发机路径', re: new RegExp('C:\\/Users\\/Admin' + 'istrator|D:\\/Phoebe' + ' Studio|D:\\/dsh-plugins') },
 ];
 

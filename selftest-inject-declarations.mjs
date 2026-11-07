@@ -81,7 +81,7 @@ check('B', 'B1 代码读的 ctx 服务全部已声明', suspects.length === 0,
 // ── C · 反例：故意删一个必需声明，对账必须报红 ──
 console.log('\n── C · 反例（对账必须有效）──');
 {
-  // [2026-10-28 by Phoebe · 反例必须自适应]
+  // [2026-10-28 by Assistant · 反例必须自适应]
   //   初版把 inject 的**完整字符串**硬编码进 replace 锚点 —— 我随后往 inject 里加了
   //   sessions/sessionPersistence，锚点就失配了，反例静默失效（还报"检出空"）。
   //   这正是今天反复踩的"锚点脆断"第 3 次。⇒ 改成用正则**动态删掉最后两项**。

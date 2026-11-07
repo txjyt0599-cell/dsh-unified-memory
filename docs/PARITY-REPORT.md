@@ -1,19 +1,19 @@
 # 开源版 vs 生产结构图 · 差异核验报告
 
-> 生成：2026-11-07 · 依据：`D:/Phoebe Studio/normify-phoebe-memory/tree.json`（结构图插件产出）
+> 生成：2026-11-07 · 依据：生产侧结构图插件产出的 tree.json（normify 项目，路径不入库）
 > 被检对象：`dsh-unified-memory` 的 `lib/`
 > 方法：结构树 source/api 全量比对 + 归一化后逐文件 diff（剔除命名/占位差异）
 
 ## 一 · 结论
 
-**没有少东西。** 99 个源文件与生产一一对应；117 个挂 `lib/` 源码的生产模块全部能找到落点。
+**没有少东西。** 100 个源文件（99 代码 + 1 说明）与生产一一对应；117 个挂 `lib/` 源码的生产模块全部能找到落点。
 反而查出两件事：**生产结构图本身有 6 处过期**；**开源版有 1 处在同步中被生产硬编码覆盖**（已修）。
 
 ## 二 · 文件层面
 
 | 项 | 生产 | 开源 | 差异 |
 |---|---:|---:|---|
-| `lib/` 源文件（排除 .bak） | 99 | 99 | **0** |
+| `lib/` 源文件（排除 .bak，含 CONFIG-NOTES.md） | 100 | 100 | **0** |
 | 生产有、开源没有 | — | — | **0** |
 | 开源有、生产没有 | — | — | **0** |
 
@@ -33,7 +33,7 @@
 
 ## 四 · 内容层面（归一化后 diff）
 
-剔除 `phoebe-memory → unified-memory`、路径占位、人称等命名差异后，24 个文件仍有差异：
+剔除 `unified-memory → unified-memory`、路径占位、人称等命名差异后，24 个文件仍有差异：
 
 | 文件 | 差异性质 |
 |---|---|
@@ -59,6 +59,6 @@
 npm run structure          # 生成 docs/structure.json + docs/STRUCTURE.md
 
 # 生产侧（结构图插件）
-#   normify_tree_list → normify_module_list(project="phoebe-memory")
+#   normify_tree_list → normify_module_list(project="unified-memory")
 #   normify_validate / normify_build 重编译
 ```

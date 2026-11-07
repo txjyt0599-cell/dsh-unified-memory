@@ -48,9 +48,9 @@ for (const f of files) {
       return "normalize(dshHome() + '/" + sub + "')";
     });
     // 日记目录
-    L = L.replace(/'D:\/Assistant Studio\/日记'/g, () => { need.diaryRoot = 1; return 'diaryRoot()'; });
+    L = L.replace(/'D:\/workspace\/日记'/g, () => { need.diaryRoot = 1; return 'diaryRoot()'; });
     // 日记文件
-    L = L.replace(/'D:\/Assistant Studio\/日记\/([^']*)'/g, (m, sub) => {
+    L = L.replace(/'D:\/workspace\/日记\/([^']*)'/g, (m, sub) => {
       need.diaryRoot = 1; need.normalize = 1;
       return "normalize(diaryRoot() + '/" + sub + "')";
     });
