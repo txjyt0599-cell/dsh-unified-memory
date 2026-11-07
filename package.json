@@ -1,6 +1,6 @@
 {
   "name": "dsh-unified-memory",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "A local-first long-term memory plugin for DSH: four-force decay, BM25 + vector + hypergraph retrieval, L0/L1/L2 layering, and a dispatch receipt state machine.",
   "type": "module",
   "main": "./lib/index.js",
@@ -31,7 +31,7 @@
   },
   "scripts": {
     "smoke": "node scripts/smoke-apply.mjs",
-    "check": "node scripts/smoke-apply.mjs && node scripts/check-tracked-imports.mjs && node scripts/check-syntax.mjs && node scripts/check-hardcodes.mjs",
+    "check": "node scripts/smoke-apply.mjs && node scripts/check-tracked-imports.mjs && node scripts/check-syntax.mjs && node scripts/check-hardcodes.mjs && node scripts/check-personal-data.mjs",
     "check:as-stranger": "node scripts/check-as-stranger.mjs",
     "check:release": "npm run check && node scripts/check-as-stranger.mjs --full && npm run audit",
     "audit": "node scripts/security-audit.mjs && node scripts/data-leak-audit.mjs"

@@ -1678,8 +1678,16 @@ console.log('── AA · 认知信用与冷却期（期8.1/8.2）──');
     }]);
 
     // ⑤-a 开关关闭（缺省）⇒ 逐位等同现状：不写 refuted 行、不产新卡
+    // [2026-11-07 · 修定时炸弹] 夹具旧卡的 createdAt 是**固定时间戳**（T=1792667400000），
+    //   而 distill 用 Date.now() 算 ageDays ⇒ 跑得越晚旧卡越"老"。
+    //   一旦 ageDays >= retireAfterDays，去重会走「退役旧卡 + 写新卡」分支，written 必然 =1，
+    //   AA19c 就会无缘无故变红（实测：2026-10-23 通过，2026-11-07 失败，代码一模一样）。
+    //   ⇒ 阈值按「今天距 T 的实际天数 + 100 天」动态给，恒走「旧卡还新 ⇒ 跳过」分支。
+    //   **断言本身（written 必须为 0）一个字没改**，改的只是让夹具与真实时间脱钩。
+    const AA_FIXTURE_T = 1792667400000;   // 与 mkAARoot 里旧卡 createdAt 同一常量
+    const freshDays = Math.ceil((Date.now() - AA_FIXTURE_T) / 86400000) + 100;
     const rootOff = mkAARoot('off');
-    const rOff = await runDistill({ llm: fakeEp, opts: { root: rootOff, sessionId: 'sAA', minDistillMessages: 1, disableLock: true, retireAfterDays: 14 }, completeFn: completeAA });
+    const rOff = await runDistill({ llm: fakeEp, opts: { root: rootOff, sessionId: 'sAA', minDistillMessages: 1, disableLock: true, retireAfterDays: freshDays }, completeFn: completeAA });
     check('AA', 'AA19 开关默认 false 时 beliefRefuted/beliefForked 恒 0',
       rOff.beliefRevision === false && rOff.beliefRefuted === 0 && rOff.beliefForked === 0, JSON.stringify(rOff));
     check('AA', 'AA19b 开关关闭时旧卡不被 refuted（行为等同现状）',

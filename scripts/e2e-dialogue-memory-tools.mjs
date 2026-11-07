@@ -235,8 +235,10 @@ try {
     }
 
     // 验证 limit 硬上限截断
+    // 上限由 10 提到 30：盘点/列举类查询模型需要一次拿到足量清单才能判断覆盖是否完整；
+    // 超过 30 仍被截断（防上下文爆炸）。
     const resMax = await searchTool.execute({ query: '9060XT', limit: 100 });
-    check('limit 硬上限截断生效（<=10）', resMax.hits.length <= 10, '返回 ' + resMax.hits.length + ' 条');
+    check('limit 硬上限截断生效（<=30）', resMax.hits.length <= 30, '返回 ' + resMax.hits.length + ' 条');
 
     // 验证 temporal 过滤
     const res7d = await searchTool.execute({ query: '9060XT', temporal: 'recent_7d' });

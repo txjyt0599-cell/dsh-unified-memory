@@ -121,8 +121,25 @@ async function main() {
   //   它是**静态**的、逐字节恒定的，不违反缓存合同，因此上限合理放宽。
   //   保留「有界」这一意图：静态段必须 < 1200 字符，防止将来被塞进大段动态内容。
   check("A", "A9 section 静态段有界（<1200，防动态内容混入）", String(o1).length < 1200, "len=" + String(o1).length);
-  // 另加一条更贴意图的断言：静态段里必须有 host_axioms，且不含检索卡片标记
-  check("A", "A9b section 含宿主机公理（静态）", /<host_axioms>[\s\S]*9060 XT[\s\S]*16GB/.test(String(o1)), "ok");
+  // [2026-11-07 · 去个人化] 反向断言：静态段里**不许**出现任何具体机器信息。
+  //   曾经的坑：把作者本机的显卡型号 / 显存 / 防误报规则焊进 FIXED 段，
+  //   于是每个使用者每轮 system prompt 都多付约 250 字符、且内容与本机无关。
+  check("A", "A9b section 不含具体机器硬件信息（去个人化）",
+    !/9060|780M|Radeon|RDNA4|gfx1200|AdapterRAM|\b16\s?GB\b/i.test(String(o1)), "ok");
+  // 正向：只有使用者主动声明 hostAxioms 时才渲染该段（能力保留，个人数据默认无）
+  {
+    const ctx2 = makeCtx();
+    const mod2 = await import("file:///" + LIB + "/index.js?axiom-test=1");
+    mod2.apply(ctx2, {
+      enabled: true, emit: "section", order: 0.6,
+      hostAxioms: ["主显卡 X，显存 Y GB"],
+      logs: { dir: join(osTmpdir(), "wm-selftest-logs") },
+    });
+    const st2 = (ctx2.registered.sections[0] || {}).text;
+    const t2 = String(typeof st2 === "function" ? st2({ sessionId: "sess-axiom" }) : (st2 || ""));
+    check("A", "A9c 使用者声明的 hostAxioms 才会渲染",
+      /<host_axioms>[\s\S]*主显卡 X[\s\S]*<\/host_axioms>/.test(t2), t2.slice(0, 50).replace(/\n/g, " "));
+  }
     check("A", "A10 section 含固定说明关键词", /固定不变|消息末尾/.test(String(o1)), "ok");
   }
   const preStepHandlers = ctx.registered.events.get("agent/pre-step") || [];

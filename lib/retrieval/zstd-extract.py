@@ -95,7 +95,9 @@ def main():
                             if isinstance(content, list):
                                 content = "".join([c.get("text", "") for c in content if isinstance(c, dict)])
                             if content and reg.search(content):
-                                role_name = "主人" if role == "user" else "菲比"
+                                # [2026-11-07 · 去个人化] 原实现把角色名硬编码成某个助手的自称/称呼，
+                                #   别的使用者导出会话时会看到完全无关的名字。改用标准角色名。
+                                role_name = role
                                 if len(content) > max_c:
                                     has_truncated = True
                                     cut = content[:max_c] + " ...[余下截断]"
