@@ -42,3 +42,6 @@ Thumbs.db
 
 # 测试运行时数据根（含本机环境元数据，禁止入库）
 _test-root/
+
+# 测试输出（临时）
+_ingest-out.txt

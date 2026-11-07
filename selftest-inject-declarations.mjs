@@ -48,7 +48,7 @@ const declared = parseInject(src);
 check('A', 'A1 能解析出 inject 数组', Array.isArray(declared) && declared.length > 0, JSON.stringify(declared));
 // [2026-11-01 Assistant · 解硬依赖] agentTeams 从「必需」改成「要么声明、要么软取」。
 //   背景：cordis 的数组式 inject 是**硬依赖** —— 缺服务整条 fiber 挂起。
-//        headless（B站鱼塘）没有 agent-team 插件，于是 phoebe-memory 永远装不进去。
+//        headless（B站鱼塘）没有 agent-team 插件，于是 unified-memory 永远装不进去。
 //        已改为 inject 不声明 + 运行时 try { ctx.agentTeams } catch {} 软取。
 //   ⇒ 判据也要跟着变：**声明了也行，软取了也行，但绝不能「又没声明又硬访问」**。
 const REQUIRED = ['systemPrompt', 'tools', 'agents'];

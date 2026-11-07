@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const EXCL = ['_sanitize-backup', 'node_modules', '.git', 'normify-phoebe-memory'];
+const EXCL = ['_sanitize-backup', 'node_modules', '.git', 'normify-unified-memory'];
 const files = [];
 (function walk(d) {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {

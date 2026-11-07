@@ -223,7 +223,7 @@ v2.0.0 的更新覆盖两个开发会话，共 **44 项**。为免混淆，下�
 > `ingest/persona-drift`、`hypergraph/l0-cache`、`memory/l1-l2-link`、`ingest/entry-shadow`、
 > `ingest/signal-miss`、`shard-files`），共 81 个文件、+5,750 / −1,078 行。
 > 开源版独有的实现（开箱即用默认值、可移植路径、首启配置模板、空场景表、BM25 快照 API）已逐项保留。
-> 当前测试：**41 套件 40 绿**；`selftest-ingest` 尚有 17 条旧断言与新过滤语义不一致，待单独对齐。
+> 当前测试：**41 套件全绿**（含 `selftest-ingest` 391/391）。
 > 完整逐项清单（含每项证据文件）见仓库根 `CHANGES-v2.0.0.md`。
 
 ---

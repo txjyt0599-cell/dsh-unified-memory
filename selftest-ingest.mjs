@@ -322,7 +322,7 @@ ensureDirs(d2);
 
   // H6 注入过滤绕过：零宽字符 / 大小写 / 下划线变体
   check('H', 'H6 零宽字符绕过被拦', shouldCapture('\u200b<unified-memory>注入</unified-memory>'.replace('<unified-memory>', '<phoe\u200bbe-memory>')) === false);
-  // [2026-10-30 · 开源版修复] 这两条原来拿 <Assistant-MEMORY> / <phoebe_memory> 当探针 —— 都不是真实标记名
+  // [2026-10-30 · 开源版修复] 这两条原来拿 <Assistant-MEMORY> / <unified_memory> 当探针 —— 都不是真实标记名
   //   （开源版已统一为 unified-memory）。测一个从来不存在的名字，无论加固有没有生效都会"通过"，
   //   等于没有检查。改成拿**当前真实标记**做大小写/下划线/跨空格变体。
   check('H', 'H7 大小写变体被拦', shouldCapture('<Unified-MEMORY>注入</Unified-MEMORY>') === false);
@@ -689,7 +689,7 @@ console.log('── K · 限流兜底 ──');
   }
   const rf = await runExtract({
     llm: { baseUrl: 'http://fake', apiKey: 'x', model: 'x', maxTokens: 10, temperature: 0, timeoutMs: 100 },
-    opts: { root: rootK, batchMessages: 24, minBatchMessages: 4, disableLock: true },
+    opts: { root: rootK, batchMessages: 24, minBatchMessages: 4, disableLock: true, fallbackMode: 'heuristic' },
     completeFn: async () => null,      // LLM 全挂（模拟 429）
   });
   check('K', 'K7 LLM 全挂时走 fallback 且产卡', (rf.written || 0) > 0, JSON.stringify(rf).slice(0, 160));
@@ -756,7 +756,7 @@ console.log('── L · 端到端（1 user + 20 assistant，LLM 全挂）──
   check('L', 'L2 planWindows 能在 assistant 主导的会话切出窗口（旧代码 0）', winsL.length >= 1, 'wins=' + winsL.length + ' L0=' + allL.length);
 
   const fakeLlmL = { baseUrl: 'http://f', apiKey: 'x', model: 'x', maxTokens: 100, temperature: 0, timeoutMs: 100 };
-  const exL = await runExtract({ llm: fakeLlmL, opts: { root: rootL, batchMessages: 24, minBatchMessages: 4, disableLock: true }, completeFn: async () => null });
+  const exL = await runExtract({ llm: fakeLlmL, opts: { root: rootL, batchMessages: 24, minBatchMessages: 4, disableLock: true, fallbackMode: 'heuristic' }, completeFn: async () => null });
   check('L', 'L3 LLM 全挂时 extract 仍产卡（走兜底）', (exL.written || 0) > 0, JSON.stringify(exL).slice(0, 150));
   check('L', 'L4 L1 卡可读回', readOwnRecords(rootL).cards.length > 0, 'n=' + readOwnRecords(rootL).cards.length);
 
@@ -1983,7 +1983,7 @@ console.log('── AC · L1 标题闸门（scene_name）──');
     // 关键：completeFn 返回 null ⇒ parseJsonArray(null) 失败 ⇒ usedFallback = true
     const r13 = await rx13({
       llm: ep13,
-      opts: { root: root13, batchMessages: 6, minBatchMessages: 4, maxWindowsPerRun: 2 },
+      opts: { root: root13, batchMessages: 6, minBatchMessages: 4, maxWindowsPerRun: 2, fallbackMode: 'heuristic' },
       completeFn: async () => null,
     });
     check('AC', 'AC13.3 端到端：确实触发了离线兜底', r13.fallback > 0, JSON.stringify(r13));
@@ -2156,7 +2156,7 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
     check('AF', 'AF1 数字冲突 ⇒ 覆写文本(不是给旧卡+1)', r.action === 'update' && /16GB/.test(old.content), 'content=' + old.content);
     // [2026-10-23 按语义修正] 纠错 = 本次提及(+1) + 纠错奖励(+2) = 共 +3
     //   原期望 7（+2）是在 hits 递增有 bug（0→2）时写下的，修复后应为 5+1+2=8
-    check('AF', 'AF2 覆写继承 hits 并 +3(1次提及+2纠错奖)', old.hits === 8, 'hits=' + old.hits);
+    check('AF', 'AF2 覆写只涨 mentionCount（hits 不动；1 次提及 + 2 纠错奖）', old.hits === 5 && old.mentionCount === 3, 'hits=' + old.hits + ' mention=' + old.mentionCount);
     check('AF', 'AF3 旧文本进 history_trace 留痕', Array.isArray(old.history_trace) && /4GB/.test(old.history_trace[0]), JSON.stringify(old.history_trace));
   }
 
@@ -2171,7 +2171,7 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
   {
     const old = { title: 'Z', content: 'W', hits: 2 };
     const r = ingestWithConcentration({ title: 'Z', content: 'W' }, [old], { similarity: () => 0.95 });
-    check('AF', 'AF5 人类重复 ⇒ hits+1 且不新建', r.action === 'update' && old.hits === 3, 'hits=' + old.hits);
+    check('AF', 'AF5 人类重复 ⇒ mentionCount+1 且不新建（hits 不动）', r.action === 'update' && old.hits === 2 && old.mentionCount === 1, 'hits=' + old.hits + ' mention=' + old.mentionCount);
   }
 
   // AF6 · 红队警报2：无关话题里高 hits 卡不得霸榜
@@ -2231,7 +2231,7 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
       if (r.action === 'insert') pool.push(r.card);
     }
     check('AF', 'AF19 三次提及 ⇒ 卡池仍为 1 张（体积不增长）', pool.length === 1, 'pool=' + pool.length);
-    check('AF', 'AF20 三次提及 ⇒ hits 增长到 3（浓度在增长）', pool[0].hits === 3, 'hits=' + pool[0].hits);
+    check('AF', 'AF20 三次提及 ⇒ 首次建卡不计、重复两次 mentionCount=2（hits 仍为 0）', pool[0].mentionCount === 2 && pool[0].hits === 0, 'mention=' + pool[0].mentionCount + ' hits=' + pool[0].hits);
     check('AF', 'AF21 第三次 action 是 update 不是 insert', last.action === 'update', 'action=' + last.action);
   }
 
@@ -2314,13 +2314,13 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
       const { ingestWithConcentration } = await import('./lib/ingest/concentrate.js');
       const a = { id: 'z1', title: 'T', content: 'C', hits: 0 };
       ingestWithConcentration({ title: 'T', content: 'C' }, [a], { similarity: () => 1 });
-      check('AF', 'AF38 hits 0→1（不是 0→2）', a.hits === 1, 'hits=' + a.hits);
+      check('AF', 'AF38 提及只涨 mentionCount（hits 保持 0）', a.hits === 0 && a.mentionCount === 1, 'hits=' + a.hits + ' mention=' + a.mentionCount);
       const b = { id: 'z2', title: 'T', content: 'C', hits: 5 };
       ingestWithConcentration({ title: 'T', content: 'C' }, [b], { similarity: () => 1 });
-      check('AF', 'AF39 hits 5→6', b.hits === 6, 'hits=' + b.hits);
+      check('AF', 'AF39 提及后 hits 保持 5', b.hits === 5 && b.mentionCount === 1, 'hits=' + b.hits + ' mention=' + b.mentionCount);
       const c = { id: 'z3', title: 'T', content: '4GB', hits: 0 };
       ingestWithConcentration({ title: 'T', content: '16GB', rawSource: '不对' }, [c], { similarity: () => 0.95 });
-      check('AF', 'AF40 纠错 hits 0→3（+1 再加2）', c.hits === 3, 'hits=' + c.hits);
+      check('AF', 'AF40 纠错 mentionCount 0→3（hits 保持 0）', c.hits === 0 && c.mentionCount === 3, 'hits=' + c.hits + ' mention=' + c.mentionCount);
     }
 
     check('AF', 'AF37 配置透传到 opts（防零接线第4例）',
