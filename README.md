@@ -7,6 +7,8 @@
 
 ---
 
+> 结构图：[docs/STRUCTURE.md](docs/STRUCTURE.md)（自动生成，npm run structure 可重算）
+
 ## Table of contents
 
 - [What it is](#what-it-is)

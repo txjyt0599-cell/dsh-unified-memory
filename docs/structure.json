@@ -1,0 +1,383 @@
+{
+  "generatedAt": "2026-11-07T07:37:28.994Z",
+  "totals": {
+    "files": 99,
+    "modules": 13,
+    "exports": 527,
+    "edges": 36
+  },
+  "mods": {
+    "backends": {
+      "files": 2,
+      "exports": 4,
+      "lines": 98,
+      "names": [
+        "backends/engram.js",
+        "backends/journal.js"
+      ]
+    },
+    "(root)": {
+      "files": 9,
+      "exports": 36,
+      "lines": 3066,
+      "names": [
+        "card-session.js",
+        "faults.js",
+        "index.js",
+        "orchestrator.js",
+        "paths.js",
+        "prefetch.js",
+        "scenes.js",
+        "section.js",
+        "shard-files.js"
+      ]
+    },
+    "diary": {
+      "files": 3,
+      "exports": 43,
+      "lines": 721,
+      "names": [
+        "diary/index.js",
+        "diary/scheduler.js",
+        "diary/tool.js"
+      ]
+    },
+    "dispatch": {
+      "files": 8,
+      "exports": 21,
+      "lines": 1620,
+      "names": [
+        "dispatch/event-source.js",
+        "dispatch/hotreload-exec.js",
+        "dispatch/hotreload-guard.js",
+        "dispatch/hotreload-probe.js",
+        "dispatch/hotreload-tools.js",
+        "dispatch/ledger.js",
+        "dispatch/state-machine.js",
+        "dispatch/tool.js"
+      ]
+    },
+    "embedding": {
+      "files": 3,
+      "exports": 18,
+      "lines": 491,
+      "names": [
+        "embedding/auto-build.js",
+        "embedding/client.js",
+        "embedding/index-store.js"
+      ]
+    },
+    "hypergraph": {
+      "files": 16,
+      "exports": 76,
+      "lines": 2893,
+      "names": [
+        "hypergraph/auto-refresh.js",
+        "hypergraph/backend.js",
+        "hypergraph/build.js",
+        "hypergraph/dedupe-titles.mjs",
+        "hypergraph/edge.js",
+        "hypergraph/episode.js",
+        "hypergraph/index-shard.js",
+        "hypergraph/l0-cache.js",
+        "hypergraph/l0-rounds.js",
+        "hypergraph/lock.js",
+        "hypergraph/pipeline.js",
+        "hypergraph/propagate.js",
+        "hypergraph/source.js",
+        "hypergraph/store.js",
+        "hypergraph/topic.js",
+        "hypergraph/types.js"
+      ]
+    },
+    "ingest": {
+      "files": 25,
+      "exports": 150,
+      "lines": 7982,
+      "names": [
+        "ingest/axioms.js",
+        "ingest/belief.js",
+        "ingest/capture.js",
+        "ingest/concentrate.js",
+        "ingest/config.js",
+        "ingest/consolidate.js",
+        "ingest/core.js",
+        "ingest/distill.js",
+        "ingest/entities.js",
+        "ingest/entry-shadow.js",
+        "ingest/extract.js",
+        "ingest/graph.js",
+        "ingest/html-strip.js",
+        "ingest/index.js",
+        "ingest/llm.js",
+        "ingest/motifs.js",
+        "ingest/normalize.js",
+        "ingest/persona-drift.js",
+        "ingest/persona.js",
+        "ingest/refute-scan.js",
+        "ingest/resolution.js",
+        "ingest/scene-nav.js",
+        "ingest/signal-miss.js",
+        "ingest/title-clean.js",
+        "ingest/verbatim-lookup.js"
+      ]
+    },
+    "memory": {
+      "files": 2,
+      "exports": 12,
+      "lines": 448,
+      "names": [
+        "memory/card-locator.js",
+        "memory/l1-l2-link.js"
+      ]
+    },
+    "observe": {
+      "files": 2,
+      "exports": 2,
+      "lines": 75,
+      "names": [
+        "observe/log.js",
+        "observe/rotate.js"
+      ]
+    },
+    "retrieval": {
+      "files": 16,
+      "exports": 83,
+      "lines": 6320,
+      "names": [
+        "retrieval/alias.js",
+        "retrieval/bm25.js",
+        "retrieval/breaker.js",
+        "retrieval/embed-fallback-server.js",
+        "retrieval/l0-normalize.js",
+        "retrieval/query-terms.js",
+        "retrieval/retriever.js",
+        "retrieval/rrf.js",
+        "retrieval/source-tracer.js",
+        "retrieval/stages.js",
+        "retrieval/startlux-rerank.js",
+        "retrieval/time-window.js",
+        "retrieval/tokenize.js",
+        "retrieval/tools.js",
+        "retrieval/types.js",
+        "retrieval/zstd-extract.py"
+      ]
+    },
+    "scorer": {
+      "files": 1,
+      "exports": 1,
+      "lines": 49,
+      "names": [
+        "scorer/baseline.js"
+      ]
+    },
+    "scoring": {
+      "files": 5,
+      "exports": 32,
+      "lines": 1308,
+      "names": [
+        "scoring/adoption.js",
+        "scoring/cold-archive.mjs",
+        "scoring/four-forces.js",
+        "scoring/importance.js",
+        "scoring/shadow-decay.js"
+      ]
+    },
+    "working-memory": {
+      "files": 7,
+      "exports": 49,
+      "lines": 1877,
+      "names": [
+        "working-memory/activation-store.js",
+        "working-memory/budget.js",
+        "working-memory/evict.js",
+        "working-memory/index.js",
+        "working-memory/spread.js",
+        "working-memory/types.js",
+        "working-memory/working-memory.js"
+      ]
+    }
+  },
+  "edgeList": [
+    {
+      "from": "ingest",
+      "to": "(root)",
+      "n": 19
+    },
+    {
+      "from": "retrieval",
+      "to": "(root)",
+      "n": 8
+    },
+    {
+      "from": "retrieval",
+      "to": "ingest",
+      "n": 8
+    },
+    {
+      "from": "(root)",
+      "to": "ingest",
+      "n": 7
+    },
+    {
+      "from": "(root)",
+      "to": "hypergraph",
+      "n": 5
+    },
+    {
+      "from": "(root)",
+      "to": "dispatch",
+      "n": 5
+    },
+    {
+      "from": "hypergraph",
+      "to": "(root)",
+      "n": 4
+    },
+    {
+      "from": "(root)",
+      "to": "embedding",
+      "n": 3
+    },
+    {
+      "from": "hypergraph",
+      "to": "ingest",
+      "n": 3
+    },
+    {
+      "from": "memory",
+      "to": "(root)",
+      "n": 3
+    },
+    {
+      "from": "retrieval",
+      "to": "hypergraph",
+      "n": 3
+    },
+    {
+      "from": "(root)",
+      "to": "backends",
+      "n": 2
+    },
+    {
+      "from": "(root)",
+      "to": "retrieval",
+      "n": 2
+    },
+    {
+      "from": "(root)",
+      "to": "working-memory",
+      "n": 2
+    },
+    {
+      "from": "(root)",
+      "to": "diary",
+      "n": 2
+    },
+    {
+      "from": "(root)",
+      "to": "scoring",
+      "n": 2
+    },
+    {
+      "from": "backends",
+      "to": "(root)",
+      "n": 2
+    },
+    {
+      "from": "ingest",
+      "to": "scoring",
+      "n": 2
+    },
+    {
+      "from": "retrieval",
+      "to": "scoring",
+      "n": 2
+    },
+    {
+      "from": "retrieval",
+      "to": "embedding",
+      "n": 2
+    },
+    {
+      "from": "working-memory",
+      "to": "hypergraph",
+      "n": 2
+    },
+    {
+      "from": "working-memory",
+      "to": "retrieval",
+      "n": 2
+    },
+    {
+      "from": "(root)",
+      "to": "scorer",
+      "n": 1
+    },
+    {
+      "from": "(root)",
+      "to": "observe",
+      "n": 1
+    },
+    {
+      "from": "diary",
+      "to": "(root)",
+      "n": 1
+    },
+    {
+      "from": "dispatch",
+      "to": "(root)",
+      "n": 1
+    },
+    {
+      "from": "embedding",
+      "to": "hypergraph",
+      "n": 1
+    },
+    {
+      "from": "embedding",
+      "to": "(root)",
+      "n": 1
+    },
+    {
+      "from": "hypergraph",
+      "to": "scoring",
+      "n": 1
+    },
+    {
+      "from": "hypergraph",
+      "to": "memory",
+      "n": 1
+    },
+    {
+      "from": "ingest",
+      "to": "hypergraph",
+      "n": 1
+    },
+    {
+      "from": "observe",
+      "to": "(root)",
+      "n": 1
+    },
+    {
+      "from": "retrieval",
+      "to": "memory",
+      "n": 1
+    },
+    {
+      "from": "scoring",
+      "to": "memory",
+      "n": 1
+    },
+    {
+      "from": "scoring",
+      "to": "(root)",
+      "n": 1
+    },
+    {
+      "from": "working-memory",
+      "to": "(root)",
+      "n": 1
+    }
+  ]
+}
