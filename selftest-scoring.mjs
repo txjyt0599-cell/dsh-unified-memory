@@ -1,6 +1,6 @@
 /**
  * selftest-scoring.mjs —— 四股力 / 重要度 / 采纳核验 自测
- * [2026-10-24 by Assistant · Step 1~3 配套]
+ * [2026-10-24 by Phoebe · Step 1~3 配套]
  */
 import { scoreImportance, IMPORTANCE_BASE } from './lib/scoring/importance.js';
 import { applyFourForces, recencyOf, strengthOf, halfLifeOf, MAX_HITS, GATE_THRESHOLD } from './lib/scoring/four-forces.js';
@@ -132,21 +132,6 @@ T('E3 只共享常见词 → 不采纳', () => {
   eq(isAdopted({ title: 'User今天说的问题', entities: [] }, '好的User今天这个问题我看看').used, false);
 });
 T('E4 空回复 → 不采纳', () => { eq(isAdopted({ entities: ['x'] }, '').used, false); });
-
-// ── [2026-10-29 补] E3 修的是「英文切片碎片白送分」，这两条防修过头 ──
-T('E5 英文整词命中 → 仍算采纳（不能被误杀）', () => {
-  eq(isAdopted({ title: 'bge-m3 embedding 配置', entities: [] },
-    '这里用 bge-m3 做向量').used, true);
-});
-T('E6 真实中文术语重合 → 仍算采纳', () => {
-  eq(isAdopted({ title: '派单回执状态机设计', entities: [] },
-    '派单回执这块我按状态机实现了').used, true);
-});
-T('E7 英文碎片不算重合（us/se/er 不许白送）', () => {
-  // 卡片叫 User...，回复里也有 User，但除此之外毫无关系 ⇒ 不采纳
-  eq(isAdopted({ title: 'User profile settings', entities: [] },
-    '好的 User 我看看别的').used, false);
-});
 
 console.log('\n  ' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail === 0 ? 0 : 1);

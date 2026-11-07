@@ -22,8 +22,6 @@ import { join } from 'node:path';
 import { createLedger } from './lib/dispatch/ledger.js';
 import { createDispatchTools } from './lib/dispatch/tool.js';
 import { classify, STATE } from './lib/dispatch/state-machine.js';
-import { fileURLToPath } from 'node:url';
-const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 let pass = 0, fail = 0;
 const fails = [];
@@ -48,9 +46,12 @@ console.log('\n── A · 判据 ──');
   check('A', 'R1 名册读失败 ⇒ undetermined（不许判死）', r1.state === STATE.UNDETERMINED, r1.state + ' / ' + r1.reason);
   check('A', 'R1b 原因写明是名册读不到', /roster-unreadable/.test(String(r1.reason)), r1.reason);
 
-  // R2 名册空
-  const r2 = classify({ ...base, target: { status: 'inactive', phase: 'active', exists: false }, rosterUnreadable: false });
-  check('A', 'R2 名册真的空 ⇒ 才允许 dead_target', r2.state === STATE.DEAD_TARGET, r2.state + ' / ' + r2.reason);
+  // R2 名册空 —— [2026-10-29 口径修正] 单次查无此人只报 undetermined；
+  //   连续 N 次（DEFAULTS.rosterMissingSamples=3）才判 dead。判据没松，是更严。
+  const r2 = classify({ ...base, target: { status: 'inactive', phase: 'active', exists: false, missingSamples: 1 }, rosterUnreadable: false });
+  check('A', 'R2 名册空但只差 1 次 ⇒ undetermined（不许单次判死）', r2.state === STATE.UNDETERMINED, r2.state + ' / ' + r2.reason);
+  const r2n = classify({ ...base, target: { status: 'inactive', phase: 'active', exists: false, missingSamples: 3 }, rosterUnreadable: false, deadline: { rosterMissingSamples: 3 } });
+  check('A', 'R2b 连采 3 次仍查无此人 ⇒ dead_target', r2n.state === STATE.DEAD_TARGET, r2n.state + ' / ' + r2n.reason);
 
   // R3 有人在
   const r3 = classify({ ...base, target: { status: 'running', phase: 'active', exists: true }, rosterUnreadable: false });
@@ -96,8 +97,15 @@ console.log('\n── C · 空名册 ──');
   const scan = tools.find(t => t.name === 'dispatch_scan');
   const res = await scan.execute({});
   const item = (res.items || []).find(x => x.taskId === 'T-empty');
-  check('C', 'C1 空名册 + 查无此人 ⇒ dead_target', item && item.state === STATE.DEAD_TARGET,
+  // [2026-10-29 口径修正] 端到端同样要 N 次：第一次 scan 只累计 1 次 ⇒ undetermined。
+  //   这正是工单要的——"连续 N 次观测彻底拿不到该成员对象"才算死，
+  //   不能因为一次 scan 时目标恰好没在注册表里就报死（10-28 那次误报同型）。
+  check('C', 'C1 首次 scan 查无此人 ⇒ undetermined（缺 1 次，不判死）', item && item.state === STATE.UNDETERMINED,
     item ? item.state + ' / ' + item.reason : 'no item');
+  check('C', 'C1b 台账累计了缺失次数', (() => {
+    const rec = ledger.find('T-empty');
+    return rec && Number(rec.missingSamples) === 1;
+  })());
 }
 
 // ── D · 端到端：人在 ──
@@ -178,7 +186,7 @@ console.log('\n── F2 · 解析不到 ──');
 console.log('\n── G · caller 兜底 ──');
 {
   const { readFileSync } = await import('node:fs');
-  const SRC = readFileSync(join(ROOT, 'lib/index.js'), 'utf8');
+  const SRC = readFileSync(new URL('./lib/index.js', import.meta.url), 'utf8');
   const CODE = SRC.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   check('G', 'G1 有 __lastSendCaller（记住发单用的 caller）', /__lastSendCaller/.test(CODE));
   check('G', 'G2 sendMessage 成功后记住 caller', /__rememberSendCaller\(caller\)/.test(CODE));
@@ -192,7 +200,7 @@ console.log('\n── G · caller 兜底 ──');
 console.log('\n── E · 源码断言 ──');
 {
   const { readFileSync } = await import('node:fs');
-  const SRC = readFileSync(join(ROOT, 'lib/index.js'), 'utf8');
+  const SRC = readFileSync(new URL('./lib/index.js', import.meta.url), 'utf8');
   const CODE = SRC.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   check('E', 'E1 用 listMembers（不是 listAgents）', /teams\.listMembers\(/.test(CODE), '找到 listMembers');
   check('E', 'E2 没有残留 listAgents 调用', !/teams\.listAgents\(/.test(CODE));
@@ -206,7 +214,7 @@ console.log('\n── E · 源码断言 ──');
 console.log('\n── H · 磁盘反查兜底 ──');
 {
   const { readFileSync } = await import('node:fs');
-  const SRC = readFileSync(join(ROOT, 'lib/index.js'), 'utf8');
+  const SRC = readFileSync(new URL('./lib/index.js', import.meta.url), 'utf8');
   const CODE = SRC.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l)).join('\n');
   check('H', 'H1 有 __findSessionByTaskId 兜底函数', /__findSessionByTaskId/.test(CODE));
   check('H', 'H2 解析失败时会调用兜底', /if \(!sid && key\)/.test(CODE));

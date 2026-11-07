@@ -158,10 +158,13 @@ console.log('\n── N3 · orphaned 真能判出来吗 ──');
 }
 
 // ── N4 · delivery_lost 真能判 ──
+// [2026-10-29 口径修正 · 工单 B/G 条] 事件源这一层本来就要验"事件确实被读到"，
+//   与具体状态无关。旧断言用"既无 messageId 也无 taskId"求 delivery_lost ——
+//   那是工单 B 条判 busy 的形态。真·delivery_lost（工单 G）是 messageId 在、标签丢了。
 console.log('\n── N4 · delivery_lost ──');
 {
-  // 投递后目标有新事件，但既无我们的 messageId 也无 taskId
-  const events = [ev('旧', 'm0'), ev('别人在聊别的', 'other-msg'), ev('继续别的', 'other-2')];
+  // 投递后目标有新事件：我们的 messageId 在里面，但本单 taskId 找不到 ⇒ 投递内容残缺
+  const events = [ev('旧', 'm0'), ev('收到但没标签', MID), ev('继续别的', 'other-2')];
   const fakeSessions = { get: () => ({ snapshotEvents: () => events.slice() }) };
   const src = createEventSource({ getSessions: () => fakeSessions });
   const r = await src.newEventsSince('x', { messageId: MID });

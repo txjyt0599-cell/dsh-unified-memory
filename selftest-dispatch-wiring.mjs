@@ -11,9 +11,8 @@
  */
 import { mkdtempSync, rmSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 let pass = 0, fail = 0;
 const fails = [];
@@ -22,7 +21,7 @@ function check(g, name, ok, detail) {
   else { fail++; fails.push(name); console.log('  FAIL ' + name + (detail ? '   ' + detail : '')); }
 }
 
-const LIB = join(ROOT, 'lib');
+const LIB = join(dirname(fileURLToPath(import.meta.url)), 'lib');
 const { createLedger } = await import('file:///' + LIB + '/dispatch/ledger.js');
 const { createDispatchTools, newTaskId, frameMessage } = await import('file:///' + LIB + '/dispatch/tool.js');
 const { STATE } = await import('file:///' + LIB + '/dispatch/state-machine.js');
@@ -169,7 +168,7 @@ console.log('\n── F · 原子写 ──');
   const raw = readFileSync(p, 'utf8');
   check('F', 'F1 落盘是合法 JSON', (() => { try { JSON.parse(raw); return true; } catch { return false; } })());
   check('F', 'F2 没有留下 .tmp 残file', !existsSync(p + '.tmp') || true);
-  check('F', 'F3 schema 字段存在', JSON.parse(raw).schema === 'Assistant-dispatch-ledger.v1');
+  check('F', 'F3 schema 字段存在', JSON.parse(raw).schema === 'phoebe-dispatch-ledger.v1');
 }
 
 try { rmSync(tmp, { recursive: true, force: true }); } catch {}

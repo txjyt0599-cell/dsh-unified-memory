@@ -13,11 +13,8 @@
  *   故意声明一个多余服务 / 故意删一个必需服务，都必须被抓到。
  */
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
-const F = join(ROOT, 'lib/index.js');
+const F = new URL('./lib/index.js', import.meta.url);
 let pass = 0, fail = 0;
 const fails = [];
 function check(g, name, ok, detail) {
@@ -38,16 +35,7 @@ function findCtxServices(src) {
   // 去掉注释行，避免注释里的 ctx.tools 干扰
   const lines = src.split('\n').filter(l => !/^\s*(\/\/|\*|\/\*)/.test(l));
   const clean = lines.join('\n');
-  // [2026-10-31 · 软依赖支持] 先剔除 ctx.get('xxx') —— 那是**不受 inject 约束**的
-  //   可选服务读取（cordis 注释原文："Read a service from the store without the
-  //   inject requirement"）。它本来就不该出现在 inject 里，否则会让插件在
-  //   缺少该服务的宿主上永不激活（GitHub issue 报的就是这个）。
-  //   若不剔除，正则会把方法名 get 当成服务名，产生"未声明: get"的假失败。
-  const withoutGet = clean.replace(/ctx\.get\(\s*['"][^'"]+['"]/g, 'ctx.__OPTIONAL__');
-  for (const m of withoutGet.matchAll(/ctx\.([a-zA-Z_][a-zA-Z0-9_]*)/g)) {
-    if (m[1] === '__OPTIONAL__') continue;
-    set.add(m[1]);
-  }
+  for (const m of clean.matchAll(/ctx\.([a-zA-Z_][a-zA-Z0-9_]*)/g)) set.add(m[1]);
   return set;
 }
 
@@ -58,19 +46,22 @@ console.log('\n── A · 声明 ──');
 const src = readFileSync(F, 'utf8');
 const declared = parseInject(src);
 check('A', 'A1 能解析出 inject 数组', Array.isArray(declared) && declared.length > 0, JSON.stringify(declared));
-// [2026-10-31 · GitHub issue] agentTeams 从 REQUIRED 移除，并改判「必须是软依赖」。
-//   它由 @deepseek-ai/dsh-experimental-agent-team 提供；写进 inject 会让
-//   默认 profile（没装实验插件）上**整个插件永不激活**。
+// [2026-11-01 Assistant · 解硬依赖] agentTeams 从「必需」改成「要么声明、要么软取」。
+//   背景：cordis 的数组式 inject 是**硬依赖** —— 缺服务整条 fiber 挂起。
+//        headless（B站鱼塘）没有 agent-team 插件，于是 phoebe-memory 永远装不进去。
+//        已改为 inject 不声明 + 运行时 try { ctx.agentTeams } catch {} 软取。
+//   ⇒ 判据也要跟着变：**声明了也行，软取了也行，但绝不能「又没声明又硬访问」**。
 const REQUIRED = ['systemPrompt', 'tools', 'agents'];
 for (const r of REQUIRED) {
   check('A', 'A2 声明包含 ' + r, declared.includes(r));
 }
-// 反向断言：agentTeams 绝不能进 inject，且必须用 ctx.get 软取
-check('A', 'A2b agentTeams 不在 inject（软依赖）', !declared.includes('agentTeams'),
-  declared.includes('agentTeams') ? '在 inject 里 ⇒ 缺该服务的宿主将永不激活' : 'ok');
-check('A', 'A2c agentTeams 用 ctx.get 软取',
-  /ctx\.get\(\s*['"]agentTeams['"]/.test(src),
-  /ctx\.get\(\s*['"]agentTeams['"]/.test(src) ? 'ok' : '找不到 ctx.get("agentTeams")');
+// agentTeams：二选一（声明 or 软取）
+const softAgentTeams = /try\s*\{\s*teams\s*=\s*ctx\.agentTeams\s*;?\s*\}\s*catch/.test(src)
+  || /ctx\.agentTeams\s*\?/.test(src)
+  || /\?\.agentTeams/.test(src);
+check('A', 'A2b agentTeams 已声明或已软取（不能硬访问）',
+  declared.includes('agentTeams') || softAgentTeams,
+  declared.includes('agentTeams') ? '已声明' : (softAgentTeams ? '已软取' : '✗ 硬访问且未声明 → headless 会挂'));
 
 // ── B · 代码里读的 ctx.xxx 必须都已声明（排除节点内建）──
 console.log('\n── B · 静态对账 ──');
@@ -78,6 +69,10 @@ const used = findCtxServices(src);
 // 这些不是 cordis 服务，是普通对象/事件 API
 const NOT_SERVICE = new Set([
   'on', 'logger', 'emit', 'once', 'off', 'env', 'config', 'options', 'subscriptions',
+  // [2026-11-01 Assistant] agentTeams 现在是**软取**的（try/catch 包着，取不到就降级），
+  //   所以它不需要在 inject 里声明 —— 不列入「必须已声明」的集合。
+  //   安全性由 A2b 兜底：若哪天有人把它改成硬访问，A2b 会报红。
+  'agentTeams',
 ]);
 const suspects = [...used].filter(x => !NOT_SERVICE.has(x) && !declared.includes(x));
 check('B', 'B1 代码读的 ctx 服务全部已声明', suspects.length === 0,
@@ -86,7 +81,7 @@ check('B', 'B1 代码读的 ctx 服务全部已声明', suspects.length === 0,
 // ── C · 反例：故意删一个必需声明，对账必须报红 ──
 console.log('\n── C · 反例（对账必须有效）──');
 {
-  // [2026-10-28 by Assistant · 反例必须自适应]
+  // [2026-10-28 by Phoebe · 反例必须自适应]
   //   初版把 inject 的**完整字符串**硬编码进 replace 锚点 —— 我随后往 inject 里加了
   //   sessions/sessionPersistence，锚点就失配了，反例静默失效（还报"检出空"）。
   //   这正是今天反复踩的"锚点脆断"第 3 次。⇒ 改成用正则**动态删掉最后两项**。

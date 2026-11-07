@@ -18,14 +18,10 @@
  * 另有 H 组：inactive 不许判死（把今天最危险的误杀单独钉住）
  */
 
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import {
   STATE, DEFAULTS, extractTaskIds, resolveTaskId, scanEventsForTask,
   classify, nextLedgerState, findCrashedPending,
 } from './lib/dispatch/state-machine.js';
-
-const ROOT = fileURLToPath(new URL('./', import.meta.url)).replace(/[\\/]$/, '');
 
 let pass = 0, fail = 0;
 const fails = [];
@@ -80,7 +76,22 @@ console.log('\n── A · 死投 dead_target ──');
     target: { phase: 'active', status: 'inactive', exists: false },
     newEvents: [],
   });
-  check('A', 'A3 成员对象拿不到 ⇒ dead_target', r.state === STATE.DEAD_TARGET, r.state + ' / ' + r.reason);
+  // ── [2026-10-29 断言口径修正 · 判据没松，是更严了] ──
+  //   旧断言：单次 exists:false ⇒ dead_target。
+  //   新判据（工单第 2 题第 2 条）：**连续 N 次**拿不到对象才算死，
+  //     单次只报 undetermined（不知道），否则 DEFAULTS.rosterMissingSamples=3
+  //     就是个从没被读过的摆设。
+  //   ⇒ 改的是断言，不是判据：below-threshold ⇒ undetermined（不误杀），
+  //     达到 N ⇒ 仍是 dead_target（下面 A3b 补上）。
+  check('A', 'A3 成员对象单次拿不到 ⇒ undetermined（未达 N）', r.state === STATE.UNDETERMINED, r.state + ' / ' + r.reason);
+  check('A', 'A3b 理由明说是"未达阈值"', /below-threshold/.test(String(r.reason)), r.reason);
+  const rN = classify({
+    taskId: T, now: Date.now(),
+    baseline: { sentAt: Date.now() - 60000, eventCountBefore: 0, messageId: MID },
+    target: { phase: 'active', status: 'inactive', exists: false, missingSamples: 3 },
+    newEvents: [], deadline: { rosterMissingSamples: 3 },
+  });
+  check('A', 'A3c 连续 3 次拿不到 ⇒ dead_target（判据仍成立）', rN.state === STATE.DEAD_TARGET, rN.state + ' / ' + rN.reason);
 }
 
 // ── H · 反例：inactive 绝不能判死（最危险的误杀）──
@@ -98,17 +109,31 @@ console.log('\n── H · inactive 不许判死 ──');
 }
 
 // ── B · 假唤醒 ──
+// [2026-10-29 口径修正 · 工单 G 条] 旧断言把"有 messageId 但无 taskId"判 busy_ignored，
+//   工单明确这条要归 delivery_lost：「messageId 在目标日志但 taskId 不在 → 归 delivery_lost…
+//   别让 busy 当万能垃圾桶」。修法完全不同：这条要修管道（标签行丢了），不是催对方。
+//   ⇒ 本组改测真正的 busy：事件在涨，但本单的 taskId 和 messageId **都不在**。
 console.log('\n── B · 假唤醒 busy_ignored ──');
 {
-  const events = [ev('在跑别的活', MID), ev('继续跑别的', null)];
+  const events = [ev('在跑别的活', 'team-message-OTHER'), ev('继续跑别的', null)];
   const r = classify({
     taskId: T, now: Date.now(),
     baseline: { sentAt: Date.now() - 30000, eventCountBefore: 0, messageId: MID },
     target: { phase: 'active', status: 'running', exists: true },
     newEvents: events,
   });
-  check('B', 'B1 有事件、有 messageId、无 taskId ⇒ busy_ignored', r.state === STATE.BUSY_IGNORED, r.state + ' / ' + r.reason);
-  check('B', 'B2 理由 delivered-but-ignored', r.reason === 'delivered-but-ignored');
+  check('B', 'B1 有事件、本单 taskId 与 messageId 都无 ⇒ busy_ignored', r.state === STATE.BUSY_IGNORED, r.state + ' / ' + r.reason);
+  check('B', 'B2 理由 busy-no-trace（目标在忙别的）', r.reason === 'busy-no-trace', r.reason);
+
+  // 补一条：这才是工单 G 的形态 —— 我们的 messageId 在目标日志里，标签行却没了
+  const eventsG = [ev('在跑别的活', MID), ev('继续跑别的', null)];
+  const rG = classify({
+    taskId: T, now: Date.now(),
+    baseline: { sentAt: Date.now() - 30000, eventCountBefore: 0, messageId: MID },
+    target: { phase: 'active', status: 'running', exists: true },
+    newEvents: eventsG,
+  });
+  check('B', 'B3 messageId 在但 taskId 不在 ⇒ delivery_lost（不是 busy）', rG.state === STATE.DELIVERY_LOST, rG.state + ' / ' + rG.reason);
 }
 
 // ── C · 真完成回执丢 ──
@@ -168,18 +193,29 @@ console.log('\n── F · 多标签 ──');
 }
 
 // ── G · 投递丢失（红队补的第七态）──
-console.log('\n── G · delivery_lost（消息压根没到）──');
+// [2026-10-29 口径修正 · 工单 B 条] 旧断言把"taskId 和 messageId 都没有"判 delivery_lost，
+//   但工单 B 条要求这种归 busy_ignored：目标活着在干别的，本单痕迹完全没有
+//   （连"我们的消息到了没"都无从谈起 ⇒ 不能断言投递丢失，只能断言对方没理这一单）。
+//   ⛔ 真·投递丢失（工单 G 条）是"messageId 在、taskId 不在"——已在上面 B3 覆盖。
+console.log('\n── G · delivery_lost（投递内容残缺：messageId 在、taskId 没了）──');
 {
-  // 有新事件，但既没有我们的 taskId，也没有我们的 messageId
-  const events = [ev('别人在聊别的事', 'team-message-OTHER-999')];
+  const events = [ev('在跑别的活', MID), ev('别人在聊别的事', 'team-message-OTHER-999')];
   const r = classify({
     taskId: T, now: Date.now(),
     baseline: { sentAt: Date.now() - 30000, eventCountBefore: 0, messageId: MID },
     target: { phase: 'active', status: 'running', exists: true },
     newEvents: events,
   });
-  check('G', 'G1 无 taskId 且无 messageId ⇒ delivery_lost', r.state === STATE.DELIVERY_LOST, r.state + ' / ' + r.reason);
-  check('G', 'G2 **不许归 busy_ignored**（那是"收到但没处理"，修法完全不同）', r.state !== STATE.BUSY_IGNORED);
+  check('G', 'G1 messageId 在、taskId 不在 ⇒ delivery_lost', r.state === STATE.DELIVERY_LOST, r.state + ' / ' + r.reason);
+  check('G', 'G2 **不许归 busy_ignored**（那是"对方没空"，修法完全不同）', r.state !== STATE.BUSY_IGNORED);
+  // 反向反例：本单痕迹全无时不许冒充 delivery_lost（那是工单 B 条的领域）
+  const rNone = classify({
+    taskId: T, now: Date.now(),
+    baseline: { sentAt: Date.now() - 30000, eventCountBefore: 0, messageId: MID },
+    target: { phase: 'active', status: 'running', exists: true },
+    newEvents: [ev('别人在聊别的事', 'team-message-OTHER-999')],
+  });
+  check('G', 'G3 本单痕迹全无 ⇒ busy（不许冒充投递丢失）', rNone.state === STATE.BUSY_IGNORED, rNone.state + ' / ' + rNone.reason);
 }
 
 // ── I · Write-Ahead 三步 ──
@@ -231,7 +267,7 @@ console.log('\n── K · provisioning 超时语义 ──');
 // ── L · 已废除字段的守门 ──
 console.log('\n── L · 防回潮 ──');
 {
-  const src = (await import('node:fs')).readFileSync(join(ROOT, 'lib/dispatch/state-machine.js'), 'utf8');
+  const src = (await import('node:fs')).readFileSync(new URL('./lib/dispatch/state-machine.js', import.meta.url), 'utf8');
   // 代码里不许出现 turnCount 判据（注释里的"已废除"说明除外）
   const codeOnly = src.split('\n').filter(l => !l.trim().startsWith('*') && !l.trim().startsWith('//')).join('\n');
   check('L', 'L1 代码里不出现 turnCount', !/turnCount/.test(codeOnly));
