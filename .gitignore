@@ -45,3 +45,7 @@ _test-root/
 
 # 测试输出（临时）
 _ingest-out.txt
+
+# 本地验证日志（不入库）
+/*.log
+/_test-root/
