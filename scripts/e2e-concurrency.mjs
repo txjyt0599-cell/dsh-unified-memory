@@ -93,7 +93,7 @@ check('两次 token 用量相同', r1.tokens === r2.tokens, r1.tokens + ' vs ' +
 
 // ── ④ 并发压力：20 个会话同时跑 ──
 console.log('── ④ 20 个会话并发（看会不会错乱）──');
-const QS = ['我显卡显存多大', 'Assistant的日记有几本', '示例设备A再生用什么阀门', '记忆系统 四股力', '桌宠最早的立绘怎么做'];
+const QS = ['我显卡显存多大', 'Assistant的日记有几本', '示例设备A再生用什么阀门', '记忆系统 四股力', '项目甲最早的素材图怎么做'];
 const many = await Promise.all(Array.from({ length: 20 }, (_, i) => run('stress-' + i, QS[i % QS.length])));
 const allOk = many.every((m) => m.ids.length > 0);
 const zeroDup = many.every((m) => new Set(m.ids).size === m.ids.length);   // 单个会话内无重复卡

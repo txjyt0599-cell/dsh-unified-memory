@@ -59,7 +59,7 @@ line('基石已标出', axiom > 0, axiom + ' 张');
 
 // ③ 打分行为
 console.log('\n── ③ 打分行为（抽样）──');
-const s1 = scoreImportance({ text: '9060XT 是 16G 不是 4G', role: 'user' });
+const s1 = scoreImportance({ text: '示例显卡 是 16G 不是 4G', role: 'user' });
 const s2 = scoreImportance({ text: '重启了 DSH', role: 'user' });
 const s3 = scoreImportance({ text: 'Assistant总结：修了三个 bug', role: 'assistant' });
 console.log('  纠错句 =', s1.importance, 'axiom=' + s1.is_axiom);
@@ -81,8 +81,8 @@ line('无关话题杠杆锁死', gateBlocked.gated === false);
 
 // ⑤ 采纳核验
 console.log('\n── ⑤ 采纳核验 ──');
-const use = isAdopted({ entities: ['9060XT'], title: '9060XT 显存' }, '这台 9060XT 是 16G');
-const noUse = isAdopted({ entities: ['9060XT'], title: '9060XT 显存' }, '今天天气不错');
+const use = isAdopted({ entities: ['示例显卡'], title: '示例显卡 显存' }, '这台 示例显卡 是 16G');
+const noUse = isAdopted({ entities: ['示例显卡'], title: '示例显卡 显存' }, '今天天气不错');
 console.log('  真用到 =', JSON.stringify(use));
 console.log('  陪跑   =', JSON.stringify(noUse));
 line('真用到判采纳', use.used === true);

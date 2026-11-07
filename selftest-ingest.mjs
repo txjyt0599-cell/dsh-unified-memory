@@ -1317,7 +1317,7 @@ if (!existsSync(dataPath('memory-tencentdb/memory-tdai/scene_blocks'))) {
   const nav = generateSceneNavigation();
   check('X', 'X1 能生成场景导航', nav.text.length > 0 && nav.scenes > 0, 'scenes=' + nav.scenes + ' chars=' + nav.totalChars);
   check('X', 'X2 用 XML 标签包裹', nav.text.indexOf('<scene-navigation>') === 0 && nav.text.indexOf('</scene-navigation>') > 0, '');
-  check('X', 'X3 按热度降序（最高热度在最前）', nav.text.indexOf('软件开发与工程项目') < nav.text.indexOf('KVMEM'), '');
+  check('X', 'X3 按热度降序（最高热度在最前）', nav.text.indexOf('软件开发与工程项目') < nav.text.indexOf('实验模块'), '');
   check('X', 'X4 每条含路径/热度/摘要', /### Path: /.test(nav.text) && /热度/.test(nav.text) && /Summary: /.test(nav.text), '');
   check('X', 'X5 遵守 maxTotalChars 预算', generateSceneNavigation(null, { maxScenes: 3, maxTotalChars: 600 }).totalChars <= 700, '');
   check('X', 'X6 遵守 maxScenes 上限', generateSceneNavigation(null, { maxScenes: 2 }).scenes <= 2, '');
@@ -2150,8 +2150,8 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
 
   // AF1 · 红队警报1：数字冲突必须覆写，而不是给旧卡刷票
   {
-    const old = { title: '显存', content: 'RX 9060 XT 显存为 4GB', hits: 5, confidence: 0.5 };
-    const neu = { title: '显存', content: 'RX 9060 XT 显存为 16GB', rawSource: '不对，是16G' };
+    const old = { title: '显存', content: 'RX 示例显卡 显存为 4GB', hits: 5, confidence: 0.5 };
+    const neu = { title: '显存', content: 'RX 示例显卡 显存为 16GB', rawSource: '不对，是16G' };
     const r = ingestWithConcentration(neu, [old], { similarity: () => 0.95 });
     check('AF', 'AF1 数字冲突 ⇒ 覆写文本(不是给旧卡+1)', r.action === 'update' && /16GB/.test(old.content), 'content=' + old.content);
     // [2026-10-23 按语义修正] 纠错 = 本次提及(+1) + 纠错奖励(+2) = 共 +3
@@ -2201,7 +2201,7 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
   // AF13 · 公理只进待审池，绝不实时改 System Prompt
   {
     const tmp = join(osTmpdir(), 'axioms-test-') + Date.now() + '.jsonl';
-    const s = stageAxioms([{ id: 'ax1', title: '9060XT 是 16GB', content: '真实显存 16GB', hits: 10, confidence: 1, session_keys: ['a','b','c'] }], tmp);
+    const s = stageAxioms([{ id: 'ax1', title: '示例显卡 是 16GB', content: '真实显存 16GB', hits: 10, confidence: 1, session_keys: ['a','b','c'] }], tmp);
     check('AF', 'AF13 公理写入待审池', s.staged === 1, 'staged=' + s.staged);
     const c = consumeAxioms(tmp);
     check('AF', 'AF14 冷启动可读出待审公理', c.axioms.length === 1 && c.retireIds[0] === 'ax1');
@@ -2285,11 +2285,11 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
     // ① L3 refute 消费者：事实覆写 ⇒ 依据它的结论被作废，且不误伤正当记录
     const { findAffectedEngrams, buildRefuteLines, scopeKeywords } = await import('./lib/ingest/refute-scan.js');
     const engrams = [
-      { id: 'e1', title: '9060XT 4GB 只能跑小模型', content: '因为显存只有 4GB，跑 27B 必 OOM', supporting_facts: ['fact-4g'], status: 'active' },
+      { id: 'e1', title: '示例显卡 4GB 只能跑小模型', content: '因为显存只有 4GB，跑 27B 必 OOM', supporting_facts: ['fact-4g'], status: 'active' },
       { id: 'e2', title: '显存分配池设为 4096MB', content: 'ComfyUI 池 4096MB 够用', supporting_facts: [], status: 'active' },
       { id: 'e3', title: '无关卡', content: '今天去哪玩', supporting_facts: [], status: 'active' },
     ];
-    const scope = { factId: 'fact-4g', oldText: '9060XT 显存 4GB' };
+    const scope = { factId: 'fact-4g', oldText: '示例显卡 显存 4GB' };
     const hit = findAffectedEngrams(engrams, scope);
     check('AF', 'AF32 L3 refute 命中依据旧事实的结论', hit.length === 1 && hit[0].card.id === 'e1', 'hit=' + hit.map(h => h.card.id).join(','));
     check('AF', 'AF33 L3 refute 不误伤正当记录', !hit.some(h => h.card.id === 'e2' || h.card.id === 'e3'));
@@ -2299,8 +2299,8 @@ console.log('── AF · 记忆动力学（浓度/门控/公理）──');
     // ② 撤销入口：正则解析（与 index.js 内同款）
     const re = /撤销公理[:：]\s*([^\n，。；]{1,40})/;
     check('AF', 'AF35 撤销指令解析（含逗号截断）',
-      re.exec('撤销公理：9060XT')[1] === '9060XT' &&
-      re.exec('撤销公理：9060XT，顺便')[1] === '9060XT' &&
+      re.exec('撤销公理：示例显卡')[1] === '示例显卡' &&
+      re.exec('撤销公理：示例显卡，顺便')[1] === '示例显卡' &&
       re.exec('今天天气不错') === null);
 
     // ③ 开关已生效（生产口径）

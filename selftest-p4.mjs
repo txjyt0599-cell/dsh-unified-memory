@@ -184,7 +184,7 @@ async function runA() {
 async function runB() {
   log('\n── B · 分级渲染成本（三 tier 实测占位） ──');
   const { renderCardLine, RENDER_TIER, computeL0Budget, WM_DEFAULTS } = MODS.wm;
-  const card = { title: 'KVMem ROCm移植', summary: '把 KVMem 的 ROCm 运行库换成 10.1 后回归全部通过，VBR 池未触发 gro。', layer: 'project' };
+  const card = { title: '实验模块 ROCm移植', summary: '把 实验模块 的 ROCm 运行库换成 10.1 后回归全部通过，VBR 池未触发 gro。', layer: 'project' };
   const full = renderCardLine(card, RENDER_TIER.full, ['a', 'b'], ['c', 'd']);
   const sum = renderCardLine(card, RENDER_TIER.summary);
   const title = renderCardLine(card, RENDER_TIER.title);
@@ -565,7 +565,7 @@ async function runH(env) {
   check('H', 'H2 暖启动完成', warm && warm.ok === true, 'ms=' + (warm && warm.ms) + ' docs=' + (warm && warm.reason || ''));
 
   const t0 = performance.now();
-  const res = await rt.search('KVMem ROCm 移植 回归');   // ★ 必须 await
+  const res = await rt.search('实验模块 ROCm 移植 回归');   // ★ 必须 await
   const ms = performance.now() - t0;
   check('H', 'H3 search 返回 hits', res && Array.isArray(res.hits) && res.hits.length > 0, 'hits=' + (res ? res.hits.length : 0) + ' degrade=' + (res && res.degrade) + ' ' + f2(ms) + 'ms');
   check('H', 'H4 search 真的 await 了（耗时 > 0.1ms）', ms > 0.1, ms.toFixed(3) + 'ms');
@@ -576,7 +576,7 @@ async function runH(env) {
   wm.loadActivation(Date.now());
 
   const adm = wm.assemble(
-    { sessionId: 'session-H', cwd: '~', queryText: 'KVMem ROCm 移植 回归', queryTokens: MODS.rtypes.estimateTokens('KVMem ROCm 移植 回归'), turn: 1 },
+    { sessionId: 'session-H', cwd: '~', queryText: '实验模块 ROCm 移植 回归', queryTokens: MODS.rtypes.estimateTokens('实验模块 ROCm 移植 回归'), turn: 1 },
     res.hits
   );
   check('H', 'H5 assemble 产出非空 L0', adm.cards.length > 0, 'picked=' + adm.cards.length + ' dropped=' + adm.dropped.length);

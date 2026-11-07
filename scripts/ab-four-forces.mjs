@@ -5,7 +5,7 @@
 import { createRetriever } from '../lib/retrieval/retriever.js';
 
 const QUERIES = [
-  '9060XT 显存是多大',
+  '示例显卡 显存是多大',
   '记忆系统 四股力 打分',
   '日记本 写在哪里',
   '重启 DSH',

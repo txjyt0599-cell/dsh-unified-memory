@@ -1,70 +1,92 @@
 /**
- * check-personal-data.mjs —— 发布前自检：运行期代码里不许有「作者本机/个人」的痕迹
+ * check-personal-data.mjs —— 发布前自检：仓库里不许有「作者本机/个人」的痕迹
  *
- * 为什么需要（2026-11-07）：
- *   开源版曾把作者本机的硬件公理（具体显卡型号 / 显存 / 防误报规则）
- *   硬编码进 section.js 的静态段，于是**每个使用者每一轮** system prompt 都会
- *   被注入约 250 字符与该用户机器完全无关的内容；同类问题还有：
- *     · importance 正则里写死具体显卡型号（影响打分）
- *     · 场景根表里写死作者的项目目录（影响场景隔离）
- *     · 域内词表里写死作者的项目词汇（影响检索范围判定）
- *     · 转录脚本里写死作者助手的自称/称呼（影响导出结果）
- *   这些都不是路径类硬编码，check-hardcodes 抓不到，所以单独立这道检查。
+ * 为什么重写（2026-11-07，独立红队复审后）：
+ *   第一版只扫 lib/**、跳过注释、不扫 docs/测试/脚本 ⇒ 出现「检查全绿，但发布物里
+ *   仍有完整硬件原文」的假绿。红队实锤：RELEASE 文档、FAILURE-MODES、lib 注释、
+ *   selftest/scripts 全部漏检。
  *
- * 判据：
- *   · 只扫**运行期代码**（lib/ 下的 .js / .py）
- *   · 跳过注释行（注释里的历史说明不算泄漏）
- *   · 命中即失败，并打印文件:行号
+ * 本版判据（严格）：
+ *   ① 扫描范围 = **git 已跟踪的全部文本文件**（含 docs / selftest / scripts / 注释）
+ *   ② 不跳过注释 —— 注释同样是发给使用者的源码
+ *   ③ 额外扫描 **npm pack 清单**（防止未跟踪但会被打包的文件漏网）
+ *   ④ 只对「检查器自身」做精确 allowlist（它们必须写出要查的模式）
+ *
+ * 命中即失败（exit 1）。
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 const REPO = process.cwd();
-const SELF = 'scripts/check-personal-data.mjs';
 
+const ALLOWLIST = new Set([
+  'scripts/check-personal-data.mjs',
+  'scripts/security-audit.mjs',
+  'scripts/check-hardcodes.mjs',
+]);
+
+const TEXT_EXT = /\.(js|mjs|cjs|ts|py|json|md|yml|yaml|txt|sh|ps1|toml)$/i;
+
+// 用字符拼接/转义构造，避免本文件自己变成「含有私人词的文件」
 const RULES = [
   { name: '具体显卡/芯片型号', re: /\b(9060|780M|4050|RDNA4|gfx1200|AdapterRAM|Radeon)\b/i },
-  // 这两条用**字符类/拼接**构造，不把敏感词原样写进本文件
-  //   —— 否则本文件自己会被 security-audit 的 C2/B2 规则命中（自指污染）。
   { name: '助手自称/对用户的称呼', re: new RegExp(['\u83f2\u6bd4', '\u4e3b\u4eba'].join('|')) },
-  { name: '作者私有项目名', re: /desktop-pet|next-hub|nexthub/i },
+  { name: '作者私有项目名', re: /desktop-pet|next-hub|nexthub|KVMem/i },
   { name: '作者私有备份盘路径', re: /MemoryBackup/ },
-  { name: '开发机路径', re: new RegExp('C:\\/Users\\/Admin' + 'istrator|D:\\/Phoebe' + ' Studio') },
+  { name: '开发机路径', re: new RegExp('C:\\/Users\\/Admin' + 'istrator|D:\\/Phoebe' + ' Studio|D:\\/dsh-plugins') },
 ];
 
-const files = execFileSync('git', ['ls-files'], { encoding: 'utf8', cwd: REPO })
-  .split('\n').map((s) => s.trim()).filter(Boolean)
-  .filter((f) => f !== SELF && /^lib\//.test(f) && /\.(js|mjs|py)$/.test(f));
-
-/** 去掉行注释，避免把「历史说明」误判成泄漏 */
-function stripComment(line, isPy) {
-  let s = line;
-  const i = isPy ? s.indexOf('#') : s.indexOf('//');
-  if (i >= 0) s = s.slice(0, i);
-  // 块注释起止行整行丢弃
-  if (/^\s*\/?\*/.test(line)) return '';
-  return s;
-}
-
-const hits = [];
-for (const f of files) {
-  const isPy = f.endsWith('.py');
-  const lines = readFileSync(join(REPO, f), 'utf8').split('\n');
+function scanText(rel, text, hits) {
+  const lines = text.split('\n');
   lines.forEach((line, i) => {
-    const code = stripComment(line, isPy);
-    if (!code.trim()) return;
+    if (!line.trim()) return;
     for (const r of RULES) {
-      if (r.re.test(code)) hits.push({ file: f, line: i + 1, rule: r.name, text: line.trim().slice(0, 90) });
+      if (r.re.test(line)) hits.push({ file: rel, line: i + 1, rule: r.name, text: line.trim().slice(0, 100) });
     }
   });
 }
 
-console.log('个人数据扫描: ' + files.length + ' 个运行期文件');
+const hits = [];
+const tracked = execFileSync('git', ['ls-files'], { encoding: 'utf8', cwd: REPO })
+  .split('\n').map((s) => s.trim()).filter(Boolean)
+  .filter((f) => !ALLOWLIST.has(f) && TEXT_EXT.test(f));
+
+for (const rel of tracked) {
+  const p = join(REPO, rel);
+  if (!existsSync(p)) continue;
+  let text = '';
+  try { text = readFileSync(p, 'utf8'); } catch { continue; }
+  scanText(rel, text, hits);
+}
+
+let packed = [];
+try {
+  const npmBin = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const out = execFileSync(npmBin, ['pack', '--dry-run', '--json'], {
+    encoding: 'utf8', cwd: REPO, timeout: 90000, shell: true,
+  });
+  const info = JSON.parse(out);
+  packed = (info[0] && info[0].files ? info[0].files : []).map((f) => f.path);
+} catch (e) {
+  console.log('  ⚠️ npm pack --dry-run 失败，跳过包清单扫描：' + String(e && e.message || e).slice(0, 80));
+}
+for (const rel of packed) {
+  if (ALLOWLIST.has(rel) || !TEXT_EXT.test(rel)) continue;
+  const p = join(REPO, rel);
+  if (!existsSync(p)) continue;
+  let text = '';
+  try { text = readFileSync(p, 'utf8'); } catch { continue; }
+  scanText(rel, text, hits);
+}
+
+console.log('个人数据扫描: git 跟踪 ' + tracked.length + ' 个文本文件' +
+  (packed.length ? ' + npm 包 ' + packed.length + ' 个文件' : ''));
 if (!hits.length) {
-  console.log('✅ 运行期代码里没有作者本机/个人痕迹');
+  console.log('✅ 未发现作者本机/个人痕迹（含注释与文档）');
 } else {
-  for (const h of hits) console.log('  ❌ [' + h.rule + '] ' + h.file + ':' + h.line + '  ' + h.text);
-  console.log('❌ 共 ' + hits.length + ' 处：这些内容会随插件发给所有使用者，请改为配置项或删除');
+  for (const h of hits.slice(0, 40)) console.log('  ❌ [' + h.rule + '] ' + h.file + ':' + h.line + '  ' + h.text);
+  if (hits.length > 40) console.log('  … 共 ' + hits.length + ' 处');
+  console.log('❌ 共 ' + hits.length + ' 处：这些内容会随仓库/发布物发给所有使用者，请改为占位或删除');
   process.exit(1);
 }

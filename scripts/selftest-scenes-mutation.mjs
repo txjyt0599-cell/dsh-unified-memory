@@ -24,7 +24,7 @@ const cases = [
     to: '  if (!currentScene) return false;' },
   { name: 'S3 允许从标题猜场景（张冠李戴）',
     from: "  if (c.cwd) return sceneOfCwd(c.cwd);",
-    to: "  if (c.cwd) return sceneOfCwd(c.cwd);\n  if (/桌宠/.test(String(c.title || ''))) return 'desktop-pet';" },
+    to: "  if (c.cwd) return sceneOfCwd(c.cwd);\n  if (/项目甲/.test(String(c.title || ''))) return 'project-a';" },
 ];
 
 const results = [];

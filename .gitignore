@@ -39,3 +39,6 @@ Thumbs.db
 *.tmp
 .vscode/
 .idea/
+
+# 测试运行时数据根（含本机环境元数据，禁止入库）
+_test-root/

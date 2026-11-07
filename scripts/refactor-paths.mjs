@@ -54,7 +54,7 @@ for (const f of files) {
     const L = lines[i];
     // 跳过纯注释行（保留原路径作历史参考）
     if (/^\s*(\/\/|\*|\/\*)/.test(L)) continue;
-    if (!L.includes('C:/Users/Administrator') && !L.includes('~')) continue;
+    if (!L.includes('<home>') && !L.includes('~')) continue;
 
     let out = L;
 

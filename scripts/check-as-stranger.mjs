@@ -7,7 +7,7 @@
  * ## 它治什么病
  *   前两轮自测全是绿的，却漏掉了三个「别人装了必踩」的问题：
  *     · cordis.patch.yml 里的 '~/...' 被当成相对路径，真的建出一个叫 "~" 的目录
- *     · zstd-extract.py 写死 C:/Users/Administrator
+ *     · zstd-extract.py 写死 <home>
  *     · smoke-apply.mjs 写死 Temp 路径
  *   为什么漏？因为前两轮都在**我自己的机器、我自己的 home、我自己攒的数据**上跑。
  *   绿的只证明「我这儿跑得通」。
@@ -139,7 +139,7 @@ if (typeof d === 'function') { try { d(); } catch {} }
 
   // js-yaml 从 DSH 安装里借一个（本仓库零依赖，不往包里加）
   const yamlCandidates = [
-    'C:/Users/Administrator/.dsh/profiles/web/node_modules/js-yaml',
+    '<home>/.dsh/profiles/web/node_modules/js-yaml',
     join(REPO, 'node_modules/js-yaml'),
   ];
   const yamlLib = yamlCandidates.find((d) => existsSync(join(d, 'index.js')));

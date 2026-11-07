@@ -18,7 +18,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = process.cwd();
-const EXCL = ['_sanitize-backup', 'node_modules', '.git'];
+// _test-root 是测试运行时的数据根（已 gitignore、不随包发布），含本机环境元数据，
+//   不属于"发布物"；但测试**源码**不豁免，仍在扫描范围内。
+const EXCL = ['_sanitize-backup', 'node_modules', '.git', '_test-root'];
+// 这些文件本身就要写出"坏模式"才能做检查 —— 精确跳过，不放宽其他任何文件
+const SELF_AUDITORS = new Set(['scripts/check-hardcodes.mjs', 'scripts/check-personal-data.mjs', 'scripts/security-audit.mjs']);
 const files = [];
 (function walk(d) {
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {
@@ -37,7 +41,9 @@ const RULES = [
   ['A1 真实密钥形态', /(?:sk-[A-Za-z0-9_-]{20,}|sk-or-v1-[a-f0-9]{32,}|AIza[0-9A-Za-z_-]{30,}|ghp_[A-Za-z0-9]{30,}|xoxb-[0-9]{10,})(?<!FAKE)(?<!FAKEFORTESTONLY)(?<!TESTONLY)/g],
   ['A2 key 字段带真值', /(?:apiKey|api_key|token|password|secret)\s*[:=]\s*['"][A-Za-z0-9_\-]{20,}['"]/gi],
   ['A3 私钥块', /-----BEGIN [A-Z ]*PRIVATE KEY-----/g],
-  ['B1 个人路径', /C:\/Users\/(?!Administrator\b)[A-Za-z0-9_.-]+|C:\\Users\\[A-Za-z0-9_.-]+|\/home\/[a-z0-9_-]+\//gi],
+  // [2026-11-07 红队整改] 原规则对 Administrator 做了负向排除，恰好放过本机最常见的私人路径。
+  //   现改为：任何 C:/Users/<name> 都算个人路径（含 Administrator）。
+  ['B1 个人路径', /C:\/Users\/[A-Za-z0-9_.-]+|C:\\Users\\[A-Za-z0-9_.-]+|\/home\/[a-z0-9_-]+\//gi],
   ['B2 工作区绝对路径', /D:\/Phoebe Studio|D:\\Phoebe Studio/g],
   // ── [2026-10-29] 这两条用**字符类拼接**而不是直接写中文词 ──
   //   原因：如果规则里直接写敏感词，审计脚本自己就会命中自己（自指污染）。
@@ -57,6 +63,7 @@ const isTestFile = (rel) =>
 const hits = [];
 for (const f of files) {
   const rel = f.slice(ROOT.length + 1).replace(/\\/g, '/');
+  if (SELF_AUDITORS.has(rel)) continue;
   // 文件名类检查
   for (const [name, re] of RULES) {
     if (name.startsWith('D')) {
@@ -103,7 +110,12 @@ for (const name of ORDER) {
 }
 
 // 阻断级 = A/B/C/D2 且**不是测试文件**
-const fatalCount = hits.filter(h => /^[ABCD]/.test(h.rule) && !h.rule.startsWith('D1') && !h.testFile).length;
+// [2026-11-07 红队整改] 原来测试文件整体豁免，导致测试目录里的私人路径/称呼不算致命。
+//   现在只有「密钥形态(A 类)」允许测试文件豁免——假 key 是测试样本；
+//   路径与私人内容(B/C)不论在哪个文件都必须为 0。
+const fatalCount = hits.filter(h =>
+  /^[ABCD]/.test(h.rule) && !h.rule.startsWith('D1') &&
+  (h.rule.startsWith('A') ? !h.testFile : true)).length;
 console.log('');
 console.log(fatalCount === 0 ? '  🟢 未发现阻断级问题' : '  🔴 有 ' + fatalCount + ' 处阻断级问题，不能开源');
 process.exit(fatalCount === 0 ? 0 : 1);

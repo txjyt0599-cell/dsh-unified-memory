@@ -21,13 +21,13 @@ const fileOwn = join(dir, 'own.jsonl');
 const fileL1 = join(dir, 'l1.jsonl');
 
 const mk = (id, extra) => Object.assign({
-  id, title: '9060XT 显存 16G', summary: '探针误报 4G',
-  content: '9060XT 真实 16GB', entities: ['9060XT'], hits: 0, createdAt: Date.now(),
+  id, title: '示例显卡 显存 16G', summary: '探针误报 4G',
+  content: '示例显卡 真实 16GB', entities: ['示例显卡'], hits: 0, createdAt: Date.now(),
 }, extra || {});
 
 // 模拟三路分流
 const cards = [mk('em-abc'), mk('pmi:xyz'), mk('pm:pm_123'), mk('tdai:m_1')];
-const reply = '这台 9060XT 的显存是 16G，别信那个 4G';
+const reply = '这台 示例显卡 的显存是 16G，别信那个 4G';
 const own = [], main = [], l1 = [];
 for (const c of cards) {
   const id = String(c.id);

@@ -24,14 +24,14 @@ const MUST_KEEP = ['显存', '显卡', '记忆', '插件', '日志', '配置', '
 const wrongly = MUST_KEEP.filter((w) => STOPWORDS.has(w));
 check('② 领域词没被误加进停用词', wrongly.length === 0, wrongly.join(',') || '无');
 
-// ③ 实际检索：口语问句应能召回到正确答案（9060XT 16G）
+// ③ 实际检索：口语问句应能召回到正确答案（示例显卡 16G）
 const ret = createRetriever({ l0Enabled: true, l0RecentDays: 30 }, null);
 await ret.warmup();
 const QS = ['显存到底多少G', '显卡显存到底多大'];
 let okCnt = 0;
 for (const q of QS) {
   const r = await ret.search(q, { k: 8 });
-  const hit = (r.hits || []).some((h) => /9060\s*XT|16GB|16G/i.test(String(h.title) + String(h.summary) + String(h.content)));
+  const hit = (r.hits || []).some((h) => /示例显卡\s*XT|16GB|16G/i.test(String(h.title) + String(h.summary) + String(h.content)));
   if (hit) okCnt++;
   console.log('    · ' + q + ' → ' + (hit ? '★命中' : '未进前8'));
 }

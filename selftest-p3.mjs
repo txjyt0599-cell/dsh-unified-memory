@@ -217,7 +217,7 @@ function runA() {
   const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
   check('A', 'A1 tokenizer CJK bigram', eq(tok.tokenize('超图检索'), ['超图', '图检', '检索']), JSON.stringify(tok.tokenize('超图检索')));
-  check('A', 'A1 tokenizer 标识符整词', eq(tok.tokenize('KVMem 解码'), ['kvmem', '解码']), JSON.stringify(tok.tokenize('KVMem 解码')));
+  check('A', 'A1 tokenizer 标识符整词', eq(tok.tokenize('实验模块 解码'), ['项目丙em', '解码']), JSON.stringify(tok.tokenize('实验模块 解码')));
   check('A', 'A1 tokenizer 版本号整词', eq(tok.tokenize('v1.2.3 修复'), ['v1.2.3', '修复']), JSON.stringify(tok.tokenize('v1.2.3 修复')));
   check('A', 'A1 tokenizer 空串', eq(tok.tokenize(''), []));
 
@@ -241,7 +241,7 @@ function runA() {
   check('A', 'A4 G1 minEpisode=10 无效', MODS.rrf.resolveAdaptiveK('factual', { minEpisode: 10 }).episode === 20);
   check('A', 'A4 G2 tokenBudget 截断', MODS.rrf.resolveAdaptiveK('factual', { tokenBudget: 300 }).fact < 24, 'fact=' + MODS.rrf.resolveAdaptiveK('factual', { tokenBudget: 300 }).fact);
 
-  check('A', 'A5 classify temporal', MODS.rrf.classifyQuery('上次那个 KVMem 改完是什么时候') === 'temporal');
+  check('A', 'A5 classify temporal', MODS.rrf.classifyQuery('上次那个 实验模块 改完是什么时候') === 'temporal');
   check('A', 'A5 classify reasoning', MODS.rrf.classifyQuery('为什么超图检索会掉点') === 'reasoning');
   check('A', 'A5 classify factual', MODS.rrf.classifyQuery('超图') === 'factual');
 }
@@ -555,8 +555,8 @@ async function runF(rt) {
   check('F', 'F3 单词「验收」不 confident', a1.confident === false, 'confident=' + a1.confident + ' reason=' + a1.reason);
 
   // F4 领域词单词豁免
-  const a2 = MODS.alias.matchAlias(idx, 'kvmembeta');
-  check('F', 'F4 领域词「kvmembeta」confident', a2.confident === true, 'confident=' + a2.confident + ' terms=' + JSON.stringify(a2.matchedTerms));
+  const a2 = MODS.alias.matchAlias(idx, '模块示例');
+  check('F', 'F4 领域词「模块示例」confident', a2.confident === true, 'confident=' + a2.confident + ' terms=' + JSON.stringify(a2.matchedTerms));
 
   // F5 多词熔断
   const a3 = MODS.alias.matchAlias(idx, '验收 检索');

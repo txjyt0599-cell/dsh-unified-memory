@@ -35,8 +35,8 @@ for (const q of ABSENT) {
 check('库外话题全部返回空', noisy === 0, noisy + '/' + ABSENT.length + ' 硬凑');
 
 console.log('── ② 库内话题不能被误伤 ──');
-const PRESENT = ['9060XT 显存', '记忆改造 四股力', '示例设备A再生怎么操作', '我们刚才在做什么',
-  'Assistant的日记写在哪', '桌宠 立绘 绑骨', '粒子视效 混合模式', '重启 DSH 报错'];
+const PRESENT = ['示例显卡 显存', '记忆改造 四股力', '示例设备A再生怎么操作', '我们刚才在做什么',
+  'Assistant的日记写在哪', '项目甲 素材图 绑骨', '粒子视效 混合模式', '重启 DSH 报错'];
 let broken = 0;
 for (const q of PRESENT) {
   const r = await ret.search(q, { k: 3 });

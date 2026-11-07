@@ -20,7 +20,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dataPath } from '../lib/paths.js';
 
-const HOME = process.env.USERPROFILE || 'C:/Users/Administrator';
+const HOME = process.env.USERPROFILE || '<home>';
 const PROBE = HOME + '/.dsh/unified-memory/probe/assemble.jsonl';
 const SNAP = dataPath('prompt-fingerprint.json');
 

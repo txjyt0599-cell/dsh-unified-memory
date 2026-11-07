@@ -39,7 +39,7 @@ def main():
 
     # 递归查找匹配的 session 归档文件
     #
-    # [2026-10-30 · 开源版修复] 原来这里写死 "C:/Users/Administrator/.dsh/sessions" ——
+    # [2026-10-30 · 开源版修复] 原来这里写死 "<home>/.dsh/sessions" ——
     #   换台机器、换个用户名这条通道就永远 not_found，而且**静默**（调用方只拿到 no_match，
     #   看起来像"这张卡没有原始对话"，实际是路径根本没找对地方）。
     #   ⇒ 由调用方把 sessions 根目录作为 argv[5] 传进来；没传就退回 ~/.dsh/sessions。

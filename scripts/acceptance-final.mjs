@@ -52,7 +52,7 @@ console.log('[数据] ' + all.length + ' 张卡');
 // ── ① 记住该记的 ──
 console.log('');
 console.log('── ① 记住该记的（纠错/决策/铁律能得高分）──');
-const s1 = scoreImportance({ text: '不对，9060XT 是 16G 不是 4G，这条要更正', role: 'user' });
+const s1 = scoreImportance({ text: '不对，示例显卡 是 16G 不是 4G，这条要更正', role: 'user' });
 const s2 = scoreImportance({ text: '重启了一下', role: 'user' });
 item('纠错内容拿高分（≥0.8）', s1.importance >= 0.8, s1.importance);
 item('流水内容拿基础分（≤0.3）', s2.importance <= 0.3, s2.importance);

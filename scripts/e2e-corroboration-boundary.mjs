@@ -7,7 +7,7 @@
  *   ① 按「提到某词的卡数」加权 ⇒ 泛词霸榜
  *      实测：文件 603 / 模型 550 / 路径 398 / 备份 388 / 参数 369
  *   ② 同一事实表述分散 ⇒ 字符串匹配算不准
- *      实测：「9060XT 16G」只匹配到 6 张，而提到 9060 的有 114 张
+ *      实测：「示例显卡 16G」只匹配到 6 张，而提到 示例显卡 的有 114 张
  *   ③ 「卡数」≠「独立背书数」
  *      实测：114 张卡来自 105 个独立会话 —— 但同一会话里说 10 遍仍是一家之言
  *
@@ -38,22 +38,22 @@ check('Top10 里有大量泛词（≥4 个）⇒ 次数加权会拉偏', generic
 
 // ── ② 表述分散证据 ──
 console.log('── ② 同一事实表述分散（字符串匹配算不准）──');
-const about9060 = all.filter((c) => /9060/i.test(String(c.title || '') + String(c.content || '').slice(0, 300)));
-const strict16 = about9060.filter((c) => /9060X?T?\s*(是|为)?\s*16\s*G/i.test(String(c.title || '') + String(c.content || '').slice(0, 300)));
-console.log('    提到 9060: ' + about9060.length + ' 张，其中严格匹配「9060...16G」: ' + strict16.length + ' 张');
-check('严格匹配数远少于提及总数（说明表述分散）', strict16.length < about9060.length * 0.5,
-  strict16.length + ' vs ' + about9060.length);
+const about示例显卡 = all.filter((c) => /示例显卡/i.test(String(c.title || '') + String(c.content || '').slice(0, 300)));
+const strict16 = about示例显卡.filter((c) => /示例显卡X?T?\s*(是|为)?\s*16\s*G/i.test(String(c.title || '') + String(c.content || '').slice(0, 300)));
+console.log('    提到 示例显卡: ' + about示例显卡.length + ' 张，其中严格匹配「示例显卡...16G」: ' + strict16.length + ' 张');
+check('严格匹配数远少于提及总数（说明表述分散）', strict16.length < about示例显卡.length * 0.5,
+  strict16.length + ' vs ' + about示例显卡.length);
 
 // ── ③ 卡数 ≠ 独立背书 ──
 console.log('── ③ 卡数 ≠ 独立背书数 ──');
 const bySession = new Map();
-for (const c of about9060) {
+for (const c of about示例显卡) {
   const k = String(c.sessionId || c.sessionKey || c.id);
   bySession.set(k, (bySession.get(k) || 0) + 1);
 }
-console.log('    9060 相关: ' + about9060.length + ' 张卡 / ' + bySession.size + ' 个独立会话');
-check('卡数与独立会话数不等（同一会话可产多张）', about9060.length !== bySession.size,
-  about9060.length + ' vs ' + bySession.size);
+console.log('    示例显卡 相关: ' + about示例显卡.length + ' 张卡 / ' + bySession.size + ' 个独立会话');
+check('卡数与独立会话数不等（同一会话可产多张）', about示例显卡.length !== bySession.size,
+  about示例显卡.length + ' vs ' + bySession.size);
 const multi = [...bySession.values()].filter((n) => n > 1).length;
 check('存在"同一会话多张卡"的情况', multi > 0, multi + ' 个会话产出多张');
 

@@ -11,9 +11,9 @@
 | 位置 | 问题 | 处理 |
 |---|---|---|
 | `lib/section.js` | 作者本机硬件公理焊进 system prompt 静态段 | 改为 `config.hostAxioms`（字符串数组，**默认空**）；能力保留、个人数据移除 |
-| `lib/scoring/importance.js` | 重要度正则写死具体显卡型号（9060/780M/4050） | 改为通用硬件词 |
+| `lib/scoring/importance.js` | 重要度正则写死具体显卡型号（示例显卡/示例核显/示例副卡） | 改为通用硬件词 |
 | `lib/scenes.js` | 场景根表写死作者的项目目录 | 默认空表 + `config.sceneRoots` / `makeSceneRoots()` |
-| `lib/retrieval/*` | 检索域词表写死作者项目词汇（桌宠 / 立绘） | 移除，只留通用技术/记忆词 |
+| `lib/retrieval/*` | 检索域词表写死作者项目词汇（项目甲 / 素材图） | 移除，只留通用技术/记忆词 |
 | `lib/diary/index.js` | 日记技术词过滤含作者显卡型号与私有项目名 | 移除 |
 | `lib/retrieval/zstd-extract.py` | 转录导出把角色名硬编码成作者助手的自称/称呼 | 改用标准 `user`/`assistant` |
 

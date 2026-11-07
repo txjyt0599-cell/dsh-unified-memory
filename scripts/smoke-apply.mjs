@@ -57,7 +57,7 @@ import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { dataPath } from '../lib/paths.js';
 
-// [2026-10-30 · 开源版修复] 原来这里有 9 处写死 'C:/Users/Administrator/AppData/Local/Temp/...'。
+// [2026-10-30 · 开源版修复] 原来这里有 9 处写死 '<home>/AppData/Local/Temp/...'。
 //   那不是"某台机器恰好能用"的小瑕疵：换个用户名，mkdir 会 EPERM，
 //   于是冒烟测的就变成"路径不存在能不能扛住"，而不是"插件能不能加载"。
 //   ⇒ 一律走 os.tmpdir()。

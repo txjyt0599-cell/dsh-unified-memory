@@ -20,9 +20,9 @@ const file = join(dir, 'test-engrams.jsonl');
 
 // 造两张卡：一张会被"用到"，一张是陪跑
 const cardA = {
-  id: 'test-used', title: '9060XT 显存是 16G', summary: 'Windows 探针误报 4G',
-  content: '9060XT 真实显存 16GB，WMI 32位整数溢出会报成 4095MB',
-  entities: ['9060XT', '显存'], importance: 0.9, is_axiom: true, hits: 0, createdAt: Date.now(),
+  id: 'test-used', title: '示例显卡 显存是 16G', summary: 'Windows 探针误报 4G',
+  content: '示例显卡 真实显存 16GB，WMI 32位整数溢出会报成 4095MB',
+  entities: ['示例显卡', '显存'], importance: 0.9, is_axiom: true, hits: 0, createdAt: Date.now(),
 };
 const cardB = {
   id: 'test-bystander', title: '图片压缩参数', summary: 'WebP q80',
@@ -31,7 +31,7 @@ const cardB = {
 };
 writeFileSync(file, JSON.stringify(cardA) + '\n' + JSON.stringify(cardB) + '\n', 'utf8');
 
-const reply = '这台机器是 9060XT，它的显存实际有 16GB，Windows 的 WMI 会因为 32 位溢出报成 4G，别信那个数。';
+const reply = '这台机器是 示例显卡，它的显存实际有 16GB，Windows 的 WMI 会因为 32 位溢出报成 4G，别信那个数。';
 
 // ── 1. 逐卡判定 ──
 const ra = isAdopted(cardA, reply);

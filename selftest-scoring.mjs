@@ -17,7 +17,7 @@ console.log('\n[scoring selftest]');
 
 // ── A 重要度 ──
 T('A1 被纠错的硬件事实 → 高分 + 基石', () => {
-  const r = scoreImportance({ text: '9060XT 是 16G 不是 4G，Windows 探针误报', role: 'user' });
+  const r = scoreImportance({ text: '示例显卡 是 16G 不是 4G，Windows 探针误报', role: 'user' });
   ok(r.importance >= 0.8, '应 >= 0.8，实际 ' + r.importance);
   ok(r.is_axiom === true, '应标基石');
 });
@@ -122,11 +122,11 @@ T('D4 高重要但无关的卡，排序仍被锁在后面', () => {
 
 // ── E 采纳核验 ──
 T('E1 回复含实体 → 判定采纳', () => {
-  const r = isAdopted({ title: '9060XT 显存误报', entities: ['9060XT', '显存'] }, '这台 9060XT 的显存是 16G');
+  const r = isAdopted({ title: '示例显卡 显存误报', entities: ['示例显卡', '显存'] }, '这台 示例显卡 的显存是 16G');
   eq(r.used, true);
 });
 T('E2 回复无关 → 不采纳（关键：防马太死锁）', () => {
-  eq(isAdopted({ title: '9060XT 显存误报', entities: ['9060XT'] }, '今天天气不错，User早点休息').used, false);
+  eq(isAdopted({ title: '示例显卡 显存误报', entities: ['示例显卡'] }, '今天天气不错，User早点休息').used, false);
 });
 T('E3 只共享常见词 → 不采纳', () => {
   eq(isAdopted({ title: 'User今天说的问题', entities: [] }, '好的User今天这个问题我看看').used, false);

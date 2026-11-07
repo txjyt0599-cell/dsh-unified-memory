@@ -9,13 +9,13 @@
  *   ① 高频实体全是泛词（文件 603 / 模型 550 / 路径 398）
  *      ⇒ 按「卡数」加权会让泛词霸榜，越加越糟。
  *   ② 同一事实的表述高度分散（16G / 16 G / 16GB…），还混着无关数字
- *      ⇒ 靠字符串匹配算「背书数」会算错（实测「9060XT 16G」只匹配到 6 张，
- *        而实际提到 9060 的有 40 张）。
+ *      ⇒ 靠字符串匹配算「背书数」会算错（实测「示例显卡 16G」只匹配到 6 张，
+ *        而实际提到 示例显卡 的有 40 张）。
  *
  * 结论：**交叉验证值得做，但需要语义级判定，不是字符串计数。**
  *   现阶段把它记成已知局限，并用这个工具人工盘点，不做自动加权。
  *
- * 用法：node scripts/diag-corroboration.mjs [--topic 9060]
+ * 用法：node scripts/diag-corroboration.mjs [--topic 示例显卡]
  */
 import { readCards, readTdaiRecords, readOwnIngest } from '../lib/hypergraph/source.js';
 

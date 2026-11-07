@@ -179,7 +179,7 @@ config:
 ```
 
 > v1.x shipped the author's own values here (a specific GPU model and a fixed set of
-> project folders). **v2.0.0 removed them** — see [docs/RELEASE-v2.0.0.md](docs/RELEASE-v2.0.0.md).
+> project folders). **v2.0.0 removed them** — see [RELEASE-NOTES-v2.0.0.md](RELEASE-NOTES-v2.0.0.md).
 
 ### Models — the part that catches everyone
 
@@ -394,7 +394,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 | Version | Date | Highlights |
 |---|---|---|
-| [v2.0.0](docs/RELEASE-v2.0.0.md) | 2026-11-07 | De-personalised runtime; enumerate tier; k only raises; paged retrieval (30/20/10); `memory_search` pagination |
+| [v2.0.0](RELEASE-NOTES-v2.0.0.md) | 2026-11-07 | De-personalised runtime; enumerate tier; k only raises; paged retrieval (30/20/10); `memory_search` pagination |
 | v1.1.1 | 2026-11-03 | Patch release |
 | v1.1.0 | 2026-11-01 | Verbatim anchors + two-stage source elevator |
 

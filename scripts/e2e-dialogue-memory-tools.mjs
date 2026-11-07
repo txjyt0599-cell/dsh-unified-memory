@@ -125,9 +125,9 @@ try {
   const testCardId = 'test_card_refute_' + Date.now();
   appendFileSync(MAIN_FILE, JSON.stringify({
     id: testCardId,
-    title: '旧误报记录：9060XT 显存为 4GB',
-    summary: '此卡记录 9060XT 显存只有 4G',
-    content: '此卡记录 9060XT 显存只有 4G，是探针读取溢出导致的误报记录。',
+    title: '旧误报记录：示例显卡 显存为 4GB',
+    summary: '此卡记录 示例显卡 显存只有 4G',
+    content: '此卡记录 示例显卡 显存只有 4G，是探针读取溢出导致的误报记录。',
     status: 'active',
     importance: 0.9,
     is_axiom: true,
@@ -221,7 +221,7 @@ try {
   {
     // 将该卡标记为"已注入"
     injectedIdsMock = [testCardId];
-    const res = await searchTool.execute({ query: '9060XT 显存', limit: 5 });
+    const res = await searchTool.execute({ query: '示例显卡 显存', limit: 5 });
     const s = checkSchema(res, searchTool.output.schema);
     const l = lossless(res);
     check('search 返回合法 Schema 且无损', s.ok && l.ok, s.why || l.why);
@@ -237,11 +237,11 @@ try {
     // 验证 limit 硬上限截断
     // 上限由 10 提到 30：盘点/列举类查询模型需要一次拿到足量清单才能判断覆盖是否完整；
     // 超过 30 仍被截断（防上下文爆炸）。
-    const resMax = await searchTool.execute({ query: '9060XT', limit: 100 });
+    const resMax = await searchTool.execute({ query: '示例显卡', limit: 100 });
     check('limit 硬上限截断生效（<=30）', resMax.hits.length <= 30, '返回 ' + resMax.hits.length + ' 条');
 
     // 验证 temporal 过滤
-    const res7d = await searchTool.execute({ query: '9060XT', temporal: 'recent_7d' });
+    const res7d = await searchTool.execute({ query: '示例显卡', temporal: 'recent_7d' });
     const allRecent = res7d.hits.every((h) => h.ageDays <= 7);
     check('recent_7d 过滤时间生效', allRecent);
   }

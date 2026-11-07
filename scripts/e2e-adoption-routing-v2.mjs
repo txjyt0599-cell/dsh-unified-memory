@@ -21,9 +21,9 @@ import { commitAdoptions } from '../lib/scoring/adoption.js';
 const dir = mkdtempSync(join(tmpdir(), 'route2-'));
 const F = { main: join(dir, 'main.jsonl'), own: join(dir, 'own.jsonl'), l1: join(dir, 'l1.jsonl'), tdai: join(dir, 'tdai.jsonl') };
 
-const mk = (id) => ({ id, title: '9060XT 显存 16G', summary: '探针误报 4G', content: '9060XT 真实 16GB', entities: ['9060XT'], hits: 0, createdAt: Date.now() });
+const mk = (id) => ({ id, title: '示例显卡 显存 16G', summary: '探针误报 4G', content: '示例显卡 真实 16GB', entities: ['示例显卡'], hits: 0, createdAt: Date.now() });
 const cards = [mk('em-abc'), mk('pmi:xyz'), mk('pm:pm_1'), mk('tdai:m_1'), mk('tdai:m_2')];
-const reply = '这台 9060XT 的显存是 16G，别信那个 4G';
+const reply = '这台 示例显卡 的显存是 16G，别信那个 4G';
 
 // 模拟生产分流
 const own = [], main = [], l1 = [], tdai = [];

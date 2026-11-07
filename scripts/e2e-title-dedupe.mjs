@@ -29,8 +29,8 @@ console.log('     ' + a[1].title);
 
 // 同前缀、差异在句尾（Round 21 踩的坑）
 const b = dedupeTitles([
-  { id: '3', title: '用户希望在 NextHubKVM 项目中', content: '用户希望在 NextHubKVM 项目中实现画面增强功能，开启超分时自动降一档分辨率采集' },
-  { id: '4', title: '用户希望在 NextHubKVM 项目中', content: '用户希望在 NextHubKVM 项目中实现采集卡帧率锁定到 60fps' },
+  { id: '3', title: '用户希望在 项目乙 项目中', content: '用户希望在 项目乙 项目中实现画面增强功能，开启超分时自动降一档分辨率采集' },
+  { id: '4', title: '用户希望在 项目乙 项目中', content: '用户希望在 项目乙 项目中实现采集卡帧率锁定到 60fps' },
 ]);
 check('同前缀时仍能提取出差异（不重复）', b[0].title !== b[1].title);
 console.log('     ' + b[0].title);

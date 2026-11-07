@@ -4,7 +4,7 @@
  * [2026-10-22 by Assistant]
  *
  * 背景：记忆有两个源——tdai（2026-08-15 起，从 OpenClaw 移植）与 engram（2026-09-09 起，自研）。
- * 期3 只读了 engram，导致 8 月的记忆（比如「最早的桌宠」）永远检索不到。
+ * 期3 只读了 engram，导致 8 月的记忆（比如「最早的项目甲」）永远检索不到。
  * 本测试锁住跨源后的关键合同，防止回退。
  */
 import { createRetriever } from './lib/retrieval/retriever.js';
@@ -64,15 +64,15 @@ console.log('── D · 标签语义统一 ──');
 // ── B · 时间方向判定 ──
 console.log('── B · 时间方向判定 ──');
 const T = [
-  ['最早的桌宠', 'earliest'], ['最久以前的记忆', 'earliest'], ['第一次做桌宠', 'earliest'],
-  ['什么时候做的桌宠', 'earliest'], ['桌宠是哪天开始的', 'earliest'],
+  ['最早的项目甲', 'earliest'], ['最久以前的记忆', 'earliest'], ['第一次做项目甲', 'earliest'],
+  ['什么时候做的项目甲', 'earliest'], ['项目甲是哪天开始的', 'earliest'],
   ['前两天我们干什么', 'latest'], ['昨天做了什么', 'latest'], ['最近在忙什么', 'latest'],
-  ['桌宠圣域面板', null],
+  ['项目甲圣域面板', null],
 ];
 for (const [q, want] of T) {
   check('B', 'B1 "' + q + '" → ' + (want === null ? 'null' : want), classifyTemporal(q) === want, '实际=' + classifyTemporal(q));
 }
-check('B', 'B2 含时间词的判 temporal', classifyQuery('最早的桌宠') === 'temporal', classifyQuery('最早的桌宠'));
+check('B', 'B2 含时间词的判 temporal', classifyQuery('最早的项目甲') === 'temporal', classifyQuery('最早的项目甲'));
 
 // ── C · 跨源检索 ──
 console.log('── C · 跨源检索 ──');
@@ -90,7 +90,7 @@ check('C', 'C1 tdai 已并入', h.tdai && h.tdai.added > 1000, 'added=' + (h.tda
 check('C', 'C2 bm25.docs 含两源', h.bm25.docs > 6000, 'docs=' + h.bm25.docs);
 check('C', 'C3 warmup < 3000ms', warmMs < 3000, warmMs + 'ms');
 
-const res = await rt.search('最早的桌宠', {});
+const res = await rt.search('最早的项目甲', {});
 check('C', 'C4 temporal 生效', res.temporal && res.temporal.dir === 'earliest', JSON.stringify(res.temporal));
 check('C', 'C5 结果含 tdai 卡', res.hits.some((x) => String(x.id).startsWith('tdai:')), 'tdai 命中数=' + res.hits.filter((x) => String(x.id).startsWith('tdai:')).length);
 
@@ -115,7 +115,7 @@ const rtOff = createRetriever({
   tdaiEnabled: false,
 });
 await rtOff.warmup();
-const off = await rtOff.search('最早的桌宠', {});
+const off = await rtOff.search('最早的项目甲', {});
 check('C', 'C7 关跨源后无 tdai 卡', !off.hits.some((x) => String(x.id).startsWith('tdai:')), 'hits=' + off.hits.length);
 check('C', 'C8 关跨源后 docs 更小', rtOff.health().bm25.docs < h.bm25.docs, rtOff.health().bm25.docs + ' < ' + h.bm25.docs);
 

@@ -125,7 +125,7 @@ async function main() {
   //   曾经的坑：把作者本机的显卡型号 / 显存 / 防误报规则焊进 FIXED 段，
   //   于是每个使用者每轮 system prompt 都多付约 250 字符、且内容与本机无关。
   check("A", "A9b section 不含具体机器硬件信息（去个人化）",
-    !/9060|780M|Radeon|RDNA4|gfx1200|AdapterRAM|\b16\s?GB\b/i.test(String(o1)), "ok");
+    !/<host_axioms>|显存|\b\d+\s?GB\b/i.test(String(o1)), "ok");
   // 正向：只有使用者主动声明 hostAxioms 时才渲染该段（能力保留，个人数据默认无）
   {
     const ctx2 = makeCtx();

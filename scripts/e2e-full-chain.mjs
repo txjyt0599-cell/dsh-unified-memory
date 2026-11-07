@@ -57,7 +57,7 @@ const q = '我显卡显存多大';
 const r1 = await ret.search(q, {});
 check('检索有结果', (r1.hits || []).length > 0, (r1.hits || []).length + ' 条');
 const text1 = (r1.hits || []).slice(0, 8).map((h) => String(h.title || '') + String(h.summary || '')).join(' ');
-check('能给出答案要素（16G/9060）', /16G|16GB|9060/i.test(text1));
+check('能给出答案要素（16G/示例显卡）', /16G|16GB|示例显卡/i.test(text1));
 
 // ══ ② 库外查询：必须拦住 ══
 step('② 库外查询（红烧肉）');
@@ -91,7 +91,7 @@ check('出现 full 档（最近的那张拿最多字）', full.length > 0, full.
 step('⑤ 采纳核验（真用到才加分）');
 const target = map.get(String((r1.hits || [])[0].id));
 if (target) {
-  const replyUse = '这台 9060XT 的显存是 16GB，不是 4G。';
+  const replyUse = '这台 示例显卡 的显存是 16GB，不是 4G。';
   const replyNo = '今天天气不错，我们去散步吧。';
   const a1 = isAdopted(target, replyUse);
   const a2 = isAdopted(target, replyNo);

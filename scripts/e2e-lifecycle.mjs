@@ -25,15 +25,15 @@ const step = (n) => console.log('\n── ' + n + ' ──');
 const check = (n, ok, d) => { console.log((ok ? '  ✅ ' : '  ❌ ') + n + (d ? '   ' + d : '')); if (!ok) fail++; };
 
 // ═══ 模拟一轮对话：User说了一句纠错 ═══
-const userTurn = '不是 4G，9060XT 真实显存是 16G，WMI 32 位会溢出报 4095MB';
+const userTurn = '不是 4G，示例显卡 真实显存是 16G，WMI 32 位会溢出报 4095MB';
 step('① 写入：从对话里产卡');
 const imp = scoreImportance({ text: userTurn, role: 'user' });
 const card = {
   id: 'life-1',
-  title: cleanTitle('9060XT 显存误报 4G', userTurn),
+  title: cleanTitle('示例显卡 显存误报 4G', userTurn),
   summary: 'WMI 32 位整数溢出会把 16GB 报成 4095MB',
-  content: '9060XT 真实显存 16GB，Windows WMI AdapterRAM 是 32 位，会溢出报 4095MB',
-  entities: ['9060xt', '显存', 'wmi'],
+  content: '示例显卡 真实显存 16GB，Windows WMI 显存查询接口 是 32 位，会溢出报 4095MB',
+  entities: ['示例显卡xt', '显存', 'wmi'],
   importance: imp.importance,
   is_axiom: imp.is_axiom,
   createdAt: now,
@@ -65,7 +65,7 @@ check('基石卡不衰减', Math.abs(later.score - relHit.score) < 1e-9,
 
 // ═══ ④ 采纳：回复里真用到了 ═══
 step('④ 采纳核验');
-const reply = '这台是 9060XT，显存实际 16GB。Windows 的 WMI AdapterRAM 是 32 位，会溢出报成 4095MB，别信那个数。';
+const reply = '这台是 示例显卡，显存实际 16GB。Windows 的 WMI 显存查询接口 是 32 位，会溢出报成 4095MB，别信那个数。';
 const adopted = isAdopted(card, reply);
 console.log('  判定: ' + JSON.stringify(adopted));
 check('真用到 → 判采纳', adopted.used === true);
