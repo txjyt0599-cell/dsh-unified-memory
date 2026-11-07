@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.0.2 — 2026-11-07
+
+### 修复
+
+- **memory_search 翻页断层**：旧实现用 `seen = (page - 1) * 30` 写死偏移。第一页若用 `limit:5` 只给 5 条，第二页 `limit:30` 会从第 31 条切 ⇒ **第 6~30 条整段跳过**；page≥3 时阶梯 30+20+10 也与 30 的倍数不符。
+  改为按 `session + query` 记录**已发放 id 游标**，翻页用 `excludeIds` 精确续读，只取本组 `limit` 条。任意 limit 变化都不再漏条。
+- 工具描述补充：翻页请沿用同一 `limit`（建议 30）。
+
+### 测试
+
+- 新增 `selftest-memory-search-paging.mjs`（9 项）：先 5 条 → 第二页必须从第 6 条续（旧版是第 31 条）、三页合并 45 条无洞无重、覆盖连续。
+- 生产 verify 全绿；开源 selftest 43/43；check-as-stranger --full 44 套件全绿。
+
 ## v2.0.1 — 2026-11-07
 
 ### 修复
