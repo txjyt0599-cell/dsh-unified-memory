@@ -2,6 +2,16 @@
 
 ## v2.0.0 — 2026-11-07
 
+### 本版新增（定版补充）
+
+- **与生产分支全量对齐**：9 个新模块（card-locator / time-window / shadow-decay / persona-drift /
+  entry-shadow / signal-miss / l0-cache / l1-l2-link / shard-files）+ 28 项修复
+  （P0 2 / P1 8 / P2 6 / 复审整改 5 / 检索与衰减 3），共 81 文件、+5,750 −1,078 行。
+- **结构树**：`docs/STRUCTURE.md`（Mermaid 分层图 + 依赖边）+ `docs/structure.json` +
+  `npm run structure` 一键重算；另有 normify 项目 `normify-unified-memory`（112 模块 / 488 API / 102 依赖）。
+- **隐私门禁加固（红队复审整改）**：英文助手名规则上线，全仓库 538 处个人化文本清零；
+  发布链 `npm run check:release` 全链 exit 0（personal 0 / security 0 / data-leak 0 / 陌生人 42 套件全绿）。
+
 ### 修复：运行期代码里的个人痕迹（重要）
 
 社区反馈 `section.js` 把作者本机的硬件公理（显卡型号 / 显存 / 防误报规则）
