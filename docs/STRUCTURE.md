@@ -1,7 +1,7 @@
 # 开源版结构图（dsh-unified-memory）
 
 > 自动生成，勿手改。重新生成：node scripts/gen-structure.mjs（或 npm run structure）
-> 生成时间：2026-11-09T18:30:34.459Z
+> 生成时间：2026-11-09T18:45:38.311Z
 
 ## 一 · 总览
 

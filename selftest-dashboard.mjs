@@ -166,6 +166,7 @@ try {
   assert.equal(client.includes('ref: rootRef'), true);
   assert.equal(client.includes('[data-pm-w="xs"]'), true);
   assert.equal(client.includes('.pm-shell.pm-embedded{min-height:0}'), true, '嵌入模式保留控制台外壳，仅放松高度');
+  assert.equal(client.includes('overflow-y:auto'), true, '主内容区必须可纵向滚动（固定高度容器不裁切）');
   assert.equal(client.includes("!embedded && h('aside'"), false, '嵌入页也必须保留侧栏导航（布局基准）');
   assert.equal(client.includes('.pm-side{display:none}'), false, '侧栏窄宽度收图标栏，不得隐藏');
   assert.equal(client.includes('container-type'), false, 'inline-size containment 会让嵌入抽屉宽度塌陷，禁止回退');

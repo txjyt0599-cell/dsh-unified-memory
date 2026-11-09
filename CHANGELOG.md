@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.1.2 — 2026-11-10
+
+### 修复
+
+- **模型线路页底部被裁切、无法下滑**：控制台外壳 `.pm-shell{overflow:hidden}` + 主区没有独立滚动，宿主给固定高度时「智能降级策略 / 抽取失败后的处理 / 备用模型凭据」整段被裁掉。
+  现在 `.pm-main` 独立纵向滚动（`overflow-y:auto` + `min-height:0`），顶栏 sticky 常驻；嵌入设置页保持 `height:auto`，不出现双滚动条。
+
+### 测试
+
+- `selftest-dashboard` 新增断言：`client.js` 必须包含 `overflow-y:auto`。
+
 ## v2.1.1 — 2026-11-10
 
 ### 修复
