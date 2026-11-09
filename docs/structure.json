@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-07T08:07:20.305Z",
+  "generatedAt": "2026-11-09T05:56:58.810Z",
   "totals": {
     "files": 99,
     "modules": 13,
@@ -19,7 +19,7 @@
     "(root)": {
       "files": 9,
       "exports": 36,
-      "lines": 3072,
+      "lines": 3088,
       "names": [
         "card-session.js",
         "faults.js",
@@ -70,7 +70,7 @@
     "hypergraph": {
       "files": 16,
       "exports": 76,
-      "lines": 2893,
+      "lines": 2899,
       "names": [
         "hypergraph/auto-refresh.js",
         "hypergraph/backend.js",
@@ -143,7 +143,7 @@
     "retrieval": {
       "files": 16,
       "exports": 83,
-      "lines": 6320,
+      "lines": 6333,
       "names": [
         "retrieval/alias.js",
         "retrieval/bm25.js",
@@ -558,7 +558,7 @@
         "finalizeTitle",
         "readOwnIngest"
       ],
-      "lines": 916
+      "lines": 922
     },
     {
       "path": "lib/hypergraph/store.js",
@@ -1006,7 +1006,7 @@
         "DIARY_FILENAME",
         "diaryPaths"
       ],
-      "lines": 112
+      "lines": 115
     },
     {
       "path": "lib/prefetch.js",
@@ -1016,7 +1016,7 @@
         "renderHits",
         "createPrefetcher"
       ],
-      "lines": 681
+      "lines": 694
     },
     {
       "path": "lib/retrieval/alias.js",
@@ -1187,7 +1187,7 @@
         "MEMORY_REFUTE",
         "createMemoryTools"
       ],
-      "lines": 823
+      "lines": 836
     },
     {
       "path": "lib/retrieval/types.js",

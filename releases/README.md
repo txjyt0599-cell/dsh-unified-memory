@@ -4,6 +4,7 @@ GitHub Releases 是正式载体（含正文与附件）；本目录只留可检�
 
 | 版本 | 说明 |
 |---|---|
+| [v2.0.3](v2.0.3.md) | 读侧标题兜底 + 日记根目录脏值回退 |
 | [v2.0.2](v2.0.2.md) | memory_search 翻页断层修复（游标 + excludeIds 续读） |
 | [v2.0.1](v2.0.1.md) | 热度直通排序 + pulse 与 hot 同源排重 |
 | v2.0.0 | 见仓库根 RELEASE-NOTES-v2.0.0.md（README 有引用，未移动） |

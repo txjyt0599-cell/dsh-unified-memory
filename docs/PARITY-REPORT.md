@@ -62,3 +62,22 @@ npm run structure          # 生成 docs/structure.json + docs/STRUCTURE.md
 #   normify_tree_list → normify_module_list(project="unified-memory")
 #   normify_validate / normify_build 重编译
 ```
+
+---
+
+## 附 · 2026-11-09 同步复核
+
+本次 v2.0.3 同步后重新点数（脚本实测，非估算）：
+
+| 项 | 生产 | 开源 | 说明 |
+|---|---:|---:|---|
+| `lib/` 源码（排除 `.bak`，`.js/.mjs/py`） | 101 | 99 | 差 2 = `dashboard.js` / `endpoint-config.js`，**Web 控制台专用，开源版不含** |
+| 结构图文件数 | — | 99 | `npm run structure`：99 文件 / 13 模块 / 527 导出 / 36 边 |
+| 陌生人机器全量套件 | — | 44 / 44 | `check-as-stranger --full` |
+
+本次同步的生产改动只有两处有开源语义：
+
+1. `lib/hypergraph/source.js` —— `finalizeTitle` 增加中文首句兜底（读侧）。
+2. `lib/paths.js` —— `diaryRoot()` 对脏 `PM_DIARY_ROOT` 的存在性回退。
+
+`dashboard.js` / `endpoint-config.js` / `client.js` / `package.json(dsh.client)` 属 Web 控制台栈，开源版不发布。

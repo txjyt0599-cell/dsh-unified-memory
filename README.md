@@ -317,7 +317,7 @@ Each gate answers a different question, and each exists because the others misse
 | `scripts/check-syntax.mjs` | Does every committed JS file even **parse**? | A file that nothing imports was left broken; it never loads, so nothing else notices |
 | `scripts/check-hardcodes.mjs` | Does any shipped path point at *my* machine? | A `C:/Users/…` or an unexpanded `~/…` reaches your box — Node does not expand `~`, so it becomes a **relative** path and quietly creates a directory literally named `~` |
 
-**37 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults. Suites that need an existing card store, tdai conversations, a persona file or scene blocks **skip with a printed reason** on a fresh install — a missing input is not a failing check, and it must not look like one. They were re-run against a full read-only copy of a real store (2 069 cards, 52/52 cross-source, 70/70 p4, 430/430 ingest) to confirm the skip is not hiding a break.
+**44 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults. Suites that need an existing card store, tdai conversations, a persona file or scene blocks **skip with a printed reason** on a fresh install — a missing input is not a failing check, and it must not look like one. They were re-run against a full read-only copy of a real store (2 069 cards, 52/52 cross-source, 70/70 p4, 430/430 ingest) to confirm the skip is not hiding a break.
 
 ### The gate that matters most: `check-as-stranger`
 
@@ -396,6 +396,9 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 | Version | Date | Highlights |
 |---|---|---|
+| [v2.0.3](releases/v2.0.3.md) | 2026-11-09 | Read-side title fallback; diary root dirty-env fallback |
+| [v2.0.2](releases/v2.0.2.md) | 2026-11-07 | `memory_search` pagination gap fix |
+| [v2.0.1](releases/v2.0.1.md) | 2026-11-07 | Hot-buffer ordering + cross-session pulse dedupe |
 | [v2.0.0](RELEASE-NOTES-v2.0.0.md) | 2026-11-07 | De-personalised runtime; enumerate tier; k only raises; paged retrieval (30/20/10); `memory_search` pagination |
 | v1.1.1 | 2026-11-03 | Patch release |
 | v1.1.0 | 2026-11-01 | Verbatim anchors + two-stage source elevator |
