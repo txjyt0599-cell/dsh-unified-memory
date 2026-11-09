@@ -390,6 +390,7 @@ node scripts/data-leak-audit.mjs   # 真实卡片 ID、会话 ID、时间戳
 
 | 版本 | 日期 | 要点 |
 |---|---|---|
+| [v2.1.1](releases/v2.1.1.md) | 2026-11-10 | 修复控制台「待重启」永不消失（漏 applyEndpointOverrides 接线） |
 | [v2.1.0](releases/v2.1.0.md) | 2026-11-09 | 内置图形控制台：总览 / 管线 / 可编辑模型线路 / write-only API Key |
 | [v2.0.3](releases/v2.0.3.md) | 2026-11-09 | 读侧标题兜底；日记根目录脏值回退 |
 | [v2.0.2](releases/v2.0.2.md) | 2026-11-07 | `memory_search` 翻页断层修复 |

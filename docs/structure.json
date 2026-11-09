@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T06:50:58.388Z",
+  "generatedAt": "2026-11-09T18:30:34.458Z",
   "totals": {
     "files": 101,
     "modules": 13,
@@ -19,7 +19,7 @@
     "(root)": {
       "files": 11,
       "exports": 53,
-      "lines": 3580,
+      "lines": 3584,
       "names": [
         "card-session.js",
         "dashboard.js",
@@ -647,7 +647,7 @@
         "inject",
         "apply"
       ],
-      "lines": 1638
+      "lines": 1642
     },
     {
       "path": "lib/ingest/axioms.js",

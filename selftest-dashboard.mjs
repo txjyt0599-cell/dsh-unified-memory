@@ -132,6 +132,10 @@ try {
   assert.equal(registrations, 1, '同一上下文不能重复注册路由');
   assert.doesNotThrow(() => mountMemoryDashboard({ inject() { throw new Error('headless'); } }, getConfig, options));
 
+  // [2026-11-10 反馈修复] 启动必须把覆盖配置合并进生效配置并写指纹；
+  //   漏了这行 ⇒ 控制台永远「待重启」，且保存的地址/密钥不生效。
+  const indexSrc = readFileSync(new URL('./lib/index.js', import.meta.url), 'utf8');
+  assert.equal(/c\s*=\s*applyEndpointOverrides\(c\)/.test(indexSrc), true, 'index.js 启动时必须调用 applyEndpointOverrides(c)');
   const client = readFileSync(new URL('./client.js', import.meta.url), 'utf8');
   // [2026-11-09] 开源控制台允许 write-only 密钥输入；但包里绝不能内置任何真实密钥。
   assert.equal(client.includes('apiKey'), true, '控制台应提供 write-only 密钥输入');

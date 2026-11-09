@@ -417,6 +417,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 | Version | Date | Highlights |
 |---|---|---|
+| [v2.1.1](releases/v2.1.1.md) | 2026-11-10 | Fix "restart pending" never clearing (missing `applyEndpointOverrides` wiring) |
 | [v2.1.0](releases/v2.1.0.md) | 2026-11-09 | Built-in web console: overview, pipeline, editable model routes, write-only API keys |
 | [v2.0.3](releases/v2.0.3.md) | 2026-11-09 | Read-side title fallback; diary root dirty-env fallback |
 | [v2.0.2](releases/v2.0.2.md) | 2026-11-07 | `memory_search` pagination gap fix |

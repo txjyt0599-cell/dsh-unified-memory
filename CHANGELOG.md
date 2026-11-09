@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.1.1 — 2026-11-10
+
+### 修复
+
+- **「待重启」永远消不掉**：开源版 `index.js` 漏了启动时的 `c = applyEndpointOverrides(c)`。后果有两个：控制台保存的地址/模型/密钥**根本没生效**；覆盖配置的指纹永远不落账 ⇒ `hasPendingEndpointRestart()` 恒为真 ⇒ 重启后仍显示「待重启」。已补接线，并加静态回归断言（`selftest-dashboard`）。
+
+### 测试
+
+- 新增接线断言：`index.js` 必须包含 `applyEndpointOverrides(c)`。
+
 ## v2.1.0 — 2026-11-09
 
 ### 新增

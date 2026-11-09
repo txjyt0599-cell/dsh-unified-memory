@@ -1,6 +1,6 @@
 {
   "name": "dsh-unified-memory",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A local-first long-term memory plugin for DSH: four-force decay, BM25 + vector + hypergraph retrieval, L0/L1/L2 layering, and a dispatch receipt state machine.",
   "type": "module",
   "main": "./lib/index.js",
