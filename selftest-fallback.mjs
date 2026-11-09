@@ -180,7 +180,11 @@ if (!__HAS_CARDS) { console.log("  ~ F5 SKIP（无卡库）"); } else {
     stopEmbedServer();
     await new Promise((r) => setTimeout(r, 1200));
     const downBefore = await fetch("http://localhost:8013/health", { signal: AbortSignal.timeout(700) }).then(() => true).catch(() => false);
-    check("F9", "F9a 测试前服务确实未运行（前置条件）", downBefore === false);
+    // [2026-11-09] 8013 可能被常驻 llama-swap / 别的会话占着——那是环境状态，不是本模块的缺陷。
+    //   这时 F9「自管拉起」整套无从验证 ⇒ 打印原因后跳过（不伪装成通过，也不误判成失败）。
+    if (downBefore) {
+      console.log("  SKIP F9 8013 已被外部服务占用（llama-swap 常驻），跳过自管拉起测试");
+    } else {
     const a = await ensureEmbedServer({ port: 8013 });
     check("F9", "F9b 自管拉起成功", a && a.ok === true, JSON.stringify(a));
     check("F9", "F9c 首次是新建不是复用", a && a.reused === false);
@@ -196,6 +200,7 @@ if (!__HAS_CARDS) { console.log("  ~ F5 SKIP（无卡库）"); } else {
     check("F9", "F9f 并发调用单飞（全部 reused）",
       c1 && c2 && c3 && c1.reused && c2.reused && c3.reused);
     stopEmbedServer();
+    }
   }
 }
 
