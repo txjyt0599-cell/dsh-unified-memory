@@ -297,7 +297,7 @@ $PM_DATA_ROOT/
 ```bash
 npm run check                    # 四道便宜闸 —— 约 20 秒，改完就跑
 npm run check:as-stranger        # 假装自己是别人 —— 约 40 秒
-npm run check:release            # 全量：含 37 套件以陌生人身份跑 —— 约 2 分钟
+npm run check:release            # 全量：含 45 套件以陌生人身份跑 —— 约 2 分钟
 node selftest-dispatch-machine.mjs   # 跑单个套件
 ```
 

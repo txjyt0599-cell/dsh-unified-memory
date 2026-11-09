@@ -324,7 +324,7 @@ $PM_DATA_ROOT/
 ```bash
 npm run check                    # four cheap gates — ~20s, run this constantly
 npm run check:as-stranger        # pretend to be someone else — ~40s
-npm run check:release            # everything, including all 37 suites as a stranger — ~2min
+npm run check:release            # everything, including all 45 suites as a stranger — ~2min
 node selftest-dispatch-machine.mjs   # run one suite
 ```
 
@@ -348,7 +348,7 @@ Every check above runs on **your** machine, with **your** home directory and **y
 1. runs all four gates as that stranger;
 2. loads your shipped `cordis.patch.yml` verbatim and calls `apply()` for real;
 3. asserts no directory named `~` appeared, that data landed under `PM_DATA_ROOT`, and that no dev-machine path survives in `lib/` or `scripts/`;
-4. with `--full`, runs all 37 suites as that stranger.
+4. with `--full`, runs all 45 suites as that stranger.
 
 It refuses to grade what it could not run: if `apply()` throws, the "no `~` directory" check reports **skipped**, not passed — because a crashed `apply()` builds no directories, and a green tick there would be a lie.
 
