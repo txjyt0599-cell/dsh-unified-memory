@@ -1,5 +1,24 @@
 # Changelog
 
+## v2.1.0 — 2026-11-09
+
+### 新增
+
+- **内置图形控制台**（`client.js` + `/api/unified-memory`）：DSH 侧栏「记忆中枢」/ 设置分区可直接打开。四个页面：运行总览、记忆管线、模型线路、运行遥测。
+- **模型线路可视化配置**：L1 / E1 / E2 / R1 可改 Base URL、模型名、向量维度、超时、启停；「测试连接」实打 `/embeddings` 或 `/chat/completions` 并校验索引维度兼容。
+- **API Key write-only**：页面填写的密钥只写入本机 `$PM_DATA_ROOT/ingest/model-endpoints.json`（600 权限），永不回显、不返回状态接口、不内置进浏览器包；留空保持原样。
+- 支持「恢复配置继承」，清掉页面覆盖值回落到 `config.json` / DSH profile。
+
+### 说明
+
+- 控制台依赖 DSH Web 档的 `webServer`；headless 环境自动跳过，不影响记忆主功能。
+- 地址/参数改动标记「待重启」，运行中不切换线路。
+
+### 测试
+
+- 新增 `selftest-dashboard.mjs`（路由、状态脱敏、端点编辑、布局、客户端注入）。
+- 陌生人 --full 全绿（45 套）。
+
 ## v2.0.3 — 2026-11-09
 
 ### 修复

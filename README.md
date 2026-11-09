@@ -16,6 +16,7 @@
 - [How it works](#how-it-works)
 - [Install](#install)
 - [Configuration](#configuration)
+- [Web console](#web-console)
 - [Tools it registers](#tools-it-registers)
 - [Data layout](#data-layout)
 - [Testing](#testing)
@@ -73,17 +74,19 @@ Every card is scored by four competing forces:
 |---|---|
 | **Relevance** | BM25 / vector / graph proximity to the current query |
 | **Importance** | How much this matters long-term (corrections and decisions rank high) |
-| **Recency** | Exponential decay with a per-card half-life |
+| **Recency** | Linear decay from the last time the card was recalled; lifespan grows with use |
 | **Strength** | How often it has actually been used |
 
-Half-life is derived from importance:
+Recency is **not a fixed half-life** — it is a linear lifespan that grows with use:
 
-| Importance | Half-life |
+| Case | Rule |
 |---|---|
-| Axiom | never decays |
-| >= 0.80 | 180 days |
-| >= 0.55 | 60 days |
-| otherwise | 21 days |
+| Axiom (`is_axiom`) | always 1, never decays |
+| Everything else | `lifespan = 30 days + hits × 1 day`; `recency = 1 − days since last recall / lifespan` |
+
+The more a card is used, the longer it lives (the 1000th use adds the same +1 day as the first — no threshold, no cap), and it naturally reaches zero past its lifespan. **Importance no longer determines a half-life.**
+
+The old exponential tiers (180 / 60 / 21 days) only apply when `linearDecay` is set back to `false` as a rollback; they are not the default.
 
 ### Retrieval pipeline
 
@@ -258,6 +261,23 @@ The diary subsystem ships with **generic, role-agnostic prompts**. To use your o
 
 ---
 
+## Web console
+
+The plugin ships an optional web console: once installed, a **Memory** entry appears in the DSH sidebar (also under **Settings → Memory**). It needs the DSH Web profile — in a headless host there is no `webServer`, so the console silently skips and the memory plugin keeps working.
+
+| Page | What it does |
+|---|---|
+| **Overview** | Card count, index status (model / dimension / compatibility), endpoint readiness, telemetry share |
+| **Pipeline** | Boolean switches and numeric sliders (hot config, effective on save) |
+| **Model routes** | L1 chat · E1 embedding · E2 local fallback · R1 local rerank, editable one by one |
+| **Telemetry** | Injection counts per tier, latency, degrade reasons |
+
+Each route can be edited in place — **Base URL, model, dimensions, timeout, enabled** — and "Test connection" performs a real `/embeddings` or `/chat/completions` call (vector routes also check dimension compatibility with the existing index).
+
+**API keys are write-only**: a key typed in the console is written to `$PM_DATA_ROOT/ingest/model-endpoints.json` (mode 600) on this machine. It is never echoed back, never returned by the status API, and never embedded in the browser bundle. Leaving the field empty keeps the existing key. "Restore inheritance" removes a route's console override and falls back to `config.json` / the DSH profile.
+
+Address and parameter changes are marked **restart pending** and never switch the live route mid-run.
+
 ## Tools it registers
 
 | Tool | What it does |
@@ -365,7 +385,7 @@ On first start the plugin writes a config template to `$PM_DATA_ROOT/ingest/conf
 | Switch | Default | Notes |
 |---|---|---|
 | `enabled` / `capture` / `extract` / `distill` | **on** | Writing chain active from the start |
-| `fourForcesEnabled` | **on** | Enable the multiplicative gate + three-tier half-life |
+| `fourForcesEnabled` | **on** | Enable the multiplicative gate + linear decay (lifespan grows with use) |
 | `flashbackEnabled` | off | Optional side channel, off by default |
 | `coldArchiveEnabled` / `coldArchiveAutoApply` | **off** | Moving cards is a physical, hard-to-undo action — deliberately not automatic |
 
@@ -383,6 +403,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 |---|---|
 | **Depends on DSH** | Not a standalone service. Needs host services for sessions, tools, persistence. |
 | **Hot reload impossible** | In-process self-reload leaves no live context. Requires a full DSH restart. |
+| **Console needs the Web profile** | The web console depends on the DSH `webServer`; headless hosts skip it — configure via files instead. |
 | **Vector search optional** | Without an endpoint it is BM25 only — strong on exact terms, weaker on paraphrase. |
 | **Card extraction needs an LLM** | `capture` and the hand-off snapshot work without one; `extract`/`distill` need an LLM channel. |
 | **Hand-off is last-turn only** | `ongoing-thread.json` holds one snapshot, overwritten each turn. A continuity aid, not a transcript. |
@@ -396,6 +417,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 | Version | Date | Highlights |
 |---|---|---|
+| [v2.1.0](releases/v2.1.0.md) | 2026-11-09 | Built-in web console: overview, pipeline, editable model routes, write-only API keys |
 | [v2.0.3](releases/v2.0.3.md) | 2026-11-09 | Read-side title fallback; diary root dirty-env fallback |
 | [v2.0.2](releases/v2.0.2.md) | 2026-11-07 | `memory_search` pagination gap fix |
 | [v2.0.1](releases/v2.0.1.md) | 2026-11-07 | Hot-buffer ordering + cross-session pulse dedupe |

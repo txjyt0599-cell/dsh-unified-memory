@@ -1,15 +1,15 @@
 # 开源版结构图（dsh-unified-memory）
 
 > 自动生成，勿手改。重新生成：node scripts/gen-structure.mjs（或 npm run structure）
-> 生成时间：2026-11-09T05:56:58.812Z
+> 生成时间：2026-11-09T06:50:58.390Z
 
 ## 一 · 总览
 
 | 指标 | 数值 |
 |---|---|
-| 源码文件（lib，js/mjs/py） | 99 |
+| 源码文件（lib，js/mjs/py） | 101 |
 | 模块（一级目录） | 13 |
-| 导出 API | 527 |
+| 导出 API | 544 |
 | 跨模块依赖边 | 36 |
 
 ## 二 · 分层图
@@ -55,7 +55,7 @@ flowchart TD
 
 | 模块 | 职责 | 文件 | 导出 | 行数 |
 |---|---|---:|---:|---:|
-| `(root)` | 入口与编排 | 9 | 36 | 3088 |
+| `(root)` | 入口与编排 | 11 | 53 | 3580 |
 | `ingest` | 写入链（L0 捕获 / L1 提取 / L2 蒸馏） | 25 | 150 | 7982 |
 | `retrieval` | 检索链（BM25 / 重排 / 工具） | 16 | 83 | 6333 |
 | `hypergraph` | 超图存储与索引 | 16 | 76 | 2899 |
@@ -74,13 +74,13 @@ flowchart TD
 | 边 | 次数 |
 |---|---:|
 | `ingest` -> `(root)` | 19 |
+| `(root)` -> `ingest` | 9 |
 | `retrieval` -> `(root)` | 8 |
 | `retrieval` -> `ingest` | 8 |
-| `(root)` -> `ingest` | 7 |
+| `(root)` -> `embedding` | 5 |
 | `(root)` -> `hypergraph` | 5 |
 | `(root)` -> `dispatch` | 5 |
 | `hypergraph` -> `(root)` | 4 |
-| `(root)` -> `embedding` | 3 |
 | `hypergraph` -> `ingest` | 3 |
 | `memory` -> `(root)` | 3 |
 | `retrieval` -> `hypergraph` | 3 |
@@ -115,6 +115,8 @@ flowchart TD
 ### (root) · 入口与编排
 
 - card-session.js
+- dashboard.js
+- endpoint-config.js
 - faults.js
 - index.js
 - orchestrator.js

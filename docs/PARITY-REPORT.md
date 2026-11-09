@@ -80,4 +80,23 @@ npm run structure          # 生成 docs/structure.json + docs/STRUCTURE.md
 1. `lib/hypergraph/source.js` —— `finalizeTitle` 增加中文首句兜底（读侧）。
 2. `lib/paths.js` —— `diaryRoot()` 对脏 `PM_DIARY_ROOT` 的存在性回退。
 
-`dashboard.js` / `endpoint-config.js` / `client.js` / `package.json(dsh.client)` 属 Web 控制台栈，开源版不发布。
+`dashboard.js` / `endpoint-config.js` / `client.js` / `package.json(dsh.client)` 属 Web 控制台栈，v2.0.3 时开源版未发布。
+
+---
+
+## 附 · 2026-11-09 v2.1.0：控制台进入开源版
+
+因用户反馈「配置 LLM 还要手改 JSON」，v2.1.0 把 Web 控制台正式纳入开源发行：
+
+| 项 | 生产 | 开源 |
+|---|---:|---:|
+| `lib/` 源码（排除 `.bak`） | 101 | **101** |
+| `client.js` | 570 行 | **570 行**（API 路径 `/api/unified-memory`） |
+| `package.json` `dsh.client` | `platform: web` | **已加**（`platform: web, inject: []`） |
+| 结构图 | — | 101 文件 / 13 模块 / 544 导出 / 36 边 |
+| 陌生人 --full | — | 45 / 45（新增 `selftest-dashboard`） |
+
+开源版比生产版多出的能力（本版新增，后续需反向往生产同步）：
+
+1. **API Key write-only**：控制台可填密钥 → 写入本机 `model-endpoints.json`（600），永不回显。
+2. 控制台挂载完全可选：`ctx.inject(['webServer'])` 失败即静默跳过，headless 仍可用。

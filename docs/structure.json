@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-09T05:56:58.810Z",
+  "generatedAt": "2026-11-09T06:50:58.388Z",
   "totals": {
-    "files": 99,
+    "files": 101,
     "modules": 13,
-    "exports": 527,
+    "exports": 544,
     "edges": 36
   },
   "mods": {
@@ -17,11 +17,13 @@
       ]
     },
     "(root)": {
-      "files": 9,
-      "exports": 36,
-      "lines": 3088,
+      "files": 11,
+      "exports": 53,
+      "lines": 3580,
       "names": [
         "card-session.js",
+        "dashboard.js",
+        "endpoint-config.js",
         "faults.js",
         "index.js",
         "orchestrator.js",
@@ -227,6 +229,22 @@
       "lines": 50
     },
     {
+      "path": "lib/dashboard.js",
+      "mod": "(root)",
+      "exports": [
+        "BOOLEAN_FIELDS",
+        "NUMBER_FIELDS",
+        "sanitizedLiveConfig",
+        "validateConfigPatch",
+        "saveLiveConfig",
+        "buildStatus",
+        "testConnectivity",
+        "createDashboardHandler",
+        "mountMemoryDashboard"
+      ],
+      "lines": 327
+    },
+    {
       "path": "lib/diary/index.js",
       "mod": "diary",
       "exports": [
@@ -405,6 +423,21 @@
         "indexStats"
       ],
       "lines": 174
+    },
+    {
+      "path": "lib/endpoint-config.js",
+      "mod": "(root)",
+      "exports": [
+        "endpointConfigPath",
+        "publicBaseUrl",
+        "endpointFingerprint",
+        "readEndpointOverrides",
+        "mergeEndpointOverrides",
+        "applyEndpointOverrides",
+        "hasPendingEndpointRestart",
+        "saveEndpointOverrides"
+      ],
+      "lines": 162
     },
     {
       "path": "lib/faults.js",
@@ -614,7 +647,7 @@
         "inject",
         "apply"
       ],
-      "lines": 1635
+      "lines": 1638
     },
     {
       "path": "lib/ingest/axioms.js",
@@ -1429,6 +1462,22 @@
       "to": "lib/paths.js"
     },
     {
+      "from": "lib/dashboard.js",
+      "to": "lib/ingest/config.js"
+    },
+    {
+      "from": "lib/dashboard.js",
+      "to": "lib/ingest/llm.js"
+    },
+    {
+      "from": "lib/dashboard.js",
+      "to": "lib/embedding/client.js"
+    },
+    {
+      "from": "lib/dashboard.js",
+      "to": "lib/embedding/index-store.js"
+    },
+    {
       "from": "lib/diary/index.js",
       "to": "lib/paths.js"
     },
@@ -1836,6 +1885,11 @@
       "n": 19
     },
     {
+      "from": "(root)",
+      "to": "ingest",
+      "n": 9
+    },
+    {
       "from": "retrieval",
       "to": "(root)",
       "n": 8
@@ -1847,8 +1901,8 @@
     },
     {
       "from": "(root)",
-      "to": "ingest",
-      "n": 7
+      "to": "embedding",
+      "n": 5
     },
     {
       "from": "(root)",
@@ -1864,11 +1918,6 @@
       "from": "hypergraph",
       "to": "(root)",
       "n": 4
-    },
-    {
-      "from": "(root)",
-      "to": "embedding",
-      "n": 3
     },
     {
       "from": "hypergraph",

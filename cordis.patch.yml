@@ -49,6 +49,14 @@
           wAlias: 0.15
           minEpisodeK: 20
           maxNeighbors: 24
+          # ── 线性衰减（默认开启）──
+          #   lifespan = linBase + hits × linPerHit
+          #   recency  = 1 - 距上次被想起的天数 / lifespan
+          #   回滚：linearDecay 改 false ⇒ 恢复旧指数分档（180/60/21 天）
+          #   ⚠️ YAML 行尾不能有逗号（true, 会被解析成字符串，静默失效）
+          linearDecay: true
+          linBase: 30
+          linPerHit: 1
 
         # ═══════════════════════════════════════════════════════════
         #  模型配置 —— 想让它「记得住」，这两段必须填
