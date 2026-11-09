@@ -316,7 +316,7 @@ window.__ModuleLoader__.load({
         h('div', { className: 'pm-endpoint-head' }, h('span', { className: 'pm-endpoint-id' }, ep.id), h('div', null, pending && h(Badge, { tone: 'warn' }, '待重启'), ' ', h(Badge, { tone: ep.enabled ? 'good' : 'warn' }, ep.enabled ? '已启用' : '未启用'))),
         h('div', { className: 'pm-endpoint-name' }, ep.name), h('div', { className: 'pm-endpoint-purpose' }, ep.purpose),
         h('div', { className: 'pm-endpoint-host', title: ep.host }, ep.host), h('div', { className: 'pm-endpoint-model' }, ep.model),
-        h('div', { className: 'pm-endpoint-info' }, h('span', null, ep.path), h('span', null, '超时 ' + Math.round(ep.timeoutMs / 1000) + 's'), ep.dimensions && h('span', null, ep.dimensions + 'D')),
+        h('div', { className: 'pm-endpoint-info' }, h('span', null, ep.path), h('span', null, '超时上限 ' + Math.round(ep.timeoutMs / 1000) + 's'), ep.dimensions && h('span', null, ep.dimensions + 'D')),
         h('div', { className: 'pm-endpoint-foot' }, h('div', null, h(Badge, { tone: ep.credential === '未配置' ? 'warn' : '' }, ep.credential), result && h('div', { className: 'pm-test-result ' + (result.ok ? 'good' : 'bad'), style: { marginTop: 7 } }, result.ok ? '连接正常 · ' + result.latencyMs + 'ms' : result.error || result.message)), h('div', { className: 'pm-endpoint-actions' }, h(Button, { onClick: onEdit }, '设置'), h(Button, { disabled: !ep.configured || testing || pending, title: pending ? '重启后测试新配置' : '', onClick: onTest }, testing ? '探测中…' : '测试连接'))));
     }
 
