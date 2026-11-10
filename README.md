@@ -417,6 +417,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 | Version | Date | Highlights |
 |---|---|---|
+| [v2.1.4](releases/v2.1.4.md) | 2026-11-10 | Root-container scrolling so the main console page can scroll |
 | [v2.1.3](releases/v2.1.3.md) | 2026-11-10 | Clarify endpoint "timeout" label as an upper bound |
 | [v2.1.2](releases/v2.1.2.md) | 2026-11-10 | Fix model-routes page not scrolling; bottom settings were clipped |
 | [v2.1.1](releases/v2.1.1.md) | 2026-11-10 | Fix "restart pending" never clearing (missing `applyEndpointOverrides` wiring) |

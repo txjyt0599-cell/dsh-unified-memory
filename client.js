@@ -9,13 +9,14 @@ window.__ModuleLoader__.load({
     let styleMounted = false;
 
     const css = `
-.pm-root{--pm-blue:#5b7cfa;--pm-cyan:#32c7d9;--pm-green:#20a779;--pm-red:#df5c68;--pm-amber:#bd7b21;color:var(--dsw-alias-color-text-primary);font-size:13px;line-height:1.5;height:100%;min-height:100%;box-sizing:border-box}
+.pm-root{--pm-blue:#5b7cfa;--pm-cyan:#32c7d9;--pm-green:#20a779;--pm-red:#df5c68;--pm-amber:#bd7b21;color:var(--dsw-alias-color-text-primary);font-size:13px;line-height:1.5;height:100%;min-height:100%;max-height:100vh;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box}
 .pm-root *{box-sizing:border-box}
-.pm-shell{display:grid;grid-template-columns:196px minmax(0,1fr);height:100%;min-height:720px;background:var(--dsw-alias-color-bg-primary);border:1px solid var(--dsw-alias-color-border-primary);border-radius:14px;overflow:hidden}
+.pm-shell{display:grid;grid-template-columns:196px minmax(0,1fr);height:auto;min-height:720px;background:var(--dsw-alias-color-bg-primary);border:1px solid var(--dsw-alias-color-border-primary);border-radius:14px;overflow:hidden}
 .pm-shell.pm-embedded{min-height:0}
 .pm-shell.pm-embedded{height:auto;max-height:none}
+.pm-root:has(.pm-shell.pm-embedded){max-height:none;overflow:visible}
 .pm-shell.pm-embedded .pm-main{overflow:visible}
-.pm-side{padding:24px 14px;background:color-mix(in srgb,var(--dsw-alias-color-bg-secondary) 80%,transparent);border-right:1px solid var(--dsw-alias-color-border-primary);display:flex;flex-direction:column}
+.pm-side{position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;padding:24px 14px;background:color-mix(in srgb,var(--dsw-alias-color-bg-secondary) 80%,transparent);border-right:1px solid var(--dsw-alias-color-border-primary);display:flex;flex-direction:column}
 .pm-brand{display:flex;align-items:center;gap:10px;padding:0 10px 24px}
 .pm-brand-mark{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:white;background:linear-gradient(145deg,#718cff,#4657bd);box-shadow:0 7px 20px #5268c52b}
 .pm-brand-name{font-size:13px;font-weight:700;letter-spacing:.08em}

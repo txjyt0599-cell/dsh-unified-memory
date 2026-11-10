@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.1.4 — 2026-11-10
+
+### 修复
+
+- **主区页面仍无法滚动**：v2.1.2 只让 `.pm-main` 滚动，但 DSH 的 `main` 插槽外层没有高度约束，滚动条不触发。现在改为**根容器滚动**：`.pm-root` 加 `max-height:100vh; overflow-y:auto`，侧栏 `position:sticky` 固定，主区内容可正常下滑到底。
+- 说明：生产端同时修了 `sync-runtime.mjs` 漏 `client.js` 的问题（前端改动此前不会进入运行时副本）。开源版由宿主直接加载 `client.js`，无此问题。
+
 ## v2.1.3 — 2026-11-10
 
 ### 优化
