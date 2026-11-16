@@ -125,7 +125,7 @@ The non-negotiable rule: **`inactive` is a healthy idle state, never "dead."** C
 
 ### Prerequisites
 
-- **Node.js >= 20.18**
+- **Node.js >= 22.15**
 - **DSH >= 0.1.7-rc.1** — this is a DSH plugin, not a standalone daemon. It needs host services (`ctx.tools`, `ctx.sessions`, `ctx.sessionPersistence`, and optionally `ctx.agentTeams`).
 
 ### Steps

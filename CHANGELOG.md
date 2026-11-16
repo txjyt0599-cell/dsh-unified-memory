@@ -2,6 +2,10 @@
 
 ## v2.1.6 — 2026-11-16
 
+### 兼容性
+
+- Node.js 最低版本改为 **22.15**（`node:zlib` 的 zstd API 从该版本开始提供）；`engines`、README 与 CI 矩阵同步。
+
 ### 整理
 
 - **公开面**：移除 `docs/PUSH-TO-GITHUB.md`、`docs/PARITY-REPORT.md`；`lib/ingest/CONFIG-NOTES.md` 改写为 `docs/configuration.md`；README 的安全承诺改为与实际一致（本机存储 / 远端端点 / 控制台密钥不回显）；安装步骤补真实 URL 与 LLM 前置说明。

@@ -122,7 +122,7 @@ pending -> confirmed -> in_progress
 
 ### 前置条件
 
-- **Node.js ≥ 20.18**
+- **Node.js ≥ 22.15**
 - **DSH ≥ 0.1.7-rc.1** —— 这是一个 DSH 插件，不是独立守护进程。它需要宿主提供 `ctx.tools`、`ctx.sessions`、`ctx.sessionPersistence`，以及可选的 `ctx.agentTeams`。
 
 ### 步骤
