@@ -1,5 +1,24 @@
 # Changelog
 
+## v2.1.5 — 2026-11-16
+
+### 新增（默认关闭）
+
+- **详情档策略可配置**：`workingMemory.recency.detailPolicy` 支持 `recency`（默认）/ `relevance` / `hybrid`。
+  - `recency`：保持原行为——按 `createdAt` 新→旧取前 `detailTop` 条给 full/summary。
+  - `relevance`：按 `finalScore` 降序取前 `detailTop` 条；排序为严格全序（分数相同按候选顺序、再按 cardId）。
+  - `hybrid`：`finalScore` 第 1 名拿 full，剩余名额按 recency 补；全部缺时间戳时按相关性补满，不空置。
+- 配置键在 `WM_DEFAULTS.recency` 注册，写错值会回落 `recency` 并记 `wm-detail-policy-unknown`。
+
+### 说明
+
+- **默认行为不变**：`detailPolicy` 缺省为 `recency`，输出与升级前逐字节一致。
+- 不改检索排序、分簇、预算与渲染格式，只改「哪些卡拿详情档」。
+
+### 测试
+
+- `selftest-p4` 新增 J 组 8 条：默认策略、relevance、hybrid 的 `detailTop=1/2` 退化、非法值回落、默认与显式 recency 一致、全缺时间补位。
+
 ## v2.1.4 — 2026-11-10
 
 ### 修复

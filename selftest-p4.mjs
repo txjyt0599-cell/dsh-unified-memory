@@ -604,6 +604,64 @@ async function runH(env) {
   record('H', '端到端', 'hits=' + res.hits.length + ' L0=' + adm.cards.length + ' used=' + adm.budget.usedTokens + '/' + adm.budget.l0CapTokens + ' degrade=' + res.degrade);
 }
 
+// ============================ J · 详情档策略（P2 · 默认 recency） ============================
+async function runJ(env) {
+  log('\n── J · 详情档策略（recency 默认 / relevance / hybrid） ──');
+  const { createWorkingMemory, RENDER_TIER } = MODS.wm;
+  const NOW = Date.now();
+  const fake = new Map();
+  const mk = (id, title, ageDays, score) => {
+    fake.set(id, { id, title, summary: '详情档摘要内容-' + id, layer: 'global', content: '', createdAt: NOW - ageDays * 86400000, _score: score });
+  };
+  mk('old-hi', '旧的高分卡', 30, 100);
+  mk('new-lo', '新的低分卡', 1, 1);
+  mk('mid', '中等卡', 10, 50);
+  const reader = {
+    header: (id) => { const c = fake.get(id); return c ? { id, title: c.title, summary: c.summary, layer: c.layer, createdAt: c.createdAt } : null; },
+    get: (id) => fake.get(id) || null,
+    content: (id) => (fake.get(id) || {}).content || null,
+  };
+  const hits = ['old-hi', 'mid', 'new-lo'].map((id) => ({ cardId: id, id, score: fake.get(id)._score, via: 'stage1' }));
+  const run = (recency) => createWorkingMemory({ dir: freshTmp('J'), cards: reader, recency }).assemble(
+    { sessionId: 'session-J-' + Math.random().toString(36).slice(2, 7), queryText: '详情档测试', queryTokens: 800, turn: 1 }, hits);
+  const tierOf = (adm, id) => { const c = (adm.cards || []).find((x) => x.cardId === id); return c ? c.tier : 'none'; };
+
+  const d1 = run(undefined);
+  check('J', 'J1 默认策略=recency：最新卡拿 full', tierOf(d1, 'new-lo') === RENDER_TIER.full, 'new-lo=' + tierOf(d1, 'new-lo'));
+  check('J', 'J2 默认策略下最高分旧卡不是 full', tierOf(d1, 'old-hi') !== RENDER_TIER.full, 'old-hi=' + tierOf(d1, 'old-hi'));
+
+  const d3 = run({ detailPolicy: 'relevance' });
+  check('J', 'J3 relevance：最高分卡拿 full', tierOf(d3, 'old-hi') === RENDER_TIER.full, 'old-hi=' + tierOf(d3, 'old-hi') + ' new-lo=' + tierOf(d3, 'new-lo'));
+
+  const d4 = run({ detailPolicy: 'hybrid', detailTop: 1 });
+  check('J', 'J4 hybrid detailTop=1：只保最高分，最新卡不保',
+    tierOf(d4, 'old-hi') === RENDER_TIER.full && tierOf(d4, 'new-lo') === RENDER_TIER.title,
+    'old-hi=' + tierOf(d4, 'old-hi') + ' new-lo=' + tierOf(d4, 'new-lo'));
+
+  const d5 = run({ detailPolicy: 'hybrid', detailTop: 2 });
+  check('J', 'J5 hybrid detailTop=2：最高分 full 且最新卡有正文',
+    tierOf(d5, 'old-hi') === RENDER_TIER.full && (tierOf(d5, 'new-lo') === RENDER_TIER.summary || tierOf(d5, 'new-lo') === RENDER_TIER.full),
+    'old=' + tierOf(d5, 'old-hi') + ' new=' + tierOf(d5, 'new-lo'));
+
+  const d6 = run({ detailPolicy: 'bogus' });
+  check('J', 'J6 非法策略回落 recency', tierOf(d6, 'new-lo') === RENDER_TIER.full, 'new-lo=' + tierOf(d6, 'new-lo'));
+
+  const sig = (adm) => (adm.cards || []).map((c) => [c.cardId, c.tier, c.line].join('|')).join('\n');
+  const a1 = run(undefined), a2 = run({ detailPolicy: 'recency' });
+  check('J', 'J7 默认未配置与显式 recency 输出一致', sig(a1) === sig(a2), 'len=' + sig(a1).length);
+
+  const fake2 = new Map([
+    ['x', { id: 'x', title: '无时间x', summary: '摘要x', layer: 'global', createdAt: 0 }],
+    ['y', { id: 'y', title: '无时间y', summary: '摘要y', layer: 'global', createdAt: 0 }],
+  ]);
+  const reader2 = { header: (id) => { const c = fake2.get(id); return c ? { id, title: c.title, summary: c.summary, layer: c.layer, createdAt: c.createdAt } : null; }, get: (id) => fake2.get(id) || null, content: () => null };
+  const wm2 = createWorkingMemory({ dir: freshTmp('J2'), cards: reader2, recency: { detailPolicy: 'hybrid', detailTop: 2 } });
+  const adm2 = wm2.assemble({ sessionId: 'session-J2', queryText: '无时间', queryTokens: 800, turn: 1 },
+    [{ cardId: 'y', id: 'y', score: 90, via: 'stage1' }, { cardId: 'x', id: 'x', score: 10, via: 'stage1' }]);
+  check('J', 'J8 全缺时间 hybrid 不空置', (adm2.cards || []).some((c) => c.tier === RENDER_TIER.full), (adm2.cards || []).map((c) => c.cardId + ':' + c.tier).join(','));
+  record('J', '策略集合', 'recency(默认)/relevance/hybrid');
+}
+
 // ============================ main ============================
 async function main() {
   log('════════ P4 SELFTEST · 期4 分层工作记忆 ════════');
@@ -650,6 +708,8 @@ async function main() {
 
   if (groupOf('I') && env.ctx) await runI(env);
   else if (groupOf('I')) log('\n── I · SKIP（无图谱 ctx） ──');
+
+  if (groupOf('J')) await runJ(env);
 
   log('\n════════ P4 SELFTEST SUMMARY ════════');
   const groups = {};
