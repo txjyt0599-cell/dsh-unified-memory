@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v2.1.6 — 2026-11-16
 
 ### 整理
 

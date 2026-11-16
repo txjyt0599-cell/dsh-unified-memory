@@ -395,6 +395,7 @@ node scripts/data-leak-audit.mjs   # 真实卡片 ID、会话 ID、时间戳
 
 | 版本 | 日期 | 要点 |
 |---|---|---|
+| [v2.1.6](releases/v2.1.6.md) | 2026-11-16 | 仓库整理：公开文档、`tests/` 目录、发布门禁 |
 | [v2.1.5](releases/v2.1.5.md) | 2026-11-16 | 可选详情档策略（默认 recency；relevance / hybrid 需显式配置） |
 | [v2.1.4](releases/v2.1.4.md) | 2026-11-10 | 根容器滚动，修复主区页面仍无法下滑 |
 | [v2.1.3](releases/v2.1.3.md) | 2026-11-10 | 「超时」文案改为「超时上限」（避免误读为故障） |
@@ -404,7 +405,7 @@ node scripts/data-leak-audit.mjs   # 真实卡片 ID、会话 ID、时间戳
 | [v2.0.3](releases/v2.0.3.md) | 2026-11-09 | 读侧标题兜底；日记根目录脏值回退 |
 | [v2.0.2](releases/v2.0.2.md) | 2026-11-07 | `memory_search` 翻页断层修复 |
 | [v2.0.1](releases/v2.0.1.md) | 2026-11-07 | 热度直通排序 + pulse 同源排重 |
-| [v2.0.0](RELEASE-NOTES-v2.0.0.md) | 2026-11-07 | 去个人化运行时；enumerate 档位；k 只升不降；分页检索（30/20/10） |
+| [v2.0.0](releases/v2.0.0.md) | 2026-11-07 | 去个人化运行时；enumerate 档位；k 只升不降；分页检索（30/20/10） |
 
 ---
 

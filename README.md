@@ -186,7 +186,7 @@ config:
 ```
 
 > v1.x shipped the author's own values here (a specific GPU model and a fixed set of
-> project folders). **v2.0.0 removed them** — see [RELEASE-NOTES-v2.0.0.md](RELEASE-NOTES-v2.0.0.md).
+> project folders). **v2.0.0 removed them** — see [releases/v2.0.0.md](releases/v2.0.0.md).
 
 ### Models — the part that catches everyone
 
@@ -422,6 +422,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 | Version | Date | Highlights |
 |---|---|---|
+| [v2.1.6](releases/v2.1.6.md) | 2026-11-16 | Repository cleanup: public docs, `tests/` layout, release gates |
 | [v2.1.5](releases/v2.1.5.md) | 2026-11-16 | Optional detail-tier policy (`recency` default / `relevance` / `hybrid`) |
 | [v2.1.4](releases/v2.1.4.md) | 2026-11-10 | Root-container scrolling so the main console page can scroll |
 | [v2.1.3](releases/v2.1.3.md) | 2026-11-10 | Clarify endpoint "timeout" label as an upper bound |
@@ -431,7 +432,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 | [v2.0.3](releases/v2.0.3.md) | 2026-11-09 | Read-side title fallback; diary root dirty-env fallback |
 | [v2.0.2](releases/v2.0.2.md) | 2026-11-07 | `memory_search` pagination gap fix |
 | [v2.0.1](releases/v2.0.1.md) | 2026-11-07 | Hot-buffer ordering + cross-session pulse dedupe |
-| [v2.0.0](RELEASE-NOTES-v2.0.0.md) | 2026-11-07 | De-personalised runtime; enumerate tier; k only raises; paged retrieval (30/20/10); `memory_search` pagination |
+| [v2.0.0](releases/v2.0.0.md) | 2026-11-07 | De-personalised runtime; enumerate tier; k only raises; paged retrieval (30/20/10); `memory_search` pagination |
 | v1.1.1 | 2026-11-03 | Patch release |
 | v1.1.0 | 2026-11-01 | Verbatim anchors + two-stage source elevator |
 
