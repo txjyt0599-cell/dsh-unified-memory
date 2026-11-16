@@ -1,3 +1,4 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 /**
  * 工具 schema 变异自证（2026-10-28）
  *
@@ -19,7 +20,7 @@ import fs from 'node:fs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/dispatch/tool.js';
-const TEST_REL = 'selftest-tool-schema.mjs';
+const TEST_REL = 'tests/selftest-tool-schema.mjs';
 const TEST_ABS = ROOT + '/' + TEST_REL;
 
 if (!fs.existsSync(TEST_ABS)) {
@@ -59,7 +60,7 @@ for (const mu of mutations) {
     execSync('node ' + TEST_REL, { cwd: ROOT, stdio: 'pipe' });
     verdict = { caught: false, why: '测试仍通过（抓不到）' };
   } catch (e) {
-    if (e.status === 1) verdict = { caught: true, why: '测试按预期红了' };
+    if (e.status === 1 && !_loadErr(e)) verdict = { caught: true, why: '测试按预期红了' };
     else verdict = { caught: false, why: '命令没跑起来（status=' + e.status + '），不是测试失败' };
   } finally {
     fs.writeFileSync(F, original, 'utf8');

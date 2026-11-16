@@ -7,11 +7,9 @@ node_modules/
 #   must never be committed.
 ~/
 
-# runtime data (never commit)
-#   ⚠️ 必须写成 /xxx/ —— 带前导斜杠 = 只匹配仓库根下的同名目录。
-#   写成 "hypergraph/" 这种裸目录名，git 会匹配**任意层级**的同名目录，
-#   于是 lib/hypergraph（源码）被整个排除，clone 下来直接 ERR_MODULE_NOT_FOUND。
-#   （2026-10-30 事故：lib/hypergraph + lib/dispatch 两大源码目录漏提交）
+# Runtime data (never commit).
+#   Keep the leading slash: a bare name like "hypergraph/" would also match
+#   lib/hypergraph/ and silently exclude source code from clones.
 /data/
 /*.jsonl
 /*.jsonl.zstd
@@ -23,14 +21,19 @@ node_modules/
 /dispatch/
 /conversations/
 
-# sanitize scratch
-_sanitize-backup/
+# Generated structure snapshot (recreate with `npm run structure`)
+/docs/structure.json
 
-# local config (may contain keys)
+# Local config and secrets (may contain API keys)
 .env
 .env.*
 *.local.json
 cordis.local.yml
+
+# Test scratch
+_test-root/
+_sanitize-backup/
+_ingest-out.txt
 
 # OS / editors
 .DS_Store
@@ -39,13 +42,3 @@ Thumbs.db
 *.tmp
 .vscode/
 .idea/
-
-# 测试运行时数据根（含本机环境元数据，禁止入库）
-_test-root/
-
-# 测试输出（临时）
-_ingest-out.txt
-
-# 本地验证日志（不入库）
-/*.log
-/_test-root/

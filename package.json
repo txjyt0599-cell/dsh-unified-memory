@@ -10,11 +10,12 @@
   },
   "files": [
     "lib/",
-    "docs/",
+    "client.js",
     "cordis.patch.yml",
     "README.md",
+    "README.zh-CN.md",
     "LICENSE",
-    "client.js"
+    "docs/configuration.md"
   ],
   "dsh": {
     "bundle": {
@@ -39,9 +40,18 @@
     "smoke": "node scripts/smoke-apply.mjs",
     "check": "node scripts/smoke-apply.mjs && node scripts/check-tracked-imports.mjs && node scripts/check-syntax.mjs && node scripts/check-hardcodes.mjs && node scripts/check-personal-data.mjs",
     "check:as-stranger": "node scripts/check-as-stranger.mjs",
-    "check:release": "npm run check && node scripts/check-as-stranger.mjs --full && npm run audit",
+    "check:release": "npm run check && node scripts/check-as-stranger.mjs --full && npm run audit && npm run check:package",
+    "check:package": "node scripts/check-package-contents.mjs",
     "audit": "node scripts/security-audit.mjs && node scripts/data-leak-audit.mjs",
     "structure": "node scripts/gen-structure.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/txjyt0599-cell/dsh-unified-memory.git"
+  },
+  "homepage": "https://github.com/txjyt0599-cell/dsh-unified-memory#readme",
+  "bugs": {
+    "url": "https://github.com/txjyt0599-cell/dsh-unified-memory/issues"
   },
   "keywords": [
     "dsh",
@@ -54,5 +64,8 @@
     "local-first"
   ],
   "license": "SEE LICENSE IN LICENSE",
-  "private": false
+  "private": false,
+  "devDependencies": {
+    "js-yaml": "^4.1.0"
+  }
 }

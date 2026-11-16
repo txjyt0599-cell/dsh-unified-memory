@@ -1,3 +1,4 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
@@ -32,10 +33,10 @@ for (const c of cases) {
   fs.writeFileSync(c.file, original.replace(c.from, c.to), 'utf8');
   let caught = false, why = '';
   try {
-    execSync('node selftest-dispatch-eventsource.mjs', { cwd: ROOT, stdio: 'ignore' });
+    execSync('node tests/selftest-dispatch-eventsource.mjs', { cwd: ROOT, stdio: 'ignore' });
     why = '测试仍通过';
   } catch (e) {
-    if (e.status === 1) { caught = true; why = '测试红了'; }
+    if (e.status === 1 && !_loadErr(e)) { caught = true; why = '测试红了'; }
     else why = '命令没跑起来 status=' + e.status;
   } finally {
     fs.writeFileSync(c.file, original, 'utf8');

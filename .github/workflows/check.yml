@@ -1,0 +1,23 @@
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install declared test dependencies
+        run: npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - name: Quality gates
+        run: npm run check
+      - name: Stranger test (all suites)
+        run: npm run check:as-stranger -- --full

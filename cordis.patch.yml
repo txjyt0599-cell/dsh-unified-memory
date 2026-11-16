@@ -82,7 +82,7 @@
         #            coldArchive* = false（故意：搬卡不可逆）
         #
         #    要改这些开关，请改 $PM_DATA_ROOT/ingest/config.json；
-        #    同目录有 CONFIG-NOTES.md 说明每一项。
+        #    每一项的说明见仓库 docs/configuration.md。
         # fourForcesEnabled: true
 
         # ② 产卡用的 LLM（必需，否则不会产生任何记忆卡）

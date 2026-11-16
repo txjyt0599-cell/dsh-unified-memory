@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### 整理
+
+- **公开面**：移除 `docs/PUSH-TO-GITHUB.md`、`docs/PARITY-REPORT.md`；`lib/ingest/CONFIG-NOTES.md` 改写为 `docs/configuration.md`；README 的安全承诺改为与实际一致（本机存储 / 远端端点 / 控制台密钥不回显）；安装步骤补真实 URL 与 LLM 前置说明。
+- **目录**：45 个 `selftest*.mjs` 迁入 `tests/`；测试发现器同时扫描 `tests/`，并拒绝「0 套全绿」；变异测试区分「测试失败」与「模块加载/语法错误」。
+- **发布**：新增 `.github/workflows/check.yml`（push/PR 跑 `npm run check` 与陌生人全量）；`release.yml` 在创建 Release 前校验标签/包版本/版本说明，执行 `npm run check:release` 与 `npm run check:package`。
+- **打包**：`files` 收紧为运行时必需文件；新增真实 tarball 内容检查（必需文件在、内部文档/测试/脚本不在）。
+
 ## v2.1.5 — 2026-11-16
 
 ### 新增（默认关闭）

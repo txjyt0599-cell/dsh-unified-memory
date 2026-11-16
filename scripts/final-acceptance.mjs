@@ -151,11 +151,11 @@ console.log('── ④ 质量门槛 ──');
     //   改成：**直接跑测试套件本身**，不依赖批次状态。
     try {
       const suites = [
-        'selftest.mjs', 'selftest-p2.mjs', 'selftest-p3.mjs', 'selftest-p4.mjs',
-        'selftest-bridge.mjs', 'selftest-crosssource.mjs', 'selftest-vector.mjs',
-        'selftest-hotreload.mjs', 'selftest-p23.mjs', 'selftest-l0detail.mjs',
-        'scripts/selftest-stage1-dualpool.mjs', 'selftest-ingest.mjs',
-        'selftest-autorefresh.mjs', 'scripts/selftest-graph-wiring.mjs',
+        'tests/selftest.mjs', 'tests/selftest-p2.mjs', 'tests/selftest-p3.mjs', 'tests/selftest-p4.mjs',
+        'tests/selftest-bridge.mjs', 'tests/selftest-crosssource.mjs', 'tests/selftest-vector.mjs',
+        'tests/selftest-hotreload.mjs', 'tests/selftest-p23.mjs', 'tests/selftest-l0detail.mjs',
+        'scripts/selftest-stage1-dualpool.mjs', 'tests/selftest-ingest.mjs',
+        'tests/selftest-autorefresh.mjs', 'scripts/selftest-graph-wiring.mjs',
         'scripts/bench-p8.mjs', 'scripts/smoke-apply.mjs',
       ];
       const failed = [];

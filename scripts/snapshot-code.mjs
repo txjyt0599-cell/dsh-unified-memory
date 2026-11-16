@@ -105,6 +105,7 @@ mkdirSync(dir, { recursive: true });
 const files = [];
 collect(join(ROOT, 'lib'), files, ROOT);
 collect(join(ROOT, 'scripts'), files, ROOT);
+collect(join(ROOT, 'tests'), files, ROOT);
 // 根目录的 selftest
 for (const n of readdirSync(ROOT)) {
   if (/^selftest.*\.mjs$/.test(n)) {

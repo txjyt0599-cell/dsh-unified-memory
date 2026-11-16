@@ -1,9 +1,10 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 const { execSync } = require('node:child_process');
 const fs = require('node:fs');
 // [2026-10-30] CJS 文件用 __dirname，别混 ESM 写法
 const ROOT = require('node:path').resolve(__dirname, '..');
 const F = ROOT + '/lib/ingest/distill.js';
-const TEST = 'selftest-ongoing-thread-pairing.mjs';
+const TEST = 'tests/selftest-ongoing-thread-pairing.mjs';
 const orig = fs.readFileSync(F, 'utf8');
 
 // 用 indexOf 找关键行，按行号删（避开转义地狱）
@@ -22,7 +23,7 @@ fs.writeFileSync(F, keep.join('\n'), 'utf8');
 
 let caught = false, why = '';
 try { execSync('node ' + TEST, { cwd: ROOT, stdio: 'pipe', encoding: 'utf8' }); why = '仍通过'; }
-catch (e) { caught = e.status === 1; why = caught ? '红了' : '未跑起来 ' + e.status; }
+catch (e) { caught = e.status === 1 && !_loadErr(e); why = caught ? '红了' : '未跑起来 ' + e.status; }
 fs.writeFileSync(F, orig, 'utf8');
 
 console.log('CSS 清洗变异自证:', caught ? '✓ 抓到' : '✗ 没抓到', '—', why);

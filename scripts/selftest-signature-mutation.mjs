@@ -1,3 +1,4 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 /**
  * sendMessage 签名变异自证（v2 · 2026-10-28）
  *
@@ -13,7 +14,7 @@ import fs from 'node:fs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/dispatch/tool.js';
-const TEST = 'selftest-dispatch-signature.mjs';
+const TEST = 'tests/selftest-dispatch-signature.mjs';
 
 const FROM = [
   '        const res = await d.sendMessage(d.caller || execAgent, {',
@@ -42,7 +43,7 @@ for (const c of cases) {
     execSync('node ' + TEST, { cwd: ROOT, stdio: 'pipe', encoding: 'utf8' });
     why = '测试仍通过';
   } catch (e) {
-    if (e.status === 1) { caught = true; why = '测试红了（status=1）'; }
+    if (e.status === 1 && !_loadErr(e)) { caught = true; why = '测试红了（status=1）'; }
     else why = '命令没跑起来 status=' + e.status;
   } finally {
     fs.writeFileSync(F, original, 'utf8');

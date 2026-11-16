@@ -1,3 +1,4 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 /**
  * 名册变异自证（2026-10-28）
  * 两条变异，对应真实事故：
@@ -10,7 +11,7 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const TEST = 'selftest-dispatch-roster.mjs';
+const TEST = 'tests/selftest-dispatch-roster.mjs';
 
 const cases = [
   { file: ROOT + '/lib/index.js', name: 'M1 方法名写错（listMembers → listAgents）',
@@ -33,7 +34,7 @@ for (const c of cases) {
     execSync('node ' + TEST, { cwd: ROOT, stdio: 'pipe', encoding: 'utf8' });
     why = '测试仍通过';
   } catch (e) {
-    if (e.status === 1) { caught = true; why = '测试红了（status=1）'; }
+    if (e.status === 1 && !_loadErr(e)) { caught = true; why = '测试红了（status=1）'; }
     else why = '命令没跑起来 status=' + e.status;
   } finally {
     fs.writeFileSync(c.file, original, 'utf8');

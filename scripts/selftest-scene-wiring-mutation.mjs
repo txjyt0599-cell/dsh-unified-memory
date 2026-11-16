@@ -1,3 +1,4 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 /**
  * 场景隔离接线变异自证（2026-10-28）
  *
@@ -16,7 +17,7 @@ import fs from 'node:fs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/retrieval/retriever.js';
-const TEST = 'selftest-scene-wiring.mjs';
+const TEST = 'tests/selftest-scene-wiring.mjs';
 
 const cases = [
   { name: 'X1 去掉 sceneIsolation 开关（传 scene 就开）',
@@ -40,7 +41,7 @@ for (const c of cases) {
     execSync('node ' + TEST, { cwd: ROOT, stdio: 'ignore' });
     why = '测试仍通过';
   } catch (e) {
-    if (e.status === 1) { caught = true; why = '测试红了'; }
+    if (e.status === 1 && !_loadErr(e)) { caught = true; why = '测试红了'; }
     else why = '命令没跑起来 status=' + e.status;
   } finally {
     fs.writeFileSync(F, original, 'utf8');

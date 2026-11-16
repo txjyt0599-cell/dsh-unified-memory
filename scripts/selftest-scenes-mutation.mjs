@@ -1,3 +1,4 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 /**
  * 场景隔离变异自证：把隔离逻辑故意改错，看 selftest-scenes 会不会红。
  *
@@ -13,7 +14,7 @@ import fs from 'node:fs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/scenes.js';
-const TEST = 'selftest-scenes.mjs';
+const TEST = 'tests/selftest-scenes.mjs';
 
 const cases = [
   { name: 'S1 未声明的卡也挡（历史卡集体消失）',
@@ -37,7 +38,7 @@ for (const c of cases) {
     execSync('node ' + TEST, { cwd: ROOT, stdio: 'ignore' });
     why = '测试仍通过';
   } catch (e) {
-    if (e.status === 1) { caught = true; why = '测试红了'; }
+    if (e.status === 1 && !_loadErr(e)) { caught = true; why = '测试红了'; }
     else why = '命令没跑起来 status=' + e.status;
   } finally {
     fs.writeFileSync(F, original, 'utf8');

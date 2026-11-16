@@ -110,6 +110,12 @@ function targets() {
     }
   } catch { /* ROOT 不在就当空 */ }
   try {
+    const td = path.join(ROOT, 'tests');
+    for (const n of fs.readdirSync(td)) {
+      if (/^selftest.*\.mjs$/.test(n)) out.push(path.join(td, n));
+    }
+  } catch { /* 无 tests 目录 */ }
+  try {
     const sd = path.join(ROOT, 'scripts');
     for (const n of fs.readdirSync(sd)) {
       if (/^(e2e|selftest).*\.mjs$/.test(n)) out.push(path.join(sd, n));

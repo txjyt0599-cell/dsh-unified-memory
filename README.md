@@ -1,7 +1,7 @@
 # dsh-unified-memory
 
 > A **local-first, self-forgetting, self-reinforcing** long-term memory plugin for [DSH](https://github.com/deepseek-ai).
-> No cloud. No external vector DB. No lock-in. Your memory is a folder of JSONL files you own.
+> No external vector DB. No lock-in. Your memory is a folder of JSONL files you own — optional model endpoints are used only when you configure them.
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
@@ -131,12 +131,14 @@ The non-negotiable rule: **`inactive` is a healthy idle state, never "dead."** C
 ### Steps
 
 ```bash
-git clone <this-repo> dsh-unified-memory
+git clone https://github.com/txjyt0599-cell/dsh-unified-memory.git dsh-unified-memory
 cd dsh-unified-memory
 npm install --omit=dev        # no runtime dependencies except the DSH peer
 ```
 
-Add it to your DSH profile's plugin list, then restart DSH so the module is loaded.
+Add it to your DSH profile's plugin list, then restart DSH so the module is loaded. The package ships `cordis.patch.yml`; DSH reads it when the plugin is installed. If your profile lists plugins manually, add `dsh-unified-memory` to that list.
+
+Card extraction (`extract` / `distill`) needs an LLM endpoint. Without one, the writing chain still captures raw turns, and extraction/distillation skip with a warning.
 
 Verify it loads cleanly:
 
@@ -144,13 +146,13 @@ Verify it loads cleanly:
 node scripts/smoke-apply.mjs
 ```
 
-That runs `apply(ctx, config)` against a fake context — the same path DSH uses on startup. If it passes, the plugin will not crash the host.
+That runs `apply(ctx, config)` against a mock context. It covers registration and startup wiring; a mock cannot reproduce every host runtime, so treat it as a smoke gate rather than a guarantee.
 
 ---
 
 ## Configuration
 
-All configuration is optional, and the plugin works without any of it. **Out of the box the writing chain and the four-force gate are already on** — that is what makes a fresh install actually accumulate memories. Two things stay off by default because they are either destructive or optional: cold-archive (moving cards is irreversible) and flashback. See [Defaults](#defaults--what-works-out-of-the-box) for the full table.
+All configuration is optional, and the plugin works without any of it. The full switch table lives in [docs/configuration.md](docs/configuration.md). **Out of the box the writing chain and the four-force gate are already on** — that is what makes a fresh install actually accumulate memories. Two things stay off by default because they are either destructive or optional: cold-archive (moving cards is irreversible) and flashback. See [Defaults](#defaults--what-works-out-of-the-box) for the full table.
 
 ### Environment variables
 
@@ -324,20 +326,21 @@ $PM_DATA_ROOT/
 ```bash
 npm run check                    # four cheap gates — ~20s, run this constantly
 npm run check:as-stranger        # pretend to be someone else — ~40s
-npm run check:release            # everything, including all 45 suites as a stranger — ~2min
-node selftest-dispatch-machine.mjs   # run one suite
+npm run check:release            # everything, including every discovered suite as a stranger — ~2min
+npm run check:package            # inspect the real tarball: required files in, internal records out — ~5s
+node tests/selftest-dispatch-machine.mjs   # run one suite
 ```
 
 Each gate answers a different question, and each exists because the others missed something real:
 
 | Gate | Question | Fails when |
 |---|---|---|
-| `scripts/smoke-apply.mjs` | Does `apply()` survive a fake context? | The plugin would crash the host on startup |
+| `scripts/smoke-apply.mjs` | Does `apply()` survive a mock context? | Startup wiring throws before the plugin can register |
 | `scripts/check-tracked-imports.mjs` | Is everything `lib/` imports actually **committed**? | A source directory was silently dropped by `.gitignore` — every local test passes, every fresh clone dies |
 | `scripts/check-syntax.mjs` | Does every committed JS file even **parse**? | A file that nothing imports was left broken; it never loads, so nothing else notices |
 | `scripts/check-hardcodes.mjs` | Does any shipped path point at *my* machine? | A `C:/Users/…` or an unexpanded `~/…` reaches your box — Node does not expand `~`, so it becomes a **relative** path and quietly creates a directory literally named `~` |
 
-**44 test suites** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults. Suites that need an existing card store, tdai conversations, a persona file or scene blocks **skip with a printed reason** on a fresh install — a missing input is not a failing check, and it must not look like one. They were re-run against a full read-only copy of a real store (2 069 cards, 52/52 cross-source, 70/70 p4, 430/430 ingest) to confirm the skip is not hiding a break.
+**The `selftest*.mjs` suites under `tests/`** cover wiring, retrieval, rendering, cross-source merging, cache contracts, dispatch state transitions, diary behavior, and out-of-the-box defaults. Suites that need an existing card store, tdai conversations, a persona file or scene blocks **skip with a printed reason** on a fresh install — a missing input is not a failing check, and it must not look like one. They were re-run against a full read-only copy of a real store (2 069 cards, 52/52 cross-source, 70/70 p4, 430/430 ingest) to confirm the skip is not hiding a break.
 
 ### The gate that matters most: `check-as-stranger`
 
@@ -348,7 +351,7 @@ Every check above runs on **your** machine, with **your** home directory and **y
 1. runs all four gates as that stranger;
 2. loads your shipped `cordis.patch.yml` verbatim and calls `apply()` for real;
 3. asserts no directory named `~` appeared, that data landed under `PM_DATA_ROOT`, and that no dev-machine path survives in `lib/` or `scripts/`;
-4. with `--full`, runs all 45 suites as that stranger.
+4. with `--full`, runs every discovered suite as that stranger.
 
 It refuses to grade what it could not run: if `apply()` throws, the "no `~` directory" check reports **skipped**, not passed — because a crashed `apply()` builds no directories, and a green tick there would be a lie.
 
@@ -368,13 +371,15 @@ node scripts/data-leak-audit.mjs   # real card IDs, session IDs, timestamps
 **What this plugin does NOT do:**
 
 - No telemetry. No phone-home.
-- No credential storage. API keys are read from your DSH profile and never logged.
-- No data leaves the machine except embedding calls to the endpoint *you* configure.
+- Memory data stays on this machine by default, under `$PM_DATA_ROOT`.
+- If you configure remote LLM, embedding, or rerank endpoints, the inputs required for those calls are sent to the endpoints you configure.
+- Keys entered in the web console are stored in `$PM_DATA_ROOT/ingest/model-endpoints.json` on this machine. They are never returned by the status API and never written to logs; keys can also come from your DSH profile.
 
 **What you must do:**
 
 - Keep `$PM_DATA_ROOT` out of version control. The bundled `.gitignore` excludes it.
 - Treat the data directory as private — it contains conversations in plain text.
+- Treat `$PM_DATA_ROOT/ingest/model-endpoints.json` as a secret — it may contain API keys.
 
 ---
 

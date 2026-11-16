@@ -1,3 +1,4 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 /**
  * E1 断言变异自证：让检索结果大幅变动，看 Jaccard 断言会不会红。
  */
@@ -7,7 +8,7 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const F = ROOT + '/selftest-bridge.mjs';
+const F = ROOT + '/tests/selftest-bridge.mjs';
 const original = fs.readFileSync(F, 'utf8');
 
 // 变异：把 jaccard 门槛提到 2.0（不可能达到）⇒ 断言必须红
@@ -22,10 +23,10 @@ fs.writeFileSync(F, original.replace(FROM, TO), 'utf8');
 
 let caught = false, why = '';
 try {
-  execSync('node selftest-bridge.mjs', { cwd: ROOT, stdio: 'pipe', encoding: 'utf8' });
+  execSync('node tests/selftest-bridge.mjs', { cwd: ROOT, stdio: 'pipe', encoding: 'utf8' });
   why = '测试仍通过';
 } catch (e) {
-  if (e.status === 1) { caught = true; why = '测试红了（status=1）'; }
+  if (e.status === 1 && !_loadErr(e)) { caught = true; why = '测试红了（status=1）'; }
   else why = '命令没跑起来 status=' + e.status;
 }
 fs.writeFileSync(F, original, 'utf8');

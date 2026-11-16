@@ -34,6 +34,7 @@ import { fileURLToPath } from 'node:url';
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const FULL = process.argv.includes('--full');
+const REQUIRE_DEPS = process.env.CI === 'true' || process.argv.includes('--require-deps');
 const AS_JSON = process.argv.includes('--json');
 const NODE = process.execPath;
 
@@ -217,7 +218,19 @@ info('── 3 · 症状断言（这三条正是前两轮漏掉的） ──');
 if (FULL) {
   info('');
   info('── 4 · 全部套件（在别人机器上） ──');
-  const suites = readdirSync(CLONE).filter((f) => /^selftest.*\.mjs$/.test(f)).sort();
+  const suites = [];
+  for (const dir of [join(CLONE, 'tests'), CLONE]) {
+    let names = [];
+    try { names = readdirSync(dir); } catch { names = []; }
+    for (const f of names) {
+      if (!/^selftest.*\.mjs$/.test(f)) continue;
+      const rel = dir === CLONE ? f : 'tests/' + f;
+      if (!suites.includes(rel)) suites.push(rel);
+    }
+  }
+  suites.sort();
+  check('发现测试套件（拒绝空集合）', suites.length > 0, '共 ' + suites.length + ' 套');
+  if (suites.length === 0) throw new Error('未发现任何 selftest 套件：拒绝把 0 套当成全绿');
   let bad = [];
   for (const s of suites) {
     const r = asStranger([s], { timeout: 300000 });

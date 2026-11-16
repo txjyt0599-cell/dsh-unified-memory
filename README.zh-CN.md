@@ -1,7 +1,7 @@
 # dsh-unified-memory
 
 > 一个 **本地优先、会遗忘、会强化** 的 DSH 长期记忆插件。
-> 不上云 · 不依赖外部向量库 · 不锁定格式 —— 你的记忆就是一堆你自己拥有的 JSONL 文件。
+> 不依赖外部向量库 · 不锁定格式 —— 你的记忆就是一堆你自己拥有的 JSONL 文件；可选模型端点只在你配置后才会使用。
 
 简体中文 | [English](README.md)
 
@@ -128,12 +128,14 @@ pending -> confirmed -> in_progress
 ### 步骤
 
 ```bash
-git clone <本仓库> dsh-unified-memory
+git clone https://github.com/txjyt0599-cell/dsh-unified-memory.git dsh-unified-memory
 cd dsh-unified-memory
 npm install --omit=dev        # 除了 DSH 这个 peer，没有任何运行时依赖
 ```
 
-把它加进你的 DSH profile 插件列表，然后重启 DSH 让模块加载。
+把它加进你的 DSH profile 插件列表，然后重启 DSH 让模块加载。插件包内自带 `cordis.patch.yml`，安装后 DSH 会读取；若你的 profile 是手动列插件，把 `dsh-unified-memory` 写进列表即可。
+
+产卡（`extract` / `distill`）需要可用的 LLM 端点；没有配置时写入链仍会记录原始对话，抽取与蒸馏会打印告警后跳过。
 
 验证加载是否干净：
 
@@ -141,13 +143,13 @@ npm install --omit=dev        # 除了 DSH 这个 peer，没有任何运行时�
 node scripts/smoke-apply.mjs
 ```
 
-它用一个假 ctx 跑一遍 `apply(ctx, config)`——和 DSH 启动时走的是同一条路。过了就说明不会把宿主搞崩。
+它用一个模拟 ctx 跑一遍 `apply(ctx, config)`，覆盖注册与启动接线；模拟环境无法复现所有宿主运行时，因此它只是冒烟门禁，不是「绝不崩溃」的保证。
 
 ---
 
 ## 配置
 
-全部配置都是可选的，不配也能跑。**开箱时写入链和四股力门控已经是开着的**——这正是一次新安装能真正攒下记忆的原因。有两样默认关闭，因为它们要么不可逆、要么属可选项：冷宫归档（搬卡不可逆）与闪回。完整对照见[默认值](#默认值--开箱是什么状态)。
+全部配置都是可选的，不配也能跑。完整开关表见 [docs/configuration.md](docs/configuration.md)。**开箱时写入链和四股力门控已经是开着的**——这正是一次新安装能真正攒下记忆的原因。有两样默认关闭，因为它们要么不可逆、要么属可选项：冷宫归档（搬卡不可逆）与闪回。完整对照见[默认值](#默认值--开箱是什么状态)。
 
 ### 环境变量
 
@@ -297,8 +299,9 @@ $PM_DATA_ROOT/
 ```bash
 npm run check                    # 四道便宜闸 —— 约 20 秒，改完就跑
 npm run check:as-stranger        # 假装自己是别人 —— 约 40 秒
-npm run check:release            # 全量：含 45 套件以陌生人身份跑 —— 约 2 分钟
-node selftest-dispatch-machine.mjs   # 跑单个套件
+npm run check:release            # 全量：所有已发现套件以陌生人身份跑 —— 约 2 分钟
+npm run check:package            # 检查真实 tarball：该有的在、内部记录不在 —— 约 5 秒
+node tests/selftest-dispatch-machine.mjs   # 跑单个套件
 ```
 
 每道闸问的是不同的问题，且每一道都是因为别的闸漏掉过真问题才加上来的：
@@ -310,7 +313,7 @@ node selftest-dispatch-machine.mjs   # 跑单个套件
 | `scripts/check-syntax.mjs` | 每个已提交的 JS 文件**能不能解析** | 某个没人 import 的文件坏着躺在那儿 —— 它从不加载，别的检查都看不见 |
 | `scripts/check-hardcodes.mjs` | 有没有哪条路径指向**我的机器** | 有 `C:/Users/…` 或没展开的 `~/…` 混进去 —— Node 不展开 `~`，它变成**相对路径**，会在你的目录里悄悄建一个名叫 `~` 的文件夹 |
 
-共 **44 个测试套件**，覆盖接线、检索、渲染、跨源合并、缓存契约、派单状态迁移、日记行为、开箱默认值。需要**已有数据**的套件（卡库 / tdai 对话 / 画像文件 / 场景块）在全新安装上会**打印原因后跳过**——缺素材不是判据失败，更不能伪装成失败或伪装成通过。为确认"跳过"不是把坏掉的东西藏起来，这些套件另外拿一份**真实卡库的只读副本**重跑过：跨源 52/52、p4 70/70、ingest 430/430（2069 张卡）。
+**`tests/` 下的 `selftest*.mjs` 套件**覆盖接线、检索、渲染、跨源合并、缓存契约、派单状态迁移、日记行为、开箱默认值。需要**已有数据**的套件（卡库 / tdai 对话 / 画像文件 / 场景块）在全新安装上会**打印原因后跳过**——缺素材不是判据失败，更不能伪装成失败或伪装成通过。为确认"跳过"不是把坏掉的东西藏起来，这些套件另外拿一份**真实卡库的只读副本**重跑过：跨源 52/52、p4 70/70、ingest 430/430（2069 张卡）。
 
 ### 最要紧的那道闸：`check-as-stranger`
 
@@ -321,7 +324,7 @@ node selftest-dispatch-machine.mjs   # 跑单个套件
 1. 以那个陌生人的身份跑完四道闸；
 2. 把仓库自带的 `cordis.patch.yml` **原样**加载，真调一次 `apply()`；
 3. 断言：没有冒出名叫 `~` 的目录、数据确实落在 `PM_DATA_ROOT`、`lib/` 与 `scripts/` 里没有开发机路径；
-4. 加 `--full` 时，以陌生人身份跑完 44 个套件。
+4. 加 `--full` 时，以陌生人身份跑完所有已发现的套件。
 
 它**拒绝给"没跑起来的东西"打分**：如果 `apply()` 直接崩了，"没有 `~` 目录"这一条会报**跳过**而不是通过——因为崩掉的 `apply()` 根本没机会建任何目录，那里打绿勾就是撒谎。
 
@@ -341,13 +344,15 @@ node scripts/data-leak-audit.mjs   # 真实卡片 ID、会话 ID、时间戳
 **这个插件不做的事：**
 
 - 没有遥测。不回家报到。
-- 不存储凭据。API key 从你的 DSH profile 读，永不写日志。
-- 数据不离开这台机器——除了发往*你自己*配置的那个 embedding 端点。
+- 记忆数据默认保存在本机 `$PM_DATA_ROOT` 下。
+- 如果你配置了远端 LLM、embedding 或重排端点，这些调用所需的输入会发送到你配置的端点。
+- 网页控制台录入的密钥保存在本机 `$PM_DATA_ROOT/ingest/model-endpoints.json`，不会通过状态接口回显，也不会写入日志；密钥也可以来自你的 DSH profile。
 
 **你必须做的事：**
 
 - 把 `$PM_DATA_ROOT` 排除在版本控制之外。自带的 `.gitignore` 已经处理了。
 - 把数据目录当私密内容对待——里面是你的对话，明文。
+- 把 `$PM_DATA_ROOT/ingest/model-endpoints.json` 当密钥文件保护——里面可能保存 API Key。
 
 ---
 

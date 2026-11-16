@@ -1,9 +1,10 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 const { execSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const ROOT = path.resolve(__dirname, '..');
 const F = ROOT + '/lib/ingest/config.js';
-const TEST = 'selftest-defaults.mjs';
+const TEST = 'tests/selftest-defaults.mjs';
 const orig = fs.readFileSync(F, 'utf8');
 
 // 变异：把四股力改回 false（复刻"默认关等于没发布"）
@@ -14,7 +15,7 @@ fs.writeFileSync(F, orig.replace(from, to), 'utf8');
 
 let caught = false, why = '';
 try { execSync('node ' + TEST, { cwd: ROOT, stdio: 'pipe', encoding: 'utf8' }); why = '仍通过'; }
-catch (e) { caught = e.status === 1; why = caught ? '红了' : '未跑起来 ' + e.status; }
+catch (e) { caught = e.status === 1 && !_loadErr(e); why = caught ? '红了' : '未跑起来 ' + e.status; }
 fs.writeFileSync(F, orig, 'utf8');
 
 console.log('四股力默认值变异自证:', caught ? '✓ 抓到' : '✗ 没抓到', '—', why);

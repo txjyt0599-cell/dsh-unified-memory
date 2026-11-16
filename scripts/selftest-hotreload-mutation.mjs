@@ -1,3 +1,4 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 /**
  * 只读探针变异自证（2026-10-28）
  * 把探针的关键判据改坏，看测试会不会红。
@@ -12,7 +13,7 @@ import fs from 'node:fs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const F = ROOT + '/lib/dispatch/hotreload-probe.js';
-const TEST = 'selftest-hotreload-probe.mjs';
+const TEST = 'tests/selftest-hotreload-probe.mjs';
 
 const cases = [
   { name: 'H1 永远返回 ok=true（假装可行）',
@@ -36,7 +37,7 @@ for (const c of cases) {
     execSync('node ' + TEST, { cwd: ROOT, stdio: 'pipe', encoding: 'utf8' });
     why = '测试仍通过';
   } catch (e) {
-    if (e.status === 1) { caught = true; why = '测试红了（status=1）'; }
+    if (e.status === 1 && !_loadErr(e)) { caught = true; why = '测试红了（status=1）'; }
     else why = '命令没跑起来 status=' + e.status;
   } finally {
     fs.writeFileSync(F, original, 'utf8');

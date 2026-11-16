@@ -34,112 +34,112 @@ const STATE = join(ROOT, '.restart-batch.json');
 const HISTORY = join(ROOT, '.restart-batch-history.jsonl');
 
 const SUITES = [
-  'selftest.mjs',
-  'selftest-p2.mjs',
-  'selftest-p3.mjs',
-  'selftest-p4.mjs',
-  'selftest-bridge.mjs',
+  'tests/selftest.mjs',
+  'tests/selftest-p2.mjs',
+  'tests/selftest-p3.mjs',
+  'tests/selftest-p4.mjs',
+  'tests/selftest-bridge.mjs',
   // [2026-10-28 by Assistant · P0 注入落盘真伪]
   //   他山之石：淋雨家自审「插件标 runtime-context ⇒ 正文被静默丢弃，日志照写 inject 成功」。
   //   本套验回捞钩子的判据，并**钉死一个我第一版真写错的地方**：
   //   只替换字面 \\n 会漏掉真换行 ⇒ 跨行指纹永远匹配不上 ⇒ 把成功误报成丢注入。
-  'selftest-inject-verify.mjs',
+  'tests/selftest-inject-verify.mjs',
   // [2026-10-28 by Assistant · P1 体温交接]
   //   抓到的真问题：写盘塞在 runDistill 里，而 llm:off 时第 429 行就 return
   //   ⇒ 本机 llm:off 期间 ongoing-thread.json 结构性永不更新（实测停在 11:04）。
   //   本套验"无 LLM 也能写"+ 脏数据清洗 + 反例。
-  'selftest-ongoing-thread.mjs',
+  'tests/selftest-ongoing-thread.mjs',
   // [2026-10-28 by Assistant · 老红项] 读侧标题闸门
   //   根因不是判据错，是判据没被执行（cleanTitle 只去脏不判合格），
   //   且 cleanTitle 把"提不出"写死成「（无标题）」⇒ 脏数据伪装成合法标题。
-  'selftest-title-gate.mjs',
+  'tests/selftest-title-gate.mjs',
   // [2026-10-28 by Assistant · 派单回执状态机 v1]
   //   七条反例：A 死投 / B 假唤醒 / C 真完成回执丢 / D 假完成不销账 /
   //   E 前缀污染 / F 多标签 / G 投递丢失；H 组单钉「inactive 不许判死」。
   //   ⛔ 判据全部来自实读源码行号，已废除 turnCount（不存在）/ mtime（整包重写）。
-  'selftest-dispatch-machine.mjs',
+  'tests/selftest-dispatch-machine.mjs',
   // [2026-10-28 by Assistant · 派单接线] 三手柄 + Write-Ahead 台账
   //   A10 是关键的**时序**断言：投递发生那一刻台账里必须已有 pending。
   //   （第一版没这条，导致"先投递后落盘"的变异抓不到 —— 又是反例不够细）
-  'selftest-dispatch-wiring.mjs',
+  'tests/selftest-dispatch-wiring.mjs',
   // [2026-10-28 by Assistant · 真实派单抓到的第四个 bug]
   //   agentTeams.sendMessage(caller, request) 是**两个参数**，我原来只传一个。
   //   旧测试全用假函数，假函数不校验参数个数 ⇒ 测试全绿但上线就崩。
   //   本套用"严格两参"假函数 + 源码断言 + 两条变异，把签名钉死。
-  'selftest-dispatch-signature.mjs',
+  'tests/selftest-dispatch-signature.mjs',
   // [2026-10-28 by Assistant · 第六次真实派单抓到的**误报**]
   //   派单成功、回执也回来了，dispatch_scan 却判 dead_target。
   //   根因：getAgents 调了不存在的方法名 listAgents（正确是 listMembers）⇒ 名册恒空。
   //   本套钉死：名册读失败 ⇒ undetermined（不知道）；空名册 ⇒ 才允许 dead_target。
-  'selftest-dispatch-roster.mjs',
+  'tests/selftest-dispatch-roster.mjs',
   // [2026-10-28 by Assistant · 热重载第一步·只读探针]
   //   只回答"能不能"：loader 可达 / 找得到自己 / 有 fiber。
   //   ⛔ 不改任何状态（P6 组专门验证了这点）。
-  'selftest-hotreload-probe.mjs',
+  'tests/selftest-hotreload-probe.mjs',
   // [2026-10-28 by Assistant · 热重载第二步·保险]
   //   核心是**顺序**不是功能：保险必须先于 dispose 挂上（G-ORDER1 专门验这个）。
   //   三条变异对应三种"会真丢插件"的写法，含最致命的"先拆后挂"。
-  'selftest-hotreload-guard.mjs',
+  'tests/selftest-hotreload-guard.mjs',
   // [2026-10-28 by Assistant · User指出的真 bug]
   //   ongoing-thread 的"问"和"答"各自找"最后一条"⇒ 不保证是同一对。
   //   实测 L0：user 20:32:01 → asst 13 → 19 → 26 → 34
   //   旧逻辑会把"过程里最后一句"当答案。P2 反例专钉"提问后无回答时不许回退拿旧答"。
-  'selftest-ongoing-thread-pairing.mjs',
+  'tests/selftest-ongoing-thread-pairing.mjs',
   // [2026-10-28 by Assistant · 热重载第三步·两个工具]
   //   今天最丢脸的 bug：join 里的转义换行被写成**真换行** ⇒
   //   node --check 报 OK、84 文件语法扫描全过，但运行时 import 直接 Invalid token。
   //   本套加 H2a「字符串字面量跨行」扫描 + H1「ESM 真解析」，
   //   且**先扫源码再加载模块**（否则源码坏了在 import 阶段就崩）。
-  'selftest-hotreload-tools.mjs',
+  'tests/selftest-hotreload-tools.mjs',
   // [2026-10-28 by Assistant · 真执行 · 一次真实翻车的教训]
   //   19:43 真跑 hotreload_apply 后插件**永久消失**（工具全没、日志无 rescue）。
   //   三个死因：① 用已 dispose 的 p.ctx 重新 apply ② catch 静默 ③ 保险同死因。
   //   ⇒ 本套钉死：没有可靠外部重装器时必须**拒绝自拆**，绝不再拆了自己装不回来。
-  'selftest-hotreload-exec.mjs',
+  'tests/selftest-hotreload-exec.mjs',
   // [2026-10-28 by Assistant · 事件源接入]
   //   N1 是关键反例：两条读取路都失败时必须判 undetermined，
   //   ⛔ 绝不能用空数组冒充"没有新增"（那会让 classify 判 busy，让人催一个没问题的目标）。
-  'selftest-dispatch-eventsource.mjs',
+  'tests/selftest-dispatch-eventsource.mjs',
   // [2026-10-28 by Assistant · 补一套真事故的守门测试]
   //   线上三个 dispatch 工具**全部注册失败**（缺 output { schema, render }），
   //   而 probe 仍打出 dispatch-tools-registered n=3 —— 今天第三次"日志说成功≠真成功"。
   //   本套验工具声明完整性（name/description/parameters/output.schema/render/execute），
   //   并有配套变异证明"删掉 output 会被抓到"。
-  'selftest-tool-schema.mjs',
+  'tests/selftest-tool-schema.mjs',
   // [2026-10-28 by Assistant · 补一套更根本的守门测试]
   //   cordis 铁律：没声明进 inject 的服务，读 ctx.xxx 会被直接拦下。
   //   今天**两次**踩同一个坑：tools（10-24）、agentTeams+sessions+sessionPersistence（10-28）。
   //   本套做静态对账：代码里读了哪些 ctx.xxx vs inject 声明了哪些，不一致就红。
-  'selftest-inject-declarations.mjs',
+  'tests/selftest-inject-declarations.mjs',
   // [2026-10-28 by Assistant · 场景隔离]
   //   反例全是「必须可见」：未声明的卡 / 当前场景未声明 / includeCrossScene。
   //   因为隔离做错的后果是**历史卡集体消失**——比不隔离更糟。
-  'selftest-scenes.mjs',
+  'tests/selftest-scenes.mjs',
   // [2026-10-28 by Assistant · 场景隔离接线]
   //   User目标：**一个Assistant，看全部会话的记忆**。所以本套最重要的不是"隔离能生效"，
   //   而是"默认一条都不挡"。A 组是源码级断言（先剥注释再匹配，防"注释让断言假绿"）。
-  'selftest-scene-wiring.mjs',
+  'tests/selftest-scene-wiring.mjs',
   // [2026-10-28 by Assistant · 结构重构] L0 归一化抽成纯函数模块
   //   判据是**逐位等价性**：新模块输出必须与旧内联实现逐字节相同（含 toFixed(4) 尾数）。
-  'selftest-l0-normalize.mjs',
-  'selftest-crosssource.mjs',
-  'selftest-vector.mjs',
+  'tests/selftest-l0-normalize.mjs',
+  'tests/selftest-crosssource.mjs',
+  'tests/selftest-vector.mjs',
   // [2026-10-26 by Assistant · 回应审核 P1「备路零测试覆盖」]
   //   selftest-vector 只测 breaker 纯函数，测不到 retriever 集成；
   //   P0（主路熔断后整条向量路被跳过）正是这样漏过去的。此套专测备路。
-  'selftest-fallback.mjs',
-  'selftest-hotreload.mjs',
-  'selftest-p23.mjs',
-  'selftest-l0detail.mjs',
+  'tests/selftest-fallback.mjs',
+  'tests/selftest-hotreload.mjs',
+  'tests/selftest-p23.mjs',
+  'tests/selftest-l0detail.mjs',
   // [2026-10-23 by Assistant · 期8.3] 路径修正：这个文件从来就在 scripts/ 下，
   //   SUITES 里写的是根目录路径 ⇒ `node <文件>` 直接 MODULE_NOT_FOUND ⇒
   //   execSync 抛异常 ⇒ 被 catch 当成「测试失败」。
   //   也就是说这个套件**从来没有被 verify 真正跑过**（却一直被当成 15 套之一）。
   'scripts/selftest-stage1-dualpool.mjs',
   // [2026-10-22 by Assistant · 期7] 写入侧（L0/L1/蒸馏）自测
-  'selftest-ingest.mjs',
+  'tests/selftest-ingest.mjs',
   // [2026-10-22 by Assistant · 坑6] 索引自动保鲜（源变才重建、幽灵卡清除）
-  'selftest-autorefresh.mjs',
+  'tests/selftest-autorefresh.mjs',
   // [2026-10-23 by Assistant · 期8.1] 认知信用协议 + 会话冷却期（白队钦定 Case 1/2/3）
   //   白队要求：「跑完拿 Trace 日志来，我们看数据说话」⇒ 必须每次 verify 都跑
   'scripts/bench-p8.mjs',

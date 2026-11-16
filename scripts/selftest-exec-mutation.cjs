@@ -1,9 +1,10 @@
+const _loadErr = (e) => /MODULE_NOT_FOUND|Cannot find module|ERR_MODULE_NOT_FOUND|SyntaxError/.test(String((e && e.stdout) || '') + String((e && e.stderr) || ''));
 const { execSync } = require('node:child_process');
 const fs = require('node:fs');
 // [2026-10-30] CJS 文件用 __dirname，别混 ESM 写法
 const ROOT = require('node:path').resolve(__dirname, '..');
 const F = ROOT + '/lib/dispatch/hotreload-exec.js';
-const TEST = 'selftest-hotreload-exec.mjs';
+const TEST = 'tests/selftest-hotreload-exec.mjs';
 const cases = [
   { name: 'E1 去掉"没重装器就拒绝"的门禁（回到会丢插件的旧行为）',
     from: '  if (!hasExternalReloader) {',
@@ -19,7 +20,7 @@ for (const c of cases) {
   fs.writeFileSync(F, orig.replace(c.from, c.to), 'utf8');
   let caught = false, why = '';
   try { execSync('node ' + TEST, { cwd: ROOT, stdio: 'pipe', encoding: 'utf8' }); why = '仍通过'; }
-  catch (e) { caught = e.status === 1; why = caught ? '红了' : '未跑起来 ' + e.status; }
+  catch (e) { caught = e.status === 1 && !_loadErr(e); why = caught ? '红了' : '未跑起来 ' + e.status; }
   fs.writeFileSync(F, orig, 'utf8');
   results.push({ name: c.name, caught, why });
 }
