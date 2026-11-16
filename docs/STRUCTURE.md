@@ -1,7 +1,7 @@
 # 开源版结构图（dsh-unified-memory）
 
 > 自动生成，勿手改。重新生成：node scripts/gen-structure.mjs（或 npm run structure）
-> 生成时间：2026-11-10T12:50:39.141Z
+> 生成时间：2026-11-16T11:23:41.865Z
 
 ## 一 · 总览
 
@@ -60,7 +60,7 @@ flowchart TD
 | `retrieval` | 检索链（BM25 / 重排 / 工具） | 16 | 83 | 6333 |
 | `hypergraph` | 超图存储与索引 | 16 | 76 | 2899 |
 | `memory` | 卡片定位与 L1-L2 关联 | 2 | 12 | 448 |
-| `working-memory` | 分层工作记忆（预算 / 淘汰 / 扩散） | 7 | 49 | 1877 |
+| `working-memory` | 分层工作记忆（预算 / 淘汰 / 扩散） | 7 | 49 | 1925 |
 | `scoring` | 四股力 / 衰减 / 采纳 | 5 | 32 | 1308 |
 | `scorer` | 基线打分 | 1 | 1 | 49 |
 | `diary` | 日记 | 3 | 43 | 721 |

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T12:50:39.139Z",
+  "generatedAt": "2026-11-16T11:23:41.863Z",
   "totals": {
     "files": 101,
     "modules": 13,
@@ -188,7 +188,7 @@
     "working-memory": {
       "files": 7,
       "exports": 49,
-      "lines": 1877,
+      "lines": 1925,
       "names": [
         "working-memory/activation-store.js",
         "working-memory/budget.js",
@@ -1439,7 +1439,7 @@
         "resolveConfig",
         "normalizeActivation"
       ],
-      "lines": 173
+      "lines": 181
     },
     {
       "path": "lib/working-memory/working-memory.js",
@@ -1449,7 +1449,7 @@
         "createWorkingMemory",
         "DEFAULT_WM_DIR"
       ],
-      "lines": 726
+      "lines": 766
     }
   ],
   "fileEdges": [
