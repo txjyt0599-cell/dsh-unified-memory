@@ -27,6 +27,10 @@ console.log('\n── StartLux 本地保底链路测试 ──');
 
 // 1. 检查模型与 server 文件
 const available = isStartLuxAvailable();
+if (!available) {
+  console.log('  SKIP 本机没有 StartLux 模型 / llama-server —— 跳过（纯净安装预期跳过）');
+  process.exit(0);
+}
 check('模型与 llama-server 存在', available);
 
 // 2. 空候选安全返回
