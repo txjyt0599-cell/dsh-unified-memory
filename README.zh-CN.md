@@ -151,6 +151,20 @@ node scripts/smoke-apply.mjs
 
 全部配置都是可选的，不配也能跑。完整开关表见 [docs/configuration.md](docs/configuration.md)。**开箱时写入链和四股力门控已经是开着的**——这正是一次新安装能真正攒下记忆的原因。有两样默认关闭，因为它们要么不可逆、要么属可选项：冷宫归档（搬卡不可逆）与闪回。完整对照见[默认值](#默认值--开箱是什么状态)。
 
+### continuity 注入（可选）
+
+默认 `hotCardMode` 是 `topN`（旧行为）。显式设为 `"continuity"` 后启用 C1（7 天语义）、C2（24 小时会话摘要）、C3 轮次与 pulse，预算按 token/字符双判据闭合；闭合失败会完整回退 `topN`。完整键见 [docs/configuration.md](docs/configuration.md)。
+
+```yaml
+config:
+  hotCardMode: continuity
+  c1WithinMs: 604800000
+  c2WithinMs: 86400000
+  c1Details: 2
+  c2Limit: 9
+  continuityMaxChars: 2200
+```
+
 ### 环境变量
 
 | 变量 | 默认 | 用途 |
@@ -395,6 +409,7 @@ node scripts/data-leak-audit.mjs   # 真实卡片 ID、会话 ID、时间戳
 
 | 版本 | 日期 | 要点 |
 |---|---|---|
+| [v2.1.8](releases/v2.1.8.md) | 2026-11-19 | continuity 运行时补齐：working-memory preview、retriever 过滤、集成测试 |
 | [v2.1.7](releases/v2.1.7.md) | 2026-11-19 | 可选 continuity 模式、注入指纹、会话级 nudge 去重 |
 | [v2.1.6](releases/v2.1.6.md) | 2026-11-16 | 仓库整理：公开文档、`tests/` 目录、发布门禁 |
 | [v2.1.5](releases/v2.1.5.md) | 2026-11-16 | 可选详情档策略（默认 recency；relevance / hybrid 需显式配置） |

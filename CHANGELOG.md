@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.1.8 — 2026-11-19
+
+### 修复
+
+- 补齐 v2.1.7 漏掉的底层引擎：`working-memory.assemblePreview/commitPreview`、`retriever.recentCardRefs/recentRounds`、`pureSearch`、`withinMs` 五路过滤、`embedQueryMemo`、L0 轮次增量保鲜。
+- 合入 `budget` 注入清洗、`observe.log` 关键错误免抽样、diary/memory 工具的 `exec` 会话透传与 ongoing-thread 日志修正。
+
+### 测试
+
+- 新增 10 套真实 continuity / retriever / WM 集成测试；陌生人全量 **60 套全绿**（pass=11 fail=0）。
+
 ## v2.1.7 — 2026-11-19
 
 ### 新增

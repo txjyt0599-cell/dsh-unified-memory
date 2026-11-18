@@ -10,6 +10,15 @@
         injectMaxChars: 8000
         budgetTokens: 450
         order: 0.6
+        # ── continuity 注入（可选，默认 topN；开启后 C1/C2/C3/pulse 预算闭合）──
+        # hotCardMode: continuity
+        # c1WithinMs: 604800000   # 7 天
+        # c2WithinMs: 86400000    # 24 小时
+        # c1Details: 2
+        # c2Limit: 9
+        # continuityMaxChars: 2200
+        # approvedTokenCap: 0     # 0 = 按基础预算自动计算
+        # approvedCharCap: 0
         logs:
           # ⚠️ [2026-10-30] 这里**故意不写 dir**。
           #   原来写的是 '~/.dsh/unified-memory/logs' —— 而 Node 不展开 ~，

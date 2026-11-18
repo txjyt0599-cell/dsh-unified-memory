@@ -32,6 +32,20 @@ $PM_DATA_ROOT/ingest/config.json
 | `fourForcesEnabled` | `true` | 四股力乘法门控：相关度是门票，重要度 / 新鲜度 / 强度只在相关池内调名次。改 `false` 即回滚到旧排序 |
 | `flashbackEnabled` | `false` | 双轨闪回，最多补 1 条远期同构记忆，不参与主排序 |
 
+## continuity 注入（可选）
+
+默认 `hotCardMode: "topN"`，行为与旧版一致。显式改为 `continuity` 后启用近期记忆连续性：C1 取 7 天语义近邻、C2 取 24 小时会话摘要、C3 保留轮次、pulse 补位；预算按 token 与字符双判据闭合，超限完整回退 topN。
+
+| 键 | 默认 | 作用 |
+|---|---|---|
+| `hotCardMode` | `topN` | `topN` 为旧行为；`continuity` 启用连续性轨 |
+| `c1WithinMs` | `604800000`（7 天） | C1 语义近邻窗口 |
+| `c2WithinMs` | `86400000`（24 小时） | C2 会话摘要窗口 |
+| `c1Details` | `2` | C1 最多详情卡数 |
+| `c2Limit` | `9` | C2 最多代表行数 |
+| `continuityMaxChars` | `2200` | hot 区字符上限 |
+| `approvedTokenCap` / `approvedCharCap` | `0`（自动） | 显式预算上限；0 表示按基础预算计算 |
+
 ## 冷宫归档（默认关，故意的）
 
 | 键 | 默认 | 作用 |

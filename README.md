@@ -154,6 +154,20 @@ That runs `apply(ctx, config)` against a mock context. It covers registration an
 
 All configuration is optional, and the plugin works without any of it. The full switch table lives in [docs/configuration.md](docs/configuration.md). **Out of the box the writing chain and the four-force gate are already on** — that is what makes a fresh install actually accumulate memories. Two things stay off by default because they are either destructive or optional: cold-archive (moving cards is irreversible) and flashback. See [Defaults](#defaults--what-works-out-of-the-box) for the full table.
 
+### Continuity mode (optional)
+
+Default `hotCardMode` is `topN` (legacy). Set `hotCardMode: "continuity"` to enable C1 (7-day semantic), C2 (24-hour session reps), C3 rounds and pulse with a closed token/char budget; falls back to `topN` if the budget cannot close. Full keys are in [docs/configuration.md](docs/configuration.md).
+
+```yaml
+config:
+  hotCardMode: continuity
+  c1WithinMs: 604800000
+  c2WithinMs: 86400000
+  c1Details: 2
+  c2Limit: 9
+  continuityMaxChars: 2200
+```
+
 ### Environment variables
 
 | Variable | Default | Purpose |
@@ -422,6 +436,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 | Version | Date | Highlights |
 |---|---|---|
+| [v2.1.8](releases/v2.1.8.md) | 2026-11-19 | Continuity runtime completion: working-memory preview, retriever filters, integration tests |
 | [v2.1.7](releases/v2.1.7.md) | 2026-11-19 | Optional continuity mode, injection fingerprints, per-session nudge dedupe |
 | [v2.1.6](releases/v2.1.6.md) | 2026-11-16 | Repository cleanup: public docs, `tests/` layout, release gates |
 | [v2.1.5](releases/v2.1.5.md) | 2026-11-16 | Optional detail-tier policy (`recency` default / `relevance` / `hybrid`) |
