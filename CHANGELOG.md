@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.1.10 — 2026-11-19
+
+### 修复
+
+- `maybeAssemble` 补 `readStateStrict` 导入，修复静默 ReferenceError。
+- `readEntry` 多行空行截断修复；补锁所有权存活判断与状态原子写。
+- nudge 增加非数组 messages 守卫；新增 section-probe / nudge 跨进程 / diary 回归测试。
+
 ## v2.1.9 — 2026-11-19
 
 ### 修复

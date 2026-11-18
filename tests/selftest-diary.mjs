@@ -10,11 +10,18 @@
  *   E 状态：nudge 每天每会话一次、assemble 幂等
  *   F 边界：空正文、缺文件、坏日期都不抛
  */
-import { existsSync, readFileSync, writeFileSync, appendFileSync, rmSync, mkdirSync, statSync } from 'node:fs';
-import * as D from '../lib/diary/index.js';
-import { maybeNudge, maybeAssemble } from '../lib/diary/scheduler.js';
+import { existsSync, readFileSync, writeFileSync, appendFileSync, rmSync, mkdirSync, statSync, mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { tmpdir as osTmpdir } from 'node:os';
+import { spawnSync } from 'node:child_process';
+// [2026-11-18] 沙箱：先设 PM_DATA_ROOT / PM_DIARY_ROOT，再动态导入，避免 E3 写进生产日记。
+const tmpRoot = mkdtempSync(join(tmpdir(), 'pm-diary-selftest-'));
+mkdirSync(tmpRoot + '/diary', { recursive: true });
+mkdirSync(tmpRoot + '/data', { recursive: true });
+process.env.PM_DIARY_ROOT = tmpRoot + '/diary';
+process.env.PM_DATA_ROOT = tmpRoot + '/data';
+const D = await import('../lib/diary/index.js');
+const { maybeNudge, maybeAssemble } = await import('../lib/diary/scheduler.js');
 
 let pass = 0, fail = 0;
 const T = (name, fn) => {
@@ -38,7 +45,7 @@ T('A3 技术词命中 3 个以上整条丢', () => {
 });
 T('A4 日常对话保留且带角色前缀', () => {
   const s = D.toSlice({ role: 'user', content: '今天好累啊，陪我坐会儿吧' });
-  ok(s.startsWith('User：'), '应以User：开头，实际 ' + s);
+  ok(s.startsWith('User：'), '应以 User：开头，实际 ' + s);
 });
 T('A5 VCP 卡片被剥成纯文本', () => {
   const s = D.toSlice({ role: 'assistant', content: '<div id="vcp-root"><style>.a{color:red}</style>User晚安</div>' });
@@ -58,9 +65,7 @@ T('B2 超量时保留头尾并插省略标记', () => {
 });
 
 // ── C 写盘（沙箱临时本子） ──
-const tmpRoot = join(osTmpdir(), 'diary-selftest');
 const tmpBook = tmpRoot + '/book.md';
-try { rmSync(tmpRoot, { recursive: true, force: true }); } catch {}
 mkdirSync(tmpRoot, { recursive: true });
 writeFileSync(tmpBook, '# 测试本\n', 'utf8');
 
@@ -86,18 +91,57 @@ T('C3 跨进程锁：拿到后第二次失败，释放后可再拿', () => {
   ok(l3.ok, '释放后应成功');
   l3.release();
 });
-T('C4 过期锁能自愈', () => {
-  const lockPath = tmpRoot + '/.lock2';
-  writeFileSync(lockPath, String(Date.now() - 60000), 'utf8');  // 60 秒前的锁
+T('C4a 过期但 PID 存活的锁绝不被抢', () => {
+  const lockPath = tmpRoot + '/.lock-live';
+  writeFileSync(lockPath, JSON.stringify({ token: 'live-owner', pid: process.pid, createdAt: Date.now() - 60000 }), 'utf8');
   const l = D.acquireLock(lockPath, 5000);
-  ok(l.ok, '过期锁应被接管');
-  l.release();
+  ok(!l.ok, '存活进程的陈锁不得接管');
+  ok(existsSync(lockPath), '存活持有者的锁必须保留');
+  rmSync(lockPath);
+});
+T('C4b 过期且 PID 已死亡的锁可经原子 rename 回收', () => {
+  const child = spawnSync(process.execPath, ['-e', ''], { encoding: 'utf8' });
+  ok(child.status === 0 && child.pid > 0, '应取得已退出子进程 PID');
+  const lockPath = tmpRoot + '/.lock-dead';
+  writeFileSync(lockPath, JSON.stringify({ token: 'dead-owner', pid: child.pid, createdAt: Date.now() - 60000 }), 'utf8');
+  const l = D.acquireLock(lockPath, 5000);
+  ok(l.ok, '死进程的陈锁应被接管');
+  eq(l.release(), true);
+});
+T('C4c 无 PID 的旧格式陈锁不自动抢', () => {
+  const lockPath = tmpRoot + '/.lock-legacy';
+  writeFileSync(lockPath, String(Date.now() - 60000), 'utf8');
+  const l = D.acquireLock(lockPath, 5000);
+  ok(!l.ok && existsSync(lockPath), '无法确认持有者死亡时保持锁原样');
+  rmSync(lockPath);
+});
+T('C5 新鲜空锁不得被当成 1970 年陈锁删除', () => {
+  const lockPath = tmpRoot + '/.lock-empty';
+  writeFileSync(lockPath, '', 'utf8');
+  const l = D.acquireLock(lockPath, 5000);
+  ok(!l.ok, '新鲜空锁应视为其他进程创建中');
+  ok(existsSync(lockPath), '不得删除别人的新鲜空锁');
+  rmSync(lockPath);
+});
+T('C6 旧持有者 release 不得删除换血后的锁', () => {
+  const lockPath = tmpRoot + '/.lock-owner';
+  const l1 = D.acquireLock(lockPath, 5000);
+  ok(l1.ok, '首个持有者应取锁成功');
+  writeFileSync(lockPath, JSON.stringify({ token: 'different-owner', createdAt: Date.now() }), 'utf8');
+  eq(l1.release(), false, '所有权不匹配必须拒绝释放');
+  ok(existsSync(lockPath), '新持有者的锁必须仍在');
+  rmSync(lockPath);
+});
+T('C7 状态原子写后可严格读回合法 JSON', () => {
+  const p = tmpRoot + '/state-atomic.json';
+  eq(D.writeState({ nudge: { ok: true } }, p), true);
+  eq(D.readStateStrict(p).nudge.ok, true);
 });
 
 // ── D 两本 ──
 T('D1 两本书路径不同', () => {
   ok(D.BOOKS.master !== D.BOOKS.self, 'AB 必须不同');
-  ok(D.BOOKS.master.endsWith('Assistant日记.md'), '给User的那本应保持原名');
+  ok(D.BOOKS.master.endsWith('Assistant日记.md'), '给User的那本应保持当前品牌名');
 });
 
 // ── E 状态 ──
@@ -117,19 +161,20 @@ T('E1 nudge 同一天同一会话返回**稳定同一段**（幂等，供调用�
   delete st2[key];
   D.writeState(st2);
 });
-T('E2 assemble 幂等（同一天不会重复收）', () => {
-  const st = D.readState();
+T('E2 assemble 真写一次、二次幂等且保留 nudge 状态', () => {
   const d = D.shiftDate(D.localDate(), -1);
-  const had = st['assembled:' + d];
-  delete st['assembled:' + d];
-  D.writeState(st);
-  const r1 = maybeAssemble({ date: d });
-  const r2 = maybeAssemble({ date: d });
-  ok(r2 === null || r2 === undefined, '第二次应返回 null');
-  // 还原状态（若之前没汇编过就删掉标记；若已汇编过就恢复）
-  const st3 = D.readState();
-  if (had) st3['assembled:' + d] = had; else delete st3['assembled:' + d];
-  D.writeState(st3);
+  const assembledKey = 'assembled:' + d;
+  const nudgeKey = 'nudge:' + D.localDate() + ':assemble-preserve';
+  writeFileSync(D.BOOKS.master, '## ' + d + ' 23:50 — Assistant的日记\n\n昨天真实写下的一段内容。\n', 'utf8');
+  const st = D.readStateStrict();
+  delete st[assembledKey];
+  st[nudgeKey] = '00:00';
+  eq(D.writeState(st), true);
+  eq(maybeAssemble({ date: d }), d, '有昨日原文时首次必须真汇编');
+  eq(maybeAssemble({ date: d }), null, '第二次不得重复汇编');
+  const raw = readFileSync(D.BOOKS.master, 'utf8');
+  eq(raw.split('### ' + d + ' · 今日合订').length - 1, 1, '合订块必须恰好一个');
+  eq(D.readStateStrict()[nudgeKey], '00:00', '汇编不得抹掉并发 nudge 状态');
 });
 
 T('E3 同一天同内容 → 不同会话也不重复写（Round 29 实测抓到的重复）', () => {
