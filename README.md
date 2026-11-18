@@ -422,6 +422,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 | Version | Date | Highlights |
 |---|---|---|
+| [v2.1.7](releases/v2.1.7.md) | 2026-11-19 | Optional continuity mode, injection fingerprints, per-session nudge dedupe |
 | [v2.1.6](releases/v2.1.6.md) | 2026-11-16 | Repository cleanup: public docs, `tests/` layout, release gates |
 | [v2.1.5](releases/v2.1.5.md) | 2026-11-16 | Optional detail-tier policy (`recency` default / `relevance` / `hybrid`) |
 | [v2.1.4](releases/v2.1.4.md) | 2026-11-10 | Root-container scrolling so the main console page can scroll |

@@ -1,5 +1,22 @@
 # Changelog
 
+## v2.1.7 — 2026-11-19
+
+### 新增
+
+- continuity 模式（可选）：`hotCardMode: "continuity"`，C1/C2/C3/pulse 预算闭合；默认仍为 legacy topN。
+- 新增 `lib/prefetch-continuity.js` 与 `lib/inject-fingerprint.js`。
+
+### 修复
+
+- `<ongoing-thread>` 移到 `<hot-memory>` 外层，可独立增量剥离。
+- 同会话 `diary-nudge` 按日期 + sessionKey 去重，跨 apply/热重载共享状态。
+- 纯 `diary-nudge` 不再进入注入回捞席位。
+
+### 测试
+
+- 新增 inject-fingerprint（11/11）、nudge-e2e（2/2）、continuity budget/flat/negative 套件；陌生人全量 50 套全绿。
+
 ## v2.1.6 — 2026-11-16
 
 ### 兼容性
