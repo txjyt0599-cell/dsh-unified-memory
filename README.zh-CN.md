@@ -409,6 +409,7 @@ node scripts/data-leak-audit.mjs   # 真实卡片 ID、会话 ID、时间戳
 
 | 版本 | 日期 | 要点 |
 |---|---|---|
+| [v2.1.9](releases/v2.1.9.md) | 2026-11-19 | 生产/发布对照收尾：nudge 锁、endpoint 编码、section 探针轮转 |
 | [v2.1.8](releases/v2.1.8.md) | 2026-11-19 | continuity 运行时补齐：working-memory preview、retriever 过滤、集成测试 |
 | [v2.1.7](releases/v2.1.7.md) | 2026-11-19 | 可选 continuity 模式、注入指纹、会话级 nudge 去重 |
 | [v2.1.6](releases/v2.1.6.md) | 2026-11-16 | 仓库整理：公开文档、`tests/` 目录、发布门禁 |

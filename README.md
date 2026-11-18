@@ -436,6 +436,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 | Version | Date | Highlights |
 |---|---|---|
+| [v2.1.9](releases/v2.1.9.md) | 2026-11-19 | Production/release parity: nudge lock, endpoint encoding, section probe rotation |
 | [v2.1.8](releases/v2.1.8.md) | 2026-11-19 | Continuity runtime completion: working-memory preview, retriever filters, integration tests |
 | [v2.1.7](releases/v2.1.7.md) | 2026-11-19 | Optional continuity mode, injection fingerprints, per-session nudge dedupe |
 | [v2.1.6](releases/v2.1.6.md) | 2026-11-16 | Repository cleanup: public docs, `tests/` layout, release gates |
