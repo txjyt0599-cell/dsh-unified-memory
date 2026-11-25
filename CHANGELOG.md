@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.2.0 — 2026-11-26
+
+### 新增
+
+- **压缩回忆（compacted-recall）**：`memory_search` 新增 `scope: "compacted_current_session"`，只检索当前会话已提交压缩覆盖的历史。
+- **阶段 2 · L0 兜底**：L0 轮次改用统一分片枚举器（活跃分片 + `_archive/` 归档 + 旧目录），按 `u.id` 生成稳定 ID；与 engram 按未覆盖消息 ID 集合去重，`memory_get` 可直接读回 `l0round:` 卡片，不写入 hits/磁盘。
+- **阶段 3 · B 层自动召回**：新增 `<compacted-session-recall>` 注入块，按 append-only 会话事件流重建 compactionId，同一压缩严格一次；in-flight 防并发、失败可重试、重启不重复。
+
+### 安全与兼容
+
+- 注入指纹改为单一标签注册表，覆盖 L0 / hot / pulse / ongoing / compacted-session-recall。
+- `capture` 注入过滤与预算清洗登记 B 块，伪造闭合标签统一降级。
+
+### 测试
+
+- `selftest-compacted-recall.mjs` **90/90**；`selftest-compacted-recall-p2p3.mjs` **33/33**。
+- 陌生人全量 **63 套全绿 / pass=11 fail=0**；安全审计阻断 0、数据泄露 0。
+
 ## v2.1.10 — 2026-11-19
 
 ### 修复

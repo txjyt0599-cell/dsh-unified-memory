@@ -286,6 +286,12 @@ node scripts/smoke-apply.mjs
 
 > **`hotreload_apply` 为什么拒绝：** 进程内自热重载被认真研究过，结论是**在没有外部重载器的前提下无法安全做到**。被 dispose 的 fiber 不留下任何活的 context 可供重新 apply，而且那条「保险」路径和它要保护的操作共享同一个失败原因。**「拒绝」本身就是这个功能。** 事故复盘写在 `lib/dispatch/hotreload-exec.js`。
 
+### 压缩回忆（compacted recall）
+
+- `memory_search({ scope: "compacted_current_session" })` 只检索**当前会话已提交压缩覆盖**的历史；`query:"*"` 浏览、`query:"关键词"` 检索。
+- 压缩后若只剩 L0 原始轮次，插件会按未覆盖消息 ID 兜底召回；`memory_get` 可直接读取 `l0round:` 卡片，且不会把它当成一次命中记账。
+- 自动召回块 `<compacted-session-recall>` 同一 compactionId 严格只出现一次，失败回合会释放占位，重启后从 append-only 事件流恢复。
+
 ---
 
 ## 数据长什么样
@@ -409,6 +415,7 @@ node scripts/data-leak-audit.mjs   # 真实卡片 ID、会话 ID、时间戳
 
 | 版本 | 日期 | 要点 |
 |---|---|---|
+| [v2.2.0](releases/v2.2.0.md) | 2026-11-26 | 压缩回忆：L0 兜底、`compacted_current_session` 范围、一次性 `<compacted-session-recall>` 块 |
 | [v2.1.10](releases/v2.1.10.md) | 2026-11-19 | 日记 assemble/readEntry 修复、锁所有权守卫、跨进程 nudge 测试 |
 | [v2.1.9](releases/v2.1.9.md) | 2026-11-19 | 生产/发布对照收尾：nudge 锁、endpoint 编码、section 探针轮转 |
 | [v2.1.8](releases/v2.1.8.md) | 2026-11-19 | continuity 运行时补齐：working-memory preview、retriever 过滤、集成测试 |

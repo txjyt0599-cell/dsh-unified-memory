@@ -1,16 +1,16 @@
 # 开源版结构图（dsh-unified-memory）
 
 > 自动生成，勿手改。重新生成：node scripts/gen-structure.mjs（或 npm run structure）
-> 生成时间：2026-11-18T20:11:38.815Z
+> 生成时间：2026-11-25T18:07:40.571Z
 
 ## 一 · 总览
 
 | 指标 | 数值 |
 |---|---|
-| 源码文件（lib，js/mjs/py） | 103 |
+| 源码文件（lib，js/mjs/py） | 104 |
 | 模块（一级目录） | 13 |
-| 导出 API | 558 |
-| 跨模块依赖边 | 36 |
+| 导出 API | 575 |
+| 跨模块依赖边 | 38 |
 
 ## 二 · 分层图
 
@@ -55,12 +55,12 @@ flowchart TD
 
 | 模块 | 职责 | 文件 | 导出 | 行数 |
 |---|---|---:|---:|---:|
-| `(root)` | 入口与编排 | 13 | 66 | 4275 |
-| `ingest` | 写入链（L0 捕获 / L1 提取 / L2 蒸馏） | 25 | 150 | 7984 |
-| `retrieval` | 检索链（BM25 / 重排 / 工具） | 16 | 83 | 6498 |
-| `hypergraph` | 超图存储与索引 | 16 | 76 | 2907 |
+| `(root)` | 入口与编排 | 13 | 69 | 4443 |
+| `ingest` | 写入链（L0 捕获 / L1 提取 / L2 蒸馏） | 25 | 150 | 7989 |
+| `retrieval` | 检索链（BM25 / 重排 / 工具） | 17 | 97 | 7336 |
+| `hypergraph` | 超图存储与索引 | 16 | 76 | 2932 |
 | `memory` | 卡片定位与 L1-L2 关联 | 2 | 12 | 448 |
-| `working-memory` | 分层工作记忆（预算 / 淘汰 / 扩散） | 7 | 49 | 1991 |
+| `working-memory` | 分层工作记忆（预算 / 淘汰 / 扩散） | 7 | 49 | 1993 |
 | `scoring` | 四股力 / 衰减 / 采纳 | 5 | 32 | 1308 |
 | `scorer` | 基线打分 | 1 | 1 | 49 |
 | `diary` | 日记 | 3 | 44 | 795 |
@@ -75,13 +75,13 @@ flowchart TD
 |---|---:|
 | `ingest` -> `(root)` | 19 |
 | `(root)` -> `ingest` | 9 |
-| `retrieval` -> `(root)` | 8 |
+| `retrieval` -> `(root)` | 9 |
 | `retrieval` -> `ingest` | 8 |
 | `(root)` -> `embedding` | 5 |
 | `(root)` -> `hypergraph` | 5 |
+| `(root)` -> `retrieval` | 5 |
 | `(root)` -> `dispatch` | 5 |
-| `(root)` -> `retrieval` | 4 |
-| `hypergraph` -> `(root)` | 4 |
+| `hypergraph` -> `(root)` | 5 |
 | `(root)` -> `working-memory` | 3 |
 | `(root)` -> `diary` | 3 |
 | `hypergraph` -> `ingest` | 3 |
@@ -105,6 +105,8 @@ flowchart TD
 | `hypergraph` -> `memory` | 1 |
 | `ingest` -> `hypergraph` | 1 |
 | `observe` -> `(root)` | 1 |
+| `retrieval` -> `dispatch` | 1 |
+| `retrieval` -> `working-memory` | 1 |
 | `retrieval` -> `memory` | 1 |
 | `scoring` -> `memory` | 1 |
 | `scoring` -> `(root)` | 1 |
@@ -161,6 +163,7 @@ flowchart TD
 - retrieval/alias.js
 - retrieval/bm25.js
 - retrieval/breaker.js
+- retrieval/compacted-recall.js
 - retrieval/embed-fallback-server.js
 - retrieval/l0-normalize.js
 - retrieval/query-terms.js

@@ -46,6 +46,20 @@ $PM_DATA_ROOT/ingest/config.json
 | `continuityMaxChars` | `2200` | hot 区字符上限 |
 | `approvedTokenCap` / `approvedCharCap` | `0`（自动） | 显式预算上限；0 表示按基础预算计算 |
 
+## 压缩回忆（compacted recall）
+
+> **配置位置：** `compactedRecall` 从 `cordis.patch.yml` 的插件 `config` 读取，改完需重启 DSH；写在下面的 `ingest/config.json` **不会生效**。
+
+默认开启。它只影响已被压缩覆盖的会话；未压缩会话的行为完全不变。
+
+| 键 | 默认 | 作用 |
+|---|---|---|
+| `compactedRecall.enabled` | `true` | 总开关；`false` 时轻提示和 B 层自动召回都停止 |
+| `compactedRecall.hintOnCompact` | `true` | 是否在压缩后发一次性 `memory_search` 轻提示 |
+| `compactedRecall.bLayer` | `true` | 是否注入 `<compacted-session-recall>` 自动召回块 |
+
+工具侧：`memory_search({ scope: "compacted_current_session" })` 只搜索当前会话已提交压缩覆盖的历史；`query: "*"` 浏览，`query: "关键词"` 检索。
+
 ## 冷宫归档（默认关，故意的）
 
 | 键 | 默认 | 作用 |
@@ -65,6 +79,8 @@ node scripts/cold-archive.mjs --apply
 **这些开关只从 `config.json` 读（活配置）。** 写在 `cordis.patch.yml` 里的同名键对写入链**不生效**。
 
 唯一例外是 `fourForcesEnabled`：在 profile 里显式写了会优先于本文件。
+
+`compactedRecall` 也是例外：它从 `cordis.patch.yml` 的插件 `config` 读取，不写在本文件。
 
 ## 模型端点与密钥
 

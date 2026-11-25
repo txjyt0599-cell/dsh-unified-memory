@@ -313,6 +313,12 @@ Address and parameter changes are marked **restart pending** and never switch th
 
 > **Why `hotreload_apply` refuses:** in-process self-reload was investigated and found to be **not safely achievable** without an external reloader. A disposed fiber leaves no live context to re-apply into, and the rescue path shares the same failure as the operation it guards. The refusal *is* the feature. Post-mortem is in `lib/dispatch/hotreload-exec.js`.
 
+### Compacted recall
+
+- `memory_search({ scope: "compacted_current_session" })` searches only history covered by committed compactions in the current session; use `query:"*"` to browse or `query:"keywords"` to search.
+- If only raw L0 rounds remain after compaction, the plugin falls back to uncovered message IDs. `memory_get` can read `l0round:` cards directly without recording a hit.
+- The automatic `<compacted-session-recall>` block is emitted at most once per compactionId; failed turns release the slot, and restarts rebuild state from the append-only event stream.
+
 ---
 
 ## Data layout
@@ -436,6 +442,7 @@ Stated explicitly, because a memory system that overstates itself is worse than 
 
 | Version | Date | Highlights |
 |---|---|---|
+| [v2.2.0](releases/v2.2.0.md) | 2026-11-26 | Compacted recall: L0 fallback, `compacted_current_session` scope, one-shot `<compacted-session-recall>` blocks |
 | [v2.1.10](releases/v2.1.10.md) | 2026-11-19 | Diary assemble/readEntry fixes, lock owner guard, cross-process nudge tests |
 | [v2.1.9](releases/v2.1.9.md) | 2026-11-19 | Production/release parity: nudge lock, endpoint encoding, section probe rotation |
 | [v2.1.8](releases/v2.1.8.md) | 2026-11-19 | Continuity runtime completion: working-memory preview, retriever filters, integration tests |

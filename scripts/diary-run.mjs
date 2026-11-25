@@ -87,22 +87,25 @@ function autoMissing(book, max) {
 }
 
 async function assemble(date) {
-  const text = D.readEntry('master', date);
-  if (!text) { console.log('[assemble] no entry for', date); return; }
-  const state = D.readState();
   const key = 'assembled:' + date;
-  if (state[key]) { console.log('[assemble] already assembled', date); return; }
   const file = D.BOOKS.master;
   const lock = D.acquireLock();
+  if (!lock.ok) { console.log('[assemble] lock busy, skip'); return; }
   try {
+    // 与 scheduler 同口径：锁内重读状态和原文，避免用旧快照覆盖 nudge。
+    const state = D.readStateStrict();
+    if (state[key]) { console.log('[assemble] already assembled', date); return; }
+    const text = D.readEntry('master', date);
+    if (!text) { console.log('[assemble] no entry for', date); return; }
     const block = ['', '### ' + date + ' · 今日合订', '', text.replace(/^/gm, '> '), ''].join('\n');
-    if (!lock.ok) { console.log('[assemble] lock busy, skip'); return; }
     const { appendFileSync } = await import('node:fs');
     appendFileSync(file, block);
     state[key] = new Date().toISOString();
-    D.writeState(state);
+    if (!D.writeState(state)) throw new Error('state write failed');
     console.log('[assemble] appended 今日合订 for', date);
-  } finally { if (lock.ok) lock.release(); }
+  } catch (e) {
+    console.log('[assemble] failed:', String(e && e.message || e));
+  } finally { lock.release(); }
 }
 
 if (cmd === 'backfill') {
